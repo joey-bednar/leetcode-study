@@ -176,6 +176,20 @@ def print_solution(problem):
     if problem['verified']:
         verified_string = f"[{B_GREEN}VERIFIED{RESET}]"
 
+    if problem.get('easy_solution'):
+        print()
+        print(f"  {BOLD}{B_MAGENTA}SUBOPTIMAL APPROACH{RESET}\n")
+        print_markdown(problem["easy_approach"])
+
+        print(f"  {BOLD}{B_MAGENTA}SUBOPTIMAL COMPLEXITY{RESET}\n")
+        print(f"  Time: {problem['easy_time']}")
+        print(f"  Space: {problem['easy_space']}")
+
+        print()
+        print(f"  {BOLD}{B_MAGENTA}SUBOPTIMAL_SOLUTION{RESET}\n")
+        print_code(problem["easy_solution"])
+        print()
+
 
     print()
     print(f"  {BOLD}{B_MAGENTA}APPROACH{RESET}\n")

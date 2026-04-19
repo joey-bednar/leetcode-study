@@ -29,7 +29,7 @@ def pick_problem(problems, problem_id):
 
 
 def print_help():
-    print("Usage: lc.py [random | pick <num> | list]")
+    print("Usage: lc [random | pick <num> | list]")
 
 
 def main():
