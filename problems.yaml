@@ -4,6 +4,7 @@
   tags: [Array, Hash Table]
   time: "O(n)"
   space: "O(n)"
+  verified: true
   description: |
     Given an array of integers `nums` and an integer `target`, return indices of the two numbers
     such that they add up to `target`.
@@ -41,8 +42,9 @@
   title: "Valid Sudoku"
   difficulty: Medium
   tags: [Array, Hash Table, Matrix]
-  time: "O(1)"
-  space: "O(1)"
+  time: "O(n^2)"
+  space: "O(n^2)"
+  verified: false
   description: |
     Determine if a `9 x 9` Sudoku board is valid. Only the filled cells need to be validated
     according to the following rules:
@@ -117,6 +119,7 @@
   tags: [Array, Hash Table, String, Sorting]
   time: "O(n * k log k)"
   space: "O(n * k)"
+  verified: false
   description: |
     Given an array of strings `strs`, group **the anagrams** together. You can return the answer
     in **any order**.
@@ -154,6 +157,7 @@
   tags: [Array, Hash Table, Union Find]
   time: "O(n)"
   space: "O(n)"
+  verified: false
   description: |
     Given an unsorted array of integers `nums`, return the length of the longest consecutive
     elements sequence.
@@ -195,6 +199,7 @@
   tags: [Array, Hash Table, Sorting]
   time: "O(n)"
   space: "O(n)"
+  verified: false
   description: |
     Given an integer array `nums`, return `True` if any value appears **at least twice**
     in the array, and return `False` if every element is distinct.
@@ -232,6 +237,7 @@
   tags: [Array, Prefix Sum]
   time: "O(n)"
   space: "O(1)"
+  verified: false
   description: |
     Given an integer array `nums`, return an array `answer` such that `answer[i]` is equal to
     the product of all the elements of `nums` except `nums[i]`.
@@ -282,6 +288,7 @@
   tags: [Hash Table, String, Sorting]
   time: "O(n)"
   space: "O(1)"
+  verified: false
   description: |
     Given two strings `s` and `t`, return `true` if `t` is an anagram of `s`, and `false`
     otherwise.
@@ -325,6 +332,7 @@
   tags: [Array, String, Design]
   time: "O(n)"
   space: "O(n)"
+  verified: false
   description: |
     Design an algorithm to encode **a list of strings** to **a single string**. The encoded
     string is then sent over the network and is decoded back to the original list of strings.
@@ -368,6 +376,7 @@
   tags: [Array, Hash Table, Divide and Conquer, Sorting, Heap, Bucket Sort, Counting, Quickselect]
   time: "O(n)"
   space: "O(n)"
+  verified: false
   description: |
     Given an integer array `nums` and an integer `k`, return the `k` most frequent elements.
     You may return the answer in **any order**.
