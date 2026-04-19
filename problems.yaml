@@ -37,6 +37,158 @@
                 return [seen[diff], i]
             seen[num] = i
         return []  # no solution found
+- id: 36
+  title: "Valid Sudoku"
+  difficulty: Medium
+  tags: [Array, Hash Table, Matrix]
+  time: "O(1)"
+  space: "O(1)"
+  description: |
+    Determine if a `9 x 9` Sudoku board is valid. Only the filled cells need to be validated
+    according to the following rules:
+
+    1. Each row must contain the digits `1-9` without repetition.
+    2. Each column must contain the digits `1-9` without repetition.
+    3. Each of the nine `3 x 3` sub-boxes of the grid must contain the digits `1-9` without
+       repetition.
+
+    **Note:**
+      - A Sudoku board (partially filled) could be valid but is not necessarily solvable.
+      - Only the filled cells need to be validated according to the mentioned rules.
+
+    **Example 1:**
+      Input:  board =
+        [["5","3",".",".","7",".",".",".","."]
+        ,["6",".",".","1","9","5",".",".","."]
+        ,[".","9","8",".",".",".",".","6","."]
+        ,["8",".",".",".","6",".",".",".","3"]
+        ,["4",".",".","8",".","3",".",".","1"]
+        ,["7",".",".",".","2",".",".",".","6"]
+        ,[".","6",".",".",".",".","2","8","."]
+        ,[".",".",".","4","1","9",".",".","5"]
+        ,[".",".",".",".","8",".",".","7","9"]]
+      Output: true
+
+    **Example 2:**
+      Input:  board =
+        [["8","3",".",".","7",".",".",".","."]
+        ,["6",".",".","1","9","5",".",".","."]
+        ,[".","9","8",".",".",".",".","6","."]
+        ,["8",".",".",".","6",".",".",".","3"]
+        ,["4",".",".","8",".","3",".",".","1"]
+        ,["7",".",".",".","2",".",".",".","6"]
+        ,[".","6",".",".",".",".","2","8","."]
+        ,[".",".",".","4","1","9",".",".","5"]
+        ,[".",".",".",".","8",".",".","7","9"]]
+      Output: false
+      Explanation: Same as Example 1, except with the 5 in the top left corner being modified
+        to 8. Since there are two 8's in the top left 3x3 sub-box, it is invalid.
+
+    **Constraints:**
+      - board.length == 9
+      - board[i].length == 9
+      - board[i][j] is a digit 1-9 or '.'.
+  approach: |
+    Use three arrays of sets — one per row, one per column, one per 3x3 box.
+    The box index for cell (r, c) is (r // 3) * 3 + (c // 3).
+    Iterate every cell; skip '.'. If the digit is already in any of the three
+    corresponding sets, return False. Otherwise add it to all three.
+  solution: |
+    def is_valid_sudoku(board: list[list[str]]) -> bool:
+        rows = [set() for _ in range(9)]
+        cols = [set() for _ in range(9)]
+        boxes = [set() for _ in range(9)]
+
+        for r in range(9):
+            for c in range(9):
+                val = board[r][c]
+                if val == ".":
+                    continue
+                box = (r // 3) * 3 + (c // 3)
+                if val in rows[r] or val in cols[c] or val in boxes[box]:
+                    return False
+                rows[r].add(val)
+                cols[c].add(val)
+                boxes[box].add(val)
+        return True
+- id: 49
+  title: "Group Anagrams"
+  difficulty: Medium
+  tags: [Array, Hash Table, String, Sorting]
+  time: "O(n * k log k)"
+  space: "O(n * k)"
+  description: |
+    Given an array of strings `strs`, group **the anagrams** together. You can return the answer
+    in **any order**.
+
+    **Example 1:**
+      Input:  strs = ["eat","tea","tan","ate","nat","bat"]
+      Output: [["bat"],["nat","tan"],["ate","eat","tea"]]
+
+    **Example 2:**
+      Input:  strs = [""]
+      Output: [[""]]
+
+    **Example 3:**
+      Input:  strs = ["a"]
+      Output: [["a"]]
+
+    **Constraints:**
+      - 1 <= strs.length <= 10^4
+      - 0 <= strs[i].length <= 100
+      - strs[i] consists of lowercase English letters.
+  approach: |
+    Sort each string to produce a canonical key — anagrams share the same sorted form.
+    Use a hash map from sorted key → list of original strings.
+    Return all values from the map.
+  solution: |
+    def group_anagrams(strs: list[str]) -> list[list[str]]:
+        groups = {}
+        for s in strs:
+            key = tuple(sorted(s))
+            groups.setdefault(key, []).append(s)
+        return list(groups.values())
+- id: 128
+  title: "Longest Consecutive Sequence"
+  difficulty: Medium
+  tags: [Array, Hash Table, Union Find]
+  time: "O(n)"
+  space: "O(n)"
+  description: |
+    Given an unsorted array of integers `nums`, return the length of the longest consecutive
+    elements sequence.
+
+    You must write an algorithm that runs in `O(n)` time.
+
+    **Example 1:**
+      Input:  nums = [100,4,200,1,3,2]
+      Output: 4
+      Explanation: The longest consecutive elements sequence is [1, 2, 3, 4]. Therefore its
+        length is 4.
+
+    **Example 2:**
+      Input:  nums = [0,3,7,2,5,8,1,6,0,4]
+      Output: 9
+
+    **Constraints:**
+      - 0 <= nums.length <= 10^5
+      - -10^9 <= nums[i] <= 10^9
+  approach: |
+    Put all numbers into a hash set for O(1) lookup.
+    For each number, check if (num - 1) is absent — that means it's the start of a sequence.
+    From each sequence start, extend right while consecutive numbers exist and track the max length.
+    Each number is visited at most twice overall, so the algorithm is O(n).
+  solution: |
+    def longest_consecutive(nums: list[int]) -> int:
+        num_set = set(nums)
+        best = 0
+        for num in num_set:
+            if num - 1 not in num_set:
+                length = 1
+                while num + length in num_set:
+                    length += 1
+                best = max(best, length)
+        return best
 - id: 217
   title: "Contains Duplicate"
   difficulty: Easy
@@ -74,3 +226,187 @@
                 return True
             seen.add(num)
         return False
+- id: 238
+  title: "Product of Array Except Self"
+  difficulty: Medium
+  tags: [Array, Prefix Sum]
+  time: "O(n)"
+  space: "O(1)"
+  description: |
+    Given an integer array `nums`, return an array `answer` such that `answer[i]` is equal to
+    the product of all the elements of `nums` except `nums[i]`.
+
+    The product of any prefix or suffix of `nums` is **guaranteed** to fit in a **32-bit** integer.
+
+    You must write an algorithm that runs in `O(n)` time and without using the division operation.
+
+    **Example 1:**
+      Input:  nums = [1,2,3,4]
+      Output: [24,12,8,6]
+
+    **Example 2:**
+      Input:  nums = [-1,1,0,-3,3]
+      Output: [0,0,9,0,0]
+
+    **Constraints:**
+      - 2 <= nums.length <= 10^5
+      - -30 <= nums[i] <= 30
+      - The product of any prefix or suffix of nums is guaranteed to fit in a 32-bit integer.
+
+    **Follow up:** Can you solve the problem in `O(1)` extra space complexity? (The output array
+    does not count as extra space for space complexity analysis.)
+  approach: |
+    Two-pass prefix/suffix approach using the output array itself.
+    First pass (left → right): store the running prefix product before each index.
+    Second pass (right → left): multiply each position by the running suffix product.
+    No extra array needed — only two scalar accumulators.
+  solution: |
+    def product_except_self(nums: list[int]) -> list[int]:
+        n = len(nums)
+        result = [1] * n
+
+        prefix = 1
+        for i in range(n):
+            result[i] = prefix
+            prefix *= nums[i]
+
+        suffix = 1
+        for i in range(n - 1, -1, -1):
+            result[i] *= suffix
+            suffix *= nums[i]
+
+        return result
+- id: 242
+  title: "Valid Anagram"
+  difficulty: Easy
+  tags: [Hash Table, String, Sorting]
+  time: "O(n)"
+  space: "O(1)"
+  description: |
+    Given two strings `s` and `t`, return `true` if `t` is an anagram of `s`, and `false`
+    otherwise.
+
+    **Example 1:**
+      Input:  s = "anagram", t = "nagaram"
+      Output: true
+
+    **Example 2:**
+      Input:  s = "rat", t = "car"
+      Output: false
+
+    **Constraints:**
+      - 1 <= s.length, t.length <= 5 * 10^4
+      - s and t consist of lowercase English letters.
+
+    **Follow up:** What if the inputs contain Unicode characters? How would you adapt your
+    solution to such a case?
+  approach: |
+    If lengths differ, immediately return False.
+    Use a hash map to count character frequencies in s, then decrement for each character in t.
+    If any count goes negative or a character is missing, return False.
+    If all counts reach zero, the strings are anagrams.
+  solution: |
+    def is_anagram(s: str, t: str) -> bool:
+        if len(s) != len(t):
+            return False
+        count = {}
+        for c in s:
+            count[c] = count.get(c, 0) + 1
+        for c in t:
+            if c not in count:
+                return False
+            count[c] -= 1
+            if count[c] == 0:
+                del count[c]
+        return len(count) == 0
+- id: 271
+  title: "Encode and Decode Strings"
+  difficulty: Medium
+  tags: [Array, String, Design]
+  time: "O(n)"
+  space: "O(n)"
+  description: |
+    Design an algorithm to encode **a list of strings** to **a single string**. The encoded
+    string is then sent over the network and is decoded back to the original list of strings.
+
+    Please implement `encode` and `decode`.
+
+    **Example 1:**
+      Input:  dummy_input = ["Hello","World"]
+      Output: ["Hello","World"]
+      Explanation: Machine 1 encodes ["Hello","World"] into a single string, then Machine 2
+        decodes it back to the original list.
+
+    **Example 2:**
+      Input:  dummy_input = [""]
+      Output: [""]
+
+    **Constraints:**
+      - 1 <= strs.length <= 200
+      - 0 <= strs[i].length <= 200
+      - strs[i] contains any possible characters out of 256 valid ASCII characters.
+  approach: |
+    Use length-prefixed encoding: for each string, write its length, a '#' delimiter, then the
+    string content. During decoding, read up to the next '#' to get the length, then slice
+    exactly that many characters. This handles any character including '#' itself.
+  solution: |
+    def encode(strs: list[str]) -> str:
+        return "".join(f"{len(s)}#{s}" for s in strs)
+
+    def decode(s: str) -> list[str]:
+        result = []
+        i = 0
+        while i < len(s):
+            j = s.index("#", i)
+            length = int(s[i:j])
+            result.append(s[j + 1:j + 1 + length])
+            i = j + 1 + length
+        return result
+- id: 347
+  title: "Top K Frequent Elements"
+  difficulty: Medium
+  tags: [Array, Hash Table, Divide and Conquer, Sorting, Heap, Bucket Sort, Counting, Quickselect]
+  time: "O(n)"
+  space: "O(n)"
+  description: |
+    Given an integer array `nums` and an integer `k`, return the `k` most frequent elements.
+    You may return the answer in **any order**.
+
+    **Example 1:**
+      Input:  nums = [1,1,1,2,2,3], k = 2
+      Output: [1,2]
+
+    **Example 2:**
+      Input:  nums = [1], k = 1
+      Output: [1]
+
+    **Constraints:**
+      - 1 <= nums.length <= 10^5
+      - -10^4 <= nums[i] <= 10^4
+      - k is in the range [1, the number of unique elements in the array].
+      - It is guaranteed that the answer is unique.
+
+    **Follow up:** Your algorithm's time complexity must be better than `O(n log n)`, where n
+    is the array's size.
+  approach: |
+    Use bucket sort to achieve O(n). Count frequencies with a hash map, then create an array of
+    buckets indexed by frequency (max frequency is at most n). Fill each bucket with numbers
+    that have that frequency. Sweep buckets from highest to lowest, collecting elements until
+    k are found.
+  solution: |
+    def top_k_frequent(nums: list[int], k: int) -> list[int]:
+        count = {}
+        for num in nums:
+            count[num] = count.get(num, 0) + 1
+
+        buckets = [[] for _ in range(len(nums) + 1)]
+        for num, freq in count.items():
+            buckets[freq].append(num)
+
+        result = []
+        for i in range(len(buckets) - 1, 0, -1):
+            for num in buckets[i]:
+                result.append(num)
+                if len(result) == k:
+                    return result
+        return result
