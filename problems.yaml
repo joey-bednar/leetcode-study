@@ -38,6 +38,64 @@
                 return [seen[diff], i]
             seen[num] = i
         return []  # no solution found
+- id: 4
+  title: "Median of Two Sorted Arrays"
+  difficulty: Hard
+  tags: [Array, Binary Search, Divide and Conquer]
+  verified: false
+  description: |
+    Given two sorted arrays `nums1` and `nums2` of size `m` and `n` respectively, return the
+    **median** of the two sorted arrays.
+
+    The overall run time complexity should be `O(log (m+n))`.
+
+    **Example 1:**
+      Input:  nums1 = [1,3], nums2 = [2]
+      Output: 2.00000
+      Explanation: merged array = [1,2,3] and median is 2.
+
+    **Example 2:**
+      Input:  nums1 = [1,2], nums2 = [3,4]
+      Output: 2.50000
+      Explanation: merged array = [1,2,3,4] and median is (2 + 3) / 2 = 2.5.
+
+    **Constraints:**
+      - nums1.length == m
+      - nums2.length == n
+      - 0 <= m <= 1000
+      - 0 <= n <= 1000
+      - 1 <= m + n <= 2000
+      - -10^6 <= nums1[i], nums2[i] <= 10^6
+  time: "O(log(min(m, n)))"
+  space: "O(1)"
+  approach: |
+    Binary search on the smaller array. Find partition points i (in A) and j = half - i - 2
+    (in B) such that A[i] <= B[j+1] and B[j] <= A[i+1]. Use boundary sentinels (-inf/+inf)
+    for out-of-range indices. Once the correct partition is found, the median is derived from
+    the max of the left elements and the min of the right elements.
+  solution: |
+    def find_median_sorted_arrays(nums1: list[int], nums2: list[int]) -> float:
+        A, B = nums1, nums2
+        total = len(nums1) + len(nums2)
+        half = total // 2
+        if len(B) < len(A):
+            A, B = B, A
+        l, r = 0, len(A) - 1
+        while True:
+            i = (l + r) // 2
+            j = half - i - 2
+            Aleft = A[i] if i >= 0 else float("-infinity")
+            Aright = A[i + 1] if (i + 1) < len(A) else float("infinity")
+            Bleft = B[j] if j >= 0 else float("-infinity")
+            Bright = B[j + 1] if (j + 1) < len(B) else float("infinity")
+            if Aleft <= Bright and Bleft <= Aright:
+                if total % 2:
+                    return min(Aright, Bright)
+                return (max(Aleft, Bleft) + min(Aright, Bright)) / 2
+            elif Aleft > Bright:
+                r = i - 1
+            else:
+                l = i + 1
 - id: 11
   title: "Container With Most Water"
   difficulty: Medium
@@ -198,6 +256,68 @@
             else:
                 stack.append(c)
         return not stack
+- id: 33
+  title: "Search In Rotated Sorted Array"
+  difficulty: Medium
+  tags: [Array, Binary Search]
+  verified: false
+  description: |
+    There is an integer array `nums` sorted in ascending order (with **distinct** values).
+
+    Prior to being passed to your function, `nums` is **possibly rotated** at an unknown pivot
+    index `k` (`1 <= k < nums.length`) such that the resulting array is
+    `[nums[k], nums[k+1], ..., nums[n-1], nums[0], nums[1], ..., nums[k-1]]` (0-indexed).
+    For example, `[0,1,2,4,5,6,7]` might be rotated at pivot index `3` and become
+    `[4,5,6,7,0,1,2]`.
+
+    Given the array `nums` after the possible rotation and an integer `target`, return the index
+    of `target` if it is in `nums`, or `-1` if it is not in `nums`.
+
+    You must write an algorithm with `O(log n)` runtime complexity.
+
+    **Example 1:**
+      Input:  nums = [4,5,6,7,0,1,2], target = 0
+      Output: 4
+
+    **Example 2:**
+      Input:  nums = [4,5,6,7,0,1,2], target = 3
+      Output: -1
+
+    **Example 3:**
+      Input:  nums = [1], target = 3
+      Output: -1
+
+    **Constraints:**
+      - 1 <= nums.length <= 5000
+      - -10^4 <= nums[i] <= 10^4
+      - All values of nums are unique.
+      - nums is an ascending array that is possibly rotated.
+      - -10^4 <= target <= 10^4
+  time: "O(log n)"
+  space: "O(1)"
+  approach: |
+    Standard binary search with rotation detection at each step. If the left half is sorted
+    (nums[l] <= nums[mid]), check if target falls in [nums[l], nums[mid]); if so search left,
+    otherwise right. If the right half is sorted, check if target falls in (nums[mid], nums[r]];
+    if so search right, otherwise left.
+  solution: |
+    def search(nums: list[int], target: int) -> int:
+        l, r = 0, len(nums) - 1
+        while l <= r:
+            mid = (l + r) // 2
+            if nums[mid] == target:
+                return mid
+            if nums[l] <= nums[mid]:
+                if nums[l] <= target < nums[mid]:
+                    r = mid - 1
+                else:
+                    l = mid + 1
+            else:
+                if nums[mid] < target <= nums[r]:
+                    l = mid + 1
+                else:
+                    r = mid - 1
+        return -1
 - id: 36
   title: "Valid Sudoku"
   difficulty: Medium
@@ -359,6 +479,53 @@
                 count[ord(c) - ord('a')] += 1
             res[tuple(count)].append(s)
         return list(res.values())
+- id: 74
+  title: "Search a 2D Matrix"
+  difficulty: Medium
+  tags: [Array, Binary Search, Matrix]
+  verified: false
+  description: |
+    You are given an `m x n` integer matrix `matrix` with the following two properties:
+      - Each row is sorted in non-decreasing order.
+      - The first integer of each row is greater than the last integer of the previous row.
+
+    Given an integer `target`, return `true` if `target` is in `matrix` or `false` otherwise.
+
+    You must write a solution in `O(log(m * n))` time complexity.
+
+    **Example 1:**
+      Input:  matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 3
+      Output: true
+
+    **Example 2:**
+      Input:  matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 13
+      Output: false
+
+    **Constraints:**
+      - m == matrix.length
+      - n == matrix[0].length
+      - 1 <= m, n <= 100
+      - -10^4 <= matrix[i][j] <= 10^4
+  time: "O(log(m * n))"
+  space: "O(1)"
+  approach: |
+    Treat the 2D matrix as a flattened 1D sorted array of length m*n. Binary search with l=0
+    and r=m*n-1. For each midpoint, convert to row = mid // COLS and col = mid % COLS to
+    access matrix[row][col]. Adjust l or r based on comparison with target.
+  solution: |
+    def search_matrix(matrix: list[list[int]], target: int) -> bool:
+        ROWS, COLS = len(matrix), len(matrix[0])
+        l, r = 0, ROWS * COLS - 1
+        while l <= r:
+            mid = (l + r) // 2
+            row, col = mid // COLS, mid % COLS
+            if matrix[row][col] == target:
+                return True
+            elif matrix[row][col] < target:
+                l = mid + 1
+            else:
+                r = mid - 1
+        return False
 - id: 84
   title: "Largest Rectangle In Histogram"
   difficulty: Hard
@@ -575,6 +742,69 @@
             else:
                 stack.append(int(t))
         return stack[0]
+- id: 153
+  title: "Find Minimum In Rotated Sorted Array"
+  difficulty: Medium
+  tags: [Array, Binary Search]
+  verified: false
+  description: |
+    Suppose an array of length `n` sorted in ascending order is **rotated** between `1` and `n`
+    times. For example, the array `nums = [0,1,2,4,5,6,7]` might become:
+      - `[4,5,6,7,0,1,2]` if it was rotated `4` times.
+      - `[0,1,2,4,5,6,7]` if it was rotated `7` times.
+
+    Notice that **rotating** an array `[a[0], a[1], a[2], ..., a[n-1]]` 1 time results in the
+    array `[a[n-1], a[0], a[1], a[2], ..., a[n-2]]`.
+
+    Given the sorted rotated array `nums` of **unique** elements, return the **minimum element**
+    of this array.
+
+    You must write an algorithm that runs in `O(log n)` time.
+
+    **Example 1:**
+      Input:  nums = [3,4,5,1,2]
+      Output: 1
+      Explanation: The original array was [1,2,3,4,5] rotated 3 times.
+
+    **Example 2:**
+      Input:  nums = [4,5,6,7,0,1,2]
+      Output: 0
+      Explanation: The original array was [0,1,2,4,5,6,7] and it was rotated 4 times.
+
+    **Example 3:**
+      Input:  nums = [11,13,15,17]
+      Output: 11
+      Explanation: The original array was [11,13,15,17] and it was rotated 4 times.
+
+    **Constraints:**
+      - n == nums.length
+      - 1 <= n <= 5000
+      - -5000 <= nums[i] <= 5000
+      - All the integers of nums are unique.
+      - nums is sorted and rotated between 1 and n times.
+  time: "O(log n)"
+  space: "O(1)"
+  approach: |
+    Binary search tracking the minimum seen so far. If nums[l] < nums[r], the current
+    subarray is fully sorted so nums[l] is the local minimum — record it and break. Otherwise
+    compute mid, update res with nums[mid], and detect which half contains the rotation: if
+    nums[mid] >= nums[l], the left half is sorted and the minimum lies in the right half
+    (l = mid + 1); otherwise search the left half (r = mid - 1).
+  solution: |
+    def find_min(nums: list[int]) -> int:
+        l, r = 0, len(nums) - 1
+        res = nums[0]
+        while l <= r:
+            if nums[l] < nums[r]:
+                res = min(res, nums[l])
+                break
+            mid = (l + r) // 2
+            res = min(res, nums[mid])
+            if nums[mid] >= nums[l]:
+                l = mid + 1
+            else:
+                r = mid - 1
+        return res
 - id: 155
   title: "Min Stack"
   difficulty: Medium
@@ -924,6 +1154,52 @@
                 if len(result) == k:
                     return result
         return result
+- id: 704
+  title: "Binary Search"
+  difficulty: Easy
+  tags: [Array, Binary Search]
+  verified: false
+  description: |
+    Given an array of integers `nums` which is sorted in ascending order, and an integer
+    `target`, write a function to search `target` in `nums`. If `target` exists, then return
+    its index. Otherwise, return `-1`.
+
+    You must write an algorithm with `O(log n)` runtime complexity.
+
+    **Example 1:**
+      Input:  nums = [-1,0,3,5,9,12], target = 9
+      Output: 4
+      Explanation: 9 exists in nums and its index is 4.
+
+    **Example 2:**
+      Input:  nums = [-1,0,3,5,9,12], target = 2
+      Output: -1
+      Explanation: 2 does not exist in nums so return -1.
+
+    **Constraints:**
+      - 1 <= nums.length <= 10^4
+      - -10^4 < nums[i], target < 10^4
+      - All the integers in nums are unique.
+      - nums is sorted in ascending order.
+  time: "O(log n)"
+  space: "O(1)"
+  approach: |
+    Initialize l = 0 and r = len(nums) - 1. At each step compute mid = (l + r) // 2. If
+    nums[mid] == target return mid. If nums[mid] < target, the answer must be to the right
+    (l = mid + 1). Otherwise it must be to the left (r = mid - 1). Return -1 if the loop
+    ends without finding target.
+  solution: |
+    def search(nums: list[int], target: int) -> int:
+        l, r = 0, len(nums) - 1
+        while l <= r:
+            mid = (l + r) // 2
+            if nums[mid] == target:
+                return mid
+            elif nums[mid] < target:
+                l = mid + 1
+            else:
+                r = mid - 1
+        return -1
 - id: 739
   title: "Daily Temperatures"
   difficulty: Medium
@@ -1035,3 +1311,124 @@
             if not stack or time > stack[-1]:
                 stack.append(time)
         return len(stack)
+- id: 875
+  title: "Koko Eating Bananas"
+  difficulty: Medium
+  tags: [Array, Binary Search]
+  verified: false
+  description: |
+    Koko loves to eat bananas. There are `n` piles of bananas, the `i`th pile has `piles[i]`
+    bananas. The guards have gone and will come back in `h` hours.
+
+    Koko can decide her bananas-per-hour eating speed of `k`. Each hour, she chooses some pile
+    of bananas and eats `k` bananas from that pile. If the pile has less than `k` bananas, she
+    eats all of them instead and will not eat any more bananas during this hour.
+
+    Koko likes to eat slowly but still wants to finish eating all the bananas before the guards
+    return.
+
+    Return the minimum integer `k` such that she can eat all the bananas within `h` hours.
+
+    **Example 1:**
+      Input:  piles = [3,6,7,11], h = 8
+      Output: 4
+
+    **Example 2:**
+      Input:  piles = [30,11,23,4,20], h = 5
+      Output: 30
+
+    **Example 3:**
+      Input:  piles = [30,11,23,4,20], h = 6
+      Output: 23
+
+    **Constraints:**
+      - 1 <= piles.length <= 10^4
+      - piles.length <= h <= 10^9
+      - 1 <= piles[i] <= 10^9
+  time: "O(log(max(p)) * n)"
+  space: "O(1)"
+  approach: |
+    Binary search on eating speed from 1 to max(piles). For each candidate speed k, compute
+    total hours needed as sum of ceil(pile / k) for each pile (using integer arithmetic:
+    (pile + k - 1) // k). If total hours <= h the speed is feasible — record it and search
+    lower (r = k - 1). Otherwise search higher (l = k + 1).
+  solution: |
+    def min_eating_speed(piles: list[int], h: int) -> int:
+        l, r = 1, max(piles)
+        res = r
+        while l <= r:
+            k = (l + r) // 2
+            hours = sum((p + k - 1) // k for p in piles)
+            if hours <= h:
+                res = k
+                r = k - 1
+            else:
+                l = k + 1
+        return res
+- id: 981
+  title: "Time Based Key Value Store"
+  difficulty: Medium
+  tags: [Hash Table, String, Binary Search, Design]
+  verified: false
+  description: |
+    Design a time-based key-value data structure that can store multiple values for the same
+    key at different time stamps and retrieve the key's value at a certain timestamp.
+
+    Implement the `TimeMap` class:
+      - `TimeMap()` Initializes the object of the data structure.
+      - `void set(String key, String value, int timestamp)` Stores the key `key` with the
+        value `value` at the given time `timestamp`.
+      - `String get(String key, int timestamp)` Returns a value such that `set` was called
+        previously, with `timestamp_prev <= timestamp`. If there are multiple such values, it
+        returns the value associated with the largest `timestamp_prev`. If there are no values,
+        it returns `""`.
+
+    **Example 1:**
+      Input:
+        ["TimeMap", "set", "get", "get", "set", "get", "get"]
+        [[], ["foo", "bar", 1], ["foo", 1], ["foo", 3], ["foo", "bar2", 4], ["foo", 4], ["foo", 5]]
+      Output: [null, null, "bar", "bar", null, "bar2", "bar2"]
+      Explanation:
+        TimeMap timeMap = new TimeMap();
+        timeMap.set("foo", "bar", 1);
+        timeMap.get("foo", 1);  // return "bar"
+        timeMap.get("foo", 3);  // return "bar"
+        timeMap.set("foo", "bar2", 4);
+        timeMap.get("foo", 4);  // return "bar2"
+        timeMap.get("foo", 5);  // return "bar2"
+
+    **Constraints:**
+      - 1 <= key.length, value.length <= 100
+      - key and value consist of lowercase English letters and digits.
+      - 1 <= timestamp <= 10^7
+      - All the timestamps timestamp of set are strictly increasing.
+      - At most 2 * 10^5 calls will be made to set and get.
+  time: "O(1) for set, O(log n) for get"
+  space: "O(n)"
+  approach: |
+    Use a hash map where each key maps to a list of (timestamp, value) pairs stored in
+    chronological order. For set, append the new pair to the list. For get, binary search the
+    list for the largest timestamp <= the query timestamp and return its value, or "" if none
+    exists.
+  solution: |
+    class TimeMap:
+        def __init__(self):
+            self.store = {}
+
+        def set(self, key: str, value: str, timestamp: int) -> None:
+            if key not in self.store:
+                self.store[key] = []
+            self.store[key].append((timestamp, value))
+
+        def get(self, key: str, timestamp: int) -> str:
+            res = ""
+            values = self.store.get(key, [])
+            l, r = 0, len(values) - 1
+            while l <= r:
+                mid = (l + r) // 2
+                if values[mid][0] <= timestamp:
+                    res = values[mid][1]
+                    l = mid + 1
+                else:
+                    r = mid - 1
+            return res
