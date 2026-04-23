@@ -959,6 +959,249 @@
         for idx, height in stack:
             max_area = max(max_area, height * (len(heights) - idx))
         return max_area
+- id: 98
+  title: "Validate Binary Search Tree"
+  difficulty: Medium
+  tags: [Tree, DFS, BST]
+  verified: false
+  description: |
+    Given the `root` of a binary tree, determine if it is a valid binary search tree (BST).
+
+    A **valid BST** is defined as follows:
+      - The left subtree of a node contains only nodes with keys **less than** the node's key.
+      - The right subtree of a node contains only nodes with keys **greater than** the node's key.
+      - Both the left and right subtrees must also be binary search trees.
+
+    **Example 1:**
+      Input:  root = [2,1,3]
+      Output: true
+
+    **Example 2:**
+      Input:  root = [5,1,4,null,null,3,6]
+      Output: false
+      Explanation: The root node's value is 5 but its right child's value is 4.
+
+    **Constraints:**
+      - The number of nodes in the tree is in the range [1, 10^4].
+      - -2^31 <= Node.val <= 2^31 - 1
+  time: "O(n)"
+  space: "O(n)"
+  approach: |
+    DFS with a valid range [min, max] passed down. Each node must satisfy min < val < max. When
+    going left, the current node's value becomes the new max. When going right, it becomes the
+    new min. Start with (-inf, inf) at the root.
+  solution: |
+    def isValidBST(root: Optional[TreeNode]) -> bool:
+        def valid(node, left, right):
+            if not node:
+                return True
+            if not (node.val < right and node.val > left):
+                return False
+            return valid(node.left, left, node.val) and valid(node.right, node.val, right)
+        return valid(root, float("-inf"), float("inf"))
+- id: 100
+  title: "Same Tree"
+  difficulty: Easy
+  tags: [Tree, DFS, BFS]
+  verified: false
+  description: |
+    Given the roots of two binary trees `p` and `q`, write a function to check if they are the
+    same or not.
+
+    Two binary trees are considered the same if they are structurally identical, and the nodes
+    have the same value.
+
+    **Example 1:**
+      Input:  p = [1,2,3], q = [1,2,3]
+      Output: true
+
+    **Example 2:**
+      Input:  p = [1,2], q = [1,null,2]
+      Output: false
+
+    **Example 3:**
+      Input:  p = [1,2,1], q = [1,1,2]
+      Output: false
+
+    **Constraints:**
+      - The number of nodes in both trees is in the range [0, 100].
+      - -10^4 <= Node.val <= 10^4
+  time: "O(n)"
+  space: "O(n)"
+  approach: |
+    Recursively compare both trees. If both nodes are None, return True. If one is None or
+    values differ, return False. Otherwise recurse on left and right subtrees.
+  solution: |
+    def isSameTree(p: Optional[TreeNode], q: Optional[TreeNode]) -> bool:
+        if not p and not q:
+            return True
+        if not p or not q or p.val != q.val:
+            return False
+        return isSameTree(p.left, q.left) and isSameTree(p.right, q.right)
+- id: 102
+  title: "Binary Tree Level Order Traversal"
+  difficulty: Medium
+  tags: [Tree, BFS]
+  verified: false
+  description: |
+    Given the `root` of a binary tree, return the level order traversal of its nodes' values
+    (i.e., from left to right, level by level).
+
+    **Example 1:**
+      Input:  root = [3,9,20,null,null,15,7]
+      Output: [[3],[9,20],[15,7]]
+
+    **Example 2:**
+      Input:  root = [1]
+      Output: [[1]]
+
+    **Example 3:**
+      Input:  root = []
+      Output: []
+
+    **Constraints:**
+      - The number of nodes in the tree is in the range [0, 2000].
+      - -1000 <= Node.val <= 1000
+  time: "O(n)"
+  space: "O(n)"
+  approach: |
+    BFS with a queue. For each level, process all currently-queued nodes, collect their values,
+    and enqueue their children. Append each level's values to the result list.
+  solution: |
+    def levelOrder(root: Optional[TreeNode]) -> list[list[int]]:
+        res = []
+        q = collections.deque()
+        if root:
+            q.append(root)
+        while q:
+            level = []
+            for _ in range(len(q)):
+                node = q.popleft()
+                level.append(node.val)
+                if node.left:
+                    q.append(node.left)
+                if node.right:
+                    q.append(node.right)
+            res.append(level)
+        return res
+- id: 104
+  title: "Maximum Depth of Binary Tree"
+  difficulty: Easy
+  tags: [Tree, DFS, BFS]
+  verified: false
+  description: |
+    Given the `root` of a binary tree, return its maximum depth.
+
+    A binary tree's **maximum depth** is the number of nodes along the longest path from the
+    root node down to the farthest leaf node.
+
+    **Example 1:**
+      Input:  root = [3,9,20,null,null,15,7]
+      Output: 3
+
+    **Example 2:**
+      Input:  root = [1,null,2]
+      Output: 2
+
+    **Constraints:**
+      - The number of nodes in the tree is in the range [0, 10^4].
+      - -100 <= Node.val <= 100
+  time: "O(n)"
+  space: "O(n)"
+  approach: |
+    Recursively return 1 + max(depth(left), depth(right)). Base case: a None node has depth 0.
+  solution: |
+    def maxDepth(root: Optional[TreeNode]) -> int:
+        if not root:
+            return 0
+        return 1 + max(maxDepth(root.left), maxDepth(root.right))
+- id: 105
+  title: "Construct Binary Tree From Preorder And Inorder Traversal"
+  difficulty: Medium
+  tags: [Tree, DFS, Array, Hash Table]
+  verified: false
+  description: |
+    Given two integer arrays `preorder` and `inorder` where `preorder` is the preorder traversal
+    of a binary tree and `inorder` is the inorder traversal of the same tree, construct and
+    return the binary tree.
+
+    **Example 1:**
+      Input:  preorder = [3,9,20,15,7], inorder = [9,3,15,20,7]
+      Output: [3,9,20,null,null,15,7]
+
+    **Example 2:**
+      Input:  preorder = [-1], inorder = [-1]
+      Output: [-1]
+
+    **Constraints:**
+      - 1 <= preorder.length <= 3000
+      - inorder.length == preorder.length
+      - -3000 <= preorder[i], inorder[i] <= 3000
+      - preorder and inorder consist of unique values.
+      - Each value of inorder also appears in preorder.
+      - preorder is guaranteed to be the preorder traversal of the tree.
+      - inorder is guaranteed to be the inorder traversal of the tree.
+  time: "O(n)"
+  space: "O(n)"
+  approach: |
+    The first element of preorder is always the root. Find that root value in inorder to split
+    into left and right subtrees. Recurse on each half. Use a hash map for O(1) inorder lookups.
+  solution: |
+    def buildTree(preorder: list[int], inorder: list[int]) -> Optional[TreeNode]:
+        if not preorder or not inorder:
+            return None
+        root = TreeNode(preorder[0])
+        mid = inorder.index(preorder[0])
+        root.left = buildTree(preorder[1:mid + 1], inorder[:mid])
+        root.right = buildTree(preorder[mid + 1:], inorder[mid + 1:])
+        return root
+- id: 110
+  title: "Balanced Binary Tree"
+  difficulty: Easy
+  tags: [Tree, DFS]
+  verified: false
+  description: |
+    Given a binary tree, determine if it is **height-balanced**.
+
+    A **height-balanced** binary tree is a binary tree in which the depth of the two subtrees of
+    every node never differs by more than one.
+
+    **Example 1:**
+      Input:  root = [3,9,20,null,null,15,7]
+      Output: true
+
+    **Example 2:**
+      Input:  root = [1,2,2,3,3,null,null,4,4]
+      Output: false
+
+    **Example 3:**
+      Input:  root = []
+      Output: true
+
+    **Constraints:**
+      - The number of nodes in the tree is in the range [0, 5000].
+      - -10^4 <= Node.val <= 10^4
+  time: "O(n)"
+  space: "O(n)"
+  approach: |
+    DFS that returns the height or -1 if unbalanced. At each node, compute left and right
+    heights. If either is -1 or they differ by more than 1, return -1. Otherwise return
+    1 + max(left, right).
+  solution: |
+    def isBalanced(root: Optional[TreeNode]) -> bool:
+        def dfs(root):
+            if not root:
+                return 0
+            left = dfs(root.left)
+            if left == -1:
+                return -1
+            right = dfs(root.right)
+            if right == -1:
+                return -1
+            if abs(left - right) > 1:
+                return -1
+            return 1 + max(left, right)
+        return dfs(root) != -1
 - id: 121
   title: "Best Time to Buy And Sell Stock"
   difficulty: Easy
@@ -1007,6 +1250,54 @@
                 l = r
             r += 1
         return max_p
+- id: 124
+  title: "Binary Tree Maximum Path Sum"
+  difficulty: Hard
+  tags: [Tree, DFS, DP]
+  verified: false
+  description: |
+    A **path** in a binary tree is a sequence of nodes where each pair of adjacent nodes in the
+    sequence has an edge connecting them. A node can only appear in the sequence **at most once**.
+    Note that the path does not need to pass through the root.
+
+    The **path sum** of a path is the sum of the node's values in the path.
+
+    Given the `root` of a binary tree, return the maximum path sum of any **non-empty** path.
+
+    **Example 1:**
+      Input:  root = [1,2,3]
+      Output: 6
+      Explanation: The optimal path is 2 -> 1 -> 3 with a path sum of 2 + 1 + 3 = 6.
+
+    **Example 2:**
+      Input:  root = [-10,9,20,null,null,15,7]
+      Output: 42
+      Explanation: The optimal path is 15 -> 20 -> 7 with a path sum of 15 + 20 + 7 = 42.
+
+    **Constraints:**
+      - The number of nodes in the tree is in the range [1, 3 * 10^4].
+      - -1000 <= Node.val <= 1000
+  time: "O(n)"
+  space: "O(n)"
+  approach: |
+    DFS returning max gain through one direction from each node. Track a global max which can
+    combine both left and right children. At each node, clamp left/right gains to 0 (skip
+    negative branches), compute val + left + right as a candidate, and return val + max(left, right)
+    as the gain upward.
+  solution: |
+    def maxPathSum(root: Optional[TreeNode]) -> int:
+        res = [root.val]
+
+        def dfs(root):
+            if not root:
+                return 0
+            left_max = max(dfs(root.left), 0)
+            right_max = max(dfs(root.right), 0)
+            res[0] = max(res[0], root.val + left_max + right_max)
+            return root.val + max(left_max, right_max)
+
+        dfs(root)
+        return res[0]
 - id: 125
   title: "Valid Palindrome"
   difficulty: Easy
@@ -1611,6 +1902,56 @@
             else:
                 l += 1
         return []
+- id: 199
+  title: "Binary Tree Right Side View"
+  difficulty: Medium
+  tags: [Tree, BFS, DFS]
+  verified: false
+  description: |
+    Given the `root` of a binary tree, imagine yourself standing on the **right side** of it,
+    return the values of the nodes you can see ordered from top to bottom.
+
+    **Example 1:**
+      Input:  root = [1,2,3,null,5,null,4]
+      Output: [1,3,4]
+
+    **Example 2:**
+      Input:  root = [1,2,3,4,null,null,null,5]
+      Output: [1,3,4]
+
+    **Example 3:**
+      Input:  root = [1,null,3]
+      Output: [1,3]
+
+    **Example 4:**
+      Input:  root = []
+      Output: []
+
+    **Constraints:**
+      - The number of nodes in the tree is in the range [0, 100].
+      - -100 <= Node.val <= 100
+  time: "O(n)"
+  space: "O(n)"
+  approach: |
+    BFS level by level. For each level, the last node processed is the rightmost node visible
+    from the right side. Append its value to the result.
+  solution: |
+    def rightSideView(root: Optional[TreeNode]) -> list[int]:
+        res = []
+        q = collections.deque()
+        if root:
+            q.append(root)
+        while q:
+            rightSide = None
+            for _ in range(len(q)):
+                node = q.popleft()
+                if node:
+                    rightSide = node
+                    q.append(node.left)
+                    q.append(node.right)
+            if rightSide:
+                res.append(rightSide.val)
+        return res
 - id: 206
   title: "Reverse Linked List"
   difficulty: Easy
@@ -1690,6 +2031,123 @@
                 return True
             seen.add(num)
         return False
+- id: 226
+  title: "Invert Binary Tree"
+  difficulty: Easy
+  tags: [Tree, DFS, BFS]
+  verified: false
+  description: |
+    Given the `root` of a binary tree, invert the tree, and return its root.
+
+    **Example 1:**
+      Input:  root = [4,2,7,1,3,6,9]
+      Output: [4,7,2,9,6,3,1]
+
+    **Example 2:**
+      Input:  root = [2,1,3]
+      Output: [2,3,1]
+
+    **Example 3:**
+      Input:  root = []
+      Output: []
+
+    **Constraints:**
+      - The number of nodes in the tree is in the range [0, 100].
+      - -100 <= Node.val <= 100
+  time: "O(n)"
+  space: "O(n)"
+  approach: |
+    Recursively swap left and right children at each node, then recurse into both subtrees.
+  solution: |
+    def invertTree(root: Optional[TreeNode]) -> Optional[TreeNode]:
+        if not root:
+            return None
+        root.left, root.right = root.right, root.left
+        invertTree(root.left)
+        invertTree(root.right)
+        return root
+- id: 230
+  title: "Kth Smallest Element In a Bst"
+  difficulty: Medium
+  tags: [Tree, DFS, BST]
+  verified: false
+  description: |
+    Given the `root` of a binary search tree, and an integer `k`, return the `k`th smallest
+    value (**1-indexed**) of all the values of the nodes in the tree.
+
+    **Example 1:**
+      Input:  root = [3,1,4,null,2], k = 1
+      Output: 1
+
+    **Example 2:**
+      Input:  root = [5,3,6,2,4,null,null,1], k = 3
+      Output: 3
+
+    **Constraints:**
+      - The number of nodes in the tree is n.
+      - 1 <= k <= n <= 10^4
+      - 0 <= Node.val <= 10^4
+  time: "O(n)"
+  space: "O(n)"
+  approach: |
+    Iterative in-order traversal (left, root, right) using a stack, which visits BST nodes in
+    ascending order. Decrement k each time a node is popped; return the value when k reaches 0.
+  solution: |
+    def kthSmallest(root: Optional[TreeNode], k: int) -> int:
+        stack = []
+        curr = root
+        while True:
+            while curr:
+                stack.append(curr)
+                curr = curr.left
+            curr = stack.pop()
+            k -= 1
+            if k == 0:
+                return curr.val
+            curr = curr.right
+- id: 235
+  title: "Lowest Common Ancestor of a Binary Search Tree"
+  difficulty: Medium
+  tags: [Tree, DFS, BST]
+  verified: false
+  description: |
+    Given a binary search tree (BST), find the lowest common ancestor (LCA) node of two given
+    nodes in the BST.
+
+    According to the definition of LCA on Wikipedia: "The lowest common ancestor is defined
+    between two nodes `p` and `q` as the lowest node in `T` that has both `p` and `q` as
+    descendants (where we allow **a node to be a descendant of itself**)."
+
+    **Example 1:**
+      Input:  root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 8
+      Output: 6
+      Explanation: The LCA of nodes 2 and 8 is 6.
+
+    **Example 2:**
+      Input:  root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 4
+      Output: 2
+      Explanation: The LCA of nodes 2 and 4 is 2, since a node can be a descendant of itself.
+
+    **Constraints:**
+      - The number of nodes in the tree is in the range [2, 10^5].
+      - -10^9 <= Node.val <= 10^9
+      - All Node.val are unique.
+      - p != q
+      - p and q will exist in the BST.
+  time: "O(n)"
+  space: "O(1)"
+  approach: |
+    Use the BST property. If both p and q are less than the current node, go left. If both are
+    greater, go right. Otherwise the current node is the split point and thus the LCA.
+  solution: |
+    def lowestCommonAncestor(root: TreeNode, p: TreeNode, q: TreeNode) -> TreeNode:
+        while True:
+            if p.val < root.val and q.val < root.val:
+                root = root.left
+            elif p.val > root.val and q.val > root.val:
+                root = root.right
+            else:
+                return root
 - id: 238
   title: "Product of Array Except Self"
   difficulty: Medium
@@ -1938,6 +2396,69 @@
             slow2 = nums[slow2]
             if slow == slow2:
                 return slow
+- id: 297
+  title: "Serialize And Deserialize Binary Tree"
+  difficulty: Hard
+  tags: [Tree, DFS, BFS, Design]
+  verified: false
+  description: |
+    Serialization is the process of converting a data structure or object into a sequence of bits
+    so that it can be stored in a file or memory buffer, or transmitted across a network
+    connection link to be reconstructed later in the same or another computer environment.
+
+    Design an algorithm to serialize and deserialize a binary tree. There is no restriction on
+    how your serialization/deserialization algorithm should work. You just need to ensure that a
+    binary tree can be serialized to a string and this string can be deserialized to the original
+    tree structure.
+
+    **Example 1:**
+      Input:  root = [1,2,3,null,null,4,5]
+      Output: [1,2,3,null,null,4,5]
+
+    **Example 2:**
+      Input:  root = []
+      Output: []
+
+    **Constraints:**
+      - The number of nodes in the tree is in the range [0, 10^4].
+      - -1000 <= Node.val <= 1000
+  time: "O(n)"
+  space: "O(n)"
+  approach: |
+    Use preorder DFS for both operations. Serialize: record each node value, or "N" for None,
+    joined by commas. Deserialize: split by comma, use a shared index pointer and recursively
+    build the tree by consuming values left to right.
+  solution: |
+    class Codec:
+        def serialize(self, root):
+            res = []
+
+            def dfs(node):
+                if not node:
+                    res.append("N")
+                    return
+                res.append(str(node.val))
+                dfs(node.left)
+                dfs(node.right)
+
+            dfs(root)
+            return ",".join(res)
+
+        def deserialize(self, data):
+            vals = data.split(",")
+            self.i = 0
+
+            def dfs():
+                if vals[self.i] == "N":
+                    self.i += 1
+                    return None
+                node = TreeNode(int(vals[self.i]))
+                self.i += 1
+                node.left = dfs()
+                node.right = dfs()
+                return node
+
+            return dfs()
 - id: 347
   title: "Top K Frequent Elements"
   difficulty: Medium
@@ -2037,6 +2558,52 @@
                 l += 1
             res = max(res, r - l + 1)
         return res
+- id: 543
+  title: "Diameter of Binary Tree"
+  difficulty: Easy
+  tags: [Tree, DFS]
+  verified: false
+  description: |
+    Given the `root` of a binary tree, return the length of the **diameter** of the tree.
+
+    The **diameter** of a binary tree is the **length** of the longest path between any two
+    nodes in a tree. This path may or may not pass through the `root`.
+
+    The **length** of a path between two nodes is represented by the number of edges between them.
+
+    **Example 1:**
+      Input:  root = [1,2,3,4,5]
+      Output: 3
+      Explanation: 3 is the length of the path [4,2,1,3] or [5,2,1,3].
+
+    **Example 2:**
+      Input:  root = [1,2]
+      Output: 1
+
+    **Constraints:**
+      - The number of nodes in the tree is in the range [1, 10^4].
+      - -100 <= Node.val <= 100
+  time: "O(n)"
+  space: "O(n)"
+  approach: |
+    DFS returning the height of each subtree. At each node, compute left_height + right_height
+    as the candidate diameter through that node and update the global max. Return
+    1 + max(left, right) as the height.
+  solution: |
+    def diameterOfBinaryTree(root: Optional[TreeNode]) -> int:
+        res = 0
+
+        def dfs(root):
+            nonlocal res
+            if not root:
+                return 0
+            left = dfs(root.left)
+            right = dfs(root.right)
+            res = max(res, left + right)
+            return 1 + max(left, right)
+
+        dfs(root)
+        return res
 - id: 567
   title: "Permutation In String"
   difficulty: Medium
@@ -2094,6 +2661,52 @@
                 matches -= 1
             l += 1
         return matches == 26
+- id: 572
+  title: "Subtree of Another Tree"
+  difficulty: Easy
+  tags: [Tree, DFS, Hash Function]
+  verified: false
+  description: |
+    Given the roots of two binary trees `root` and `subRoot`, return `true` if there is a
+    subtree of `root` with the same structure and node values of `subRoot` and `false` otherwise.
+
+    A subtree of a binary tree `tree` is a tree that consists of a node in `tree` and all of
+    this node's descendants. The tree `tree` could also be considered as a subtree of itself.
+
+    **Example 1:**
+      Input:  root = [3,4,5,1,2], subRoot = [4,1,2]
+      Output: true
+
+    **Example 2:**
+      Input:  root = [3,4,5,1,2,null,null,null,null,0], subRoot = [4,1,2]
+      Output: false
+
+    **Constraints:**
+      - The number of nodes in the root tree is in the range [1, 2000].
+      - The number of nodes in the subRoot tree is in the range [1, 1000].
+      - -10^4 <= root.val <= 10^4
+      - -10^4 <= subRoot.val <= 10^4
+  time: "O(m * n)"
+  space: "O(m + n)"
+  approach: |
+    For each node in the main tree, check if the subtree rooted there matches subRoot using a
+    helper isSameTree function. Return True if any node matches.
+  solution: |
+    def isSubtree(root: Optional[TreeNode], subRoot: Optional[TreeNode]) -> bool:
+        if not subRoot:
+            return True
+        if not root:
+            return False
+        if isSameTree(root, subRoot):
+            return True
+        return isSubtree(root.left, subRoot) or isSubtree(root.right, subRoot)
+
+    def isSameTree(s: Optional[TreeNode], t: Optional[TreeNode]) -> bool:
+        if not s and not t:
+            return True
+        if s and t and s.val == t.val:
+            return isSameTree(s.left, t.left) and isSameTree(s.right, t.right)
+        return False
 - id: 704
   title: "Binary Search"
   difficulty: Easy
@@ -2372,3 +2985,50 @@
                 else:
                     r = mid - 1
             return res
+- id: 1448
+  title: "Count Good Nodes In Binary Tree"
+  difficulty: Medium
+  tags: [Tree, DFS]
+  verified: false
+  description: |
+    Given a binary tree `root`, a node X in the tree is named **good** if in the path from root
+    to X there are no nodes with a value **greater than** X's value.
+
+    Return the number of **good** nodes in the binary tree.
+
+    **Example 1:**
+      Input:  root = [3,1,4,3,null,1,5]
+      Output: 4
+      Explanation: Root Node (3) is always good. Node 4 -> (3,4) is the max in the path from
+        root. Node 3 -> (3,1,3) is the max in the path from root. Node 5 -> (3,4,5) is the max.
+
+    **Example 2:**
+      Input:  root = [3,3,null,4,2]
+      Output: 3
+      Explanation: Node 2 -> (3,3,2) is not good because "3" is higher than it.
+
+    **Example 3:**
+      Input:  root = [1]
+      Output: 1
+      Explanation: Root is considered as good.
+
+    **Constraints:**
+      - The number of nodes in the binary tree is in the range [1, 10^5].
+      - Each node's value is between [-10^4, 10^4].
+  time: "O(n)"
+  space: "O(n)"
+  approach: |
+    DFS passing the maximum value seen along the path from root to the current node. A node is
+    good if its value >= that maximum. Count good nodes recursively.
+  solution: |
+    def goodNodes(root: TreeNode) -> int:
+        def dfs(node, maxVal):
+            if not node:
+                return 0
+            res = 1 if node.val >= maxVal else 0
+            maxVal = max(maxVal, node.val)
+            res += dfs(node.left, maxVal)
+            res += dfs(node.right, maxVal)
+            return res
+
+        return dfs(root, root.val)
