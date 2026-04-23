@@ -38,6 +38,57 @@
                 return [seen[diff], i]
             seen[num] = i
         return []  # no solution found
+- id: 2
+  title: "Add Two Numbers"
+  difficulty: Medium
+  tags: [Linked List, Math, Recursion]
+  verified: false
+  description: |
+    You are given two **non-empty** linked lists representing two non-negative integers. The
+    digits are stored in **reverse order**, and each of their nodes contains a single digit.
+    Add the two numbers and return the sum as a linked list.
+
+    You may assume the two numbers do not contain any leading zero, except the number 0 itself.
+
+    **Example 1:**
+      Input:  l1 = [2,4,3], l2 = [5,6,4]
+      Output: [7,0,8]
+      Explanation: 342 + 465 = 807.
+
+    **Example 2:**
+      Input:  l1 = [0], l2 = [0]
+      Output: [0]
+
+    **Example 3:**
+      Input:  l1 = [9,9,9,9,9,9,9], l2 = [9,9,9,9]
+      Output: [8,9,9,9,0,0,0,1]
+
+    **Constraints:**
+      - The number of nodes in each linked list is in the range [1, 100].
+      - 0 <= Node.val <= 9
+      - It is guaranteed that the list represents a number that does not have leading zeros.
+  time: "O(n + m)"
+  space: "O(n + m)"
+  approach: |
+    Use a dummy head and iterate through both lists simultaneously, summing node values with
+    carry. Treat exhausted lists as 0. After the loop, if a remaining carry exists append a
+    new node. Return dummy.next.
+  solution: |
+    def addTwoNumbers(l1: Optional[ListNode], l2: Optional[ListNode]) -> Optional[ListNode]:
+        dummy = ListNode()
+        cur = dummy
+        carry = 0
+        while l1 or l2 or carry:
+            v1 = l1.val if l1 else 0
+            v2 = l2.val if l2 else 0
+            val = v1 + v2 + carry
+            carry = val // 10
+            val = val % 10
+            cur.next = ListNode(val)
+            cur = cur.next
+            l1 = l1.next if l1 else None
+            l2 = l2.next if l2 else None
+        return dummy.next
 - id: 3
   title: "Longest Substring Without Repeating Characters"
   difficulty: Medium
@@ -250,6 +301,54 @@
                     while l < r and nums[l] == nums[l - 1]:
                         l += 1
         return res
+- id: 19
+  title: "Remove Nth Node From End of List"
+  difficulty: Medium
+  tags: [Linked List, Two Pointers]
+  verified: false
+  description: |
+    Given the head of a linked list, remove the `n`th node from the end of the list and return
+    its head.
+
+    **Example 1:**
+      Input:  head = [1,2,3,4,5], n = 2
+      Output: [1,2,3,5]
+
+    **Example 2:**
+      Input:  head = [1], n = 1
+      Output: []
+
+    **Example 3:**
+      Input:  head = [1,2], n = 1
+      Output: [1]
+
+    **Constraints:**
+      - The number of nodes in the list is sz.
+      - 1 <= sz <= 30
+      - 0 <= Node.val <= 100
+      - 1 <= n <= sz
+
+    **Follow up:** Could you do this in one pass?
+  time: "O(n)"
+  space: "O(1)"
+  approach: |
+    Use a dummy node pointing to head and two pointers (left starting at dummy, right starting
+    at head). Advance right by n steps. Then advance both together until right reaches null.
+    left is now just before the target node — set left.next = left.next.next and return
+    dummy.next.
+  solution: |
+    def removeNthFromEnd(head: Optional[ListNode], n: int) -> Optional[ListNode]:
+        dummy = ListNode(0, head)
+        left = dummy
+        right = head
+        while n > 0:
+            right = right.next
+            n -= 1
+        while right:
+            left = left.next
+            right = right.next
+        left.next = left.next.next
+        return dummy.next
 - id: 20
   title: "Valid Parentheses"
   difficulty: Easy
@@ -302,6 +401,182 @@
             else:
                 stack.append(c)
         return not stack
+- id: 21
+  title: "Merge Two Sorted Lists"
+  difficulty: Easy
+  tags: [Linked List, Recursion]
+  verified: false
+  description: |
+    You are given the heads of two sorted linked lists `list1` and `list2`.
+
+    Merge the two lists into one **sorted** list. The list should be made by splicing together
+    the nodes of the first two lists.
+
+    Return the head of the merged linked list.
+
+    **Example 1:**
+      Input:  list1 = [1,1,2], list2 = [1,3,4]
+      Output: [1,1,1,2,3,4]
+
+    **Example 2:**
+      Input:  list1 = [], list2 = []
+      Output: []
+
+    **Example 3:**
+      Input:  list1 = [], list2 = [0]
+      Output: [0]
+
+    **Constraints:**
+      - The number of nodes in both lists is in the range [0, 50].
+      - -100 <= Node.val <= 100
+      - Both list1 and list2 are sorted in non-decreasing order.
+  time: "O(n + m)"
+  space: "O(1)"
+  approach: |
+    Use a dummy head node and a cur pointer. While both lists have nodes, compare the two heads
+    and append the smaller one to cur, advancing that list. After either list is exhausted,
+    attach the remainder of the other. Return dummy.next.
+  solution: |
+    def mergeTwoLists(list1: Optional[ListNode], list2: Optional[ListNode]) -> Optional[ListNode]:
+        dummy = ListNode()
+        cur = dummy
+        while list1 and list2:
+            if list1.val <= list2.val:
+                cur.next = list1
+                list1 = list1.next
+            else:
+                cur.next = list2
+                list2 = list2.next
+            cur = cur.next
+        cur.next = list1 if list1 else list2
+        return dummy.next
+- id: 23
+  title: "Merge K Sorted Lists"
+  difficulty: Hard
+  tags: [Linked List, Divide and Conquer, Heap (Priority Queue), Merge Sort]
+  verified: false
+  description: |
+    You are given an array of `k` linked-lists `lists`, each linked-list is sorted in ascending
+    order.
+
+    Merge all the linked-lists into one sorted linked-list and return it.
+
+    **Example 1:**
+      Input:  lists = [[1,4,5],[1,3,4],[2,6]]
+      Output: [1,1,2,3,4,4,5,6]
+      Explanation: The linked-lists are:
+        [1->4->5, 1->3->4, 2->6]
+        Merging them into one sorted list: 1->1->2->3->4->4->5->6
+
+    **Example 2:**
+      Input:  lists = []
+      Output: []
+
+    **Example 3:**
+      Input:  lists = [[]]
+      Output: []
+
+    **Constraints:**
+      - k == lists.length
+      - 0 <= k <= 10^4
+      - 0 <= lists[i].length <= 500
+      - -10^4 <= lists[i][j] <= 10^4
+      - lists[i] is sorted in ascending order.
+      - The sum of lists[i].length will not exceed 10^4.
+  time: "O(n log k)"
+  space: "O(1)"
+  approach: |
+    Divide and conquer: repeatedly merge adjacent pairs of lists until only one remains. Each
+    round halves the number of lists. With log k rounds each processing O(n) total nodes, the
+    overall complexity is O(n log k). Each pair is merged with the standard two-pointer dummy
+    head approach.
+  solution: |
+    def mergeKLists(lists: List[Optional[ListNode]]) -> Optional[ListNode]:
+        if not lists or len(lists) == 0:
+            return None
+        while len(lists) > 1:
+            merged = []
+            for i in range(0, len(lists), 2):
+                l1 = lists[i]
+                l2 = lists[i + 1] if (i + 1) < len(lists) else None
+                merged.append(mergeList(l1, l2))
+            lists = merged
+        return lists[0]
+
+    def mergeList(l1, l2):
+        dummy = ListNode()
+        tail = dummy
+        while l1 and l2:
+            if l1.val <= l2.val:
+                tail.next = l1
+                l1 = l1.next
+            else:
+                tail.next = l2
+                l2 = l2.next
+            tail = tail.next
+        tail.next = l1 if l1 else l2
+        return dummy.next
+- id: 25
+  title: "Reverse Nodes In K Group"
+  difficulty: Hard
+  tags: [Linked List, Recursion]
+  verified: false
+  description: |
+    Given the head of a linked list, reverse the nodes of the list `k` at a time, and return
+    the modified list.
+
+    `k` is a positive integer and is less than or equal to the length of the linked list. If
+    the number of nodes is not a multiple of `k` then left-out nodes, in the end, should remain
+    as is.
+
+    You may not alter the values in the list's nodes, only nodes themselves may be changed.
+
+    **Example 1:**
+      Input:  head = [1,2,3,4,5], k = 2
+      Output: [2,1,4,3,5]
+
+    **Example 2:**
+      Input:  head = [1,2,3,4,5], k = 3
+      Output: [3,2,1,4,5]
+
+    **Constraints:**
+      - The number of nodes in the list is n.
+      - 1 <= k <= n <= 5000
+      - 0 <= Node.val <= 1000
+
+    **Follow up:** Can you solve the problem in `O(1)` extra memory space?
+  time: "O(n)"
+  space: "O(1)"
+  approach: |
+    Use a dummy node and a groupPrev pointer. For each group, find the k-th node with a helper
+    (return if fewer than k remain). Save groupNext (the node after the group). Reverse the k
+    nodes between groupPrev and groupNext. Connect groupPrev to the reversed head (kth node)
+    and the reversed tail (original first node) to groupNext. Advance groupPrev to the tail.
+  solution: |
+    def reverseKGroup(head: Optional[ListNode], k: int) -> Optional[ListNode]:
+        dummy = ListNode(0, head)
+        groupPrev = dummy
+        while True:
+            kth = getKth(groupPrev, k)
+            if not kth:
+                break
+            groupNext = kth.next
+            prev, curr = kth.next, groupPrev.next
+            while curr != groupNext:
+                tmp = curr.next
+                curr.next = prev
+                prev = curr
+                curr = tmp
+            tmp = groupPrev.next
+            groupPrev.next = kth
+            groupPrev = tmp
+        return dummy.next
+
+    def getKth(curr, k):
+        while curr and k > 0:
+            curr = curr.next
+            k -= 1
+        return curr
 - id: 33
   title: "Search In Rotated Sorted Array"
   difficulty: Medium
@@ -842,6 +1117,252 @@
                     length += 1
                 best = max(best, length)
         return best
+- id: 138
+  title: "Copy List With Random Pointer"
+  difficulty: Medium
+  tags: [Hash Table, Linked List]
+  verified: false
+  description: |
+    A linked list of length `n` is given such that each node contains an additional **random
+    pointer**, which could point to any node in the list, or `null`.
+
+    Construct a **deep copy** of the list. The deep copy should consist of exactly `n` **brand
+    new** nodes, where each new node has its value set to the value of its corresponding
+    original node. Both the `next` and `random` pointer of the new nodes should point to new
+    nodes in the copied list such that the pointers in the original list and copied list
+    represent the same list state. **None of the pointers in the new list should point to
+    nodes in the original list.**
+
+    Return the head of the copied linked list.
+
+    **Example 1:**
+      Input:  head = [[7,null],[13,0],[11,4],[10,2],[1,0]]
+      Output: [[7,null],[13,0],[11,4],[10,2],[1,0]]
+
+    **Example 2:**
+      Input:  head = [[1,1],[2,1]]
+      Output: [[1,1],[2,1]]
+
+    **Example 3:**
+      Input:  head = [[3,null],[3,0],[3,null]]
+      Output: [[3,null],[3,0],[3,null]]
+
+    **Constraints:**
+      - 0 <= n <= 1000
+      - -10^4 <= Node.val <= 10^4
+      - Node.random is null or is pointing to some node in the linked list.
+  time: "O(n)"
+  space: "O(n)"
+  approach: |
+    Use a hash map from original nodes to their new copies, pre-seeded with {None: None}.
+    First pass: create all new nodes. Second pass: assign next and random pointers using the
+    map to translate original references to new copies.
+  solution: |
+    def copyRandomList(head: Optional[Node]) -> Optional[Node]:
+        old_to_new = {None: None}
+        cur = head
+        while cur:
+            old_to_new[cur] = Node(cur.val)
+            cur = cur.next
+        cur = head
+        while cur:
+            old_to_new[cur].next = old_to_new[cur.next]
+            old_to_new[cur].random = old_to_new[cur.random]
+            cur = cur.next
+        return old_to_new[head]
+- id: 141
+  title: "Linked List Cycle"
+  difficulty: Easy
+  tags: [Hash Table, Linked List, Two Pointers]
+  verified: false
+  description: |
+    Given `head`, the head of a linked list, determine if the linked list has a **cycle** in it.
+
+    There is a cycle in a linked list if there is some node in the list that can be reached
+    again by continuously following the `next` pointer. Internally, `pos` is used to denote
+    the index of the node that tail's `next` pointer is connected to. **Note that `pos` is not
+    passed as a parameter**.
+
+    Return `true` if there is a cycle in the linked list. Otherwise, return `false`.
+
+    **Example 1:**
+      Input:  head = [3,2,0,-4], pos = 1
+      Output: true
+      Explanation: There is a cycle in the linked list, where the tail connects to the 1st
+        node (0-indexed).
+
+    **Example 2:**
+      Input:  head = [1,2], pos = 0
+      Output: true
+      Explanation: There is a cycle in the linked list, where the tail connects to the 0th node.
+
+    **Example 3:**
+      Input:  head = [1], pos = -1
+      Output: false
+      Explanation: There is no cycle in the linked list.
+
+    **Constraints:**
+      - The number of the nodes in the list is in the range [0, 10^4].
+      - -10^5 <= Node.val <= 10^5
+      - pos is -1 or a valid index in the linked-list.
+
+    **Follow up:** Can you solve it using `O(1)` (i.e. constant) memory?
+  time: "O(n)"
+  space: "O(1)"
+  approach: |
+    Floyd's cycle detection (tortoise and hare). Use slow and fast pointers both starting at
+    head. Slow advances one step; fast advances two. If they ever meet, a cycle exists. If fast
+    reaches null, there is no cycle.
+  solution: |
+    def hasCycle(head: Optional[ListNode]) -> bool:
+        slow, fast = head, head
+        while fast and fast.next:
+            slow = slow.next
+            fast = fast.next.next
+            if slow == fast:
+                return True
+        return False
+- id: 143
+  title: "Reorder List"
+  difficulty: Medium
+  tags: [Linked List, Two Pointers, Stack, Recursion]
+  verified: false
+  description: |
+    You are given the head of a singly linked-list:
+
+    `L0 → L1 → … → Ln - 1 → Ln`
+
+    Reorder it to:
+
+    `L0 → Ln → L1 → Ln - 1 → L2 → Ln - 2 → …`
+
+    You may not modify the values in the list's nodes. Only nodes themselves may be changed.
+
+    **Example 1:**
+      Input:  head = [1,2,3,4]
+      Output: [1,4,2,3]
+
+    **Example 2:**
+      Input:  head = [1,2,3,4,5]
+      Output: [1,5,2,4,3]
+
+    **Constraints:**
+      - The number of nodes in the list is in the range [1, 5 * 10^4].
+      - 1 <= Node.val <= 1000
+  time: "O(n)"
+  space: "O(1)"
+  approach: |
+    Three steps: (1) Find the middle of the list using slow/fast pointers. (2) Reverse the
+    second half in place. (3) Merge the two halves by alternating one node from each half
+    until the second half is exhausted.
+  solution: |
+    def reorderList(head: Optional[ListNode]) -> None:
+        slow, fast = head, head.next
+        while fast and fast.next:
+            slow = slow.next
+            fast = fast.next.next
+        second = slow.next
+        slow.next = None
+        prev = None
+        while second:
+            tmp = second.next
+            second.next = prev
+            prev = second
+            second = tmp
+        first, second = head, prev
+        while second:
+            tmp1, tmp2 = first.next, second.next
+            first.next = second
+            second.next = tmp1
+            first, second = tmp1, tmp2
+- id: 146
+  title: "LRU Cache"
+  difficulty: Medium
+  tags: [Hash Table, Linked List, Design, Doubly-Linked List]
+  verified: false
+  description: |
+    Design a data structure that follows the constraints of a **Least Recently Used (LRU)
+    cache**.
+
+    Implement the `LRUCache` class:
+      - `LRUCache(int capacity)` Initialize the LRU cache with **positive** size `capacity`.
+      - `int get(int key)` Return the value of the `key` if the key exists, otherwise return
+        `-1`.
+      - `void put(int key, int value)` Update the value of the `key` if the `key` exists.
+        Otherwise, add the `key-value` pair to the cache. If the number of keys exceeds the
+        `capacity` from this operation, **evict** the least recently used key.
+
+    The functions `get` and `put` must each run in `O(1)` average time complexity.
+
+    **Example 1:**
+      Input:
+        ["LRUCache", "put", "put", "get", "put", "get", "put", "get", "get", "get"]
+        [[2], [1, 1], [2, 2], [1], [3, 3], [2], [4, 4], [1], [3], [4]]
+      Output: [null, null, null, 1, null, -1, null, -1, 3, 4]
+      Explanation:
+        LRUCache lRUCache = new LRUCache(2);
+        lRUCache.put(1, 1); // cache is {1=1}
+        lRUCache.put(2, 2); // cache is {1=1, 2=2}
+        lRUCache.get(1);    // return 1
+        lRUCache.put(3, 3); // LRU key was 2, evicts key 2, cache is {1=1, 3=3}
+        lRUCache.get(2);    // returns -1 (not found)
+        lRUCache.put(4, 4); // LRU key was 1, evicts key 1, cache is {4=4, 3=3}
+        lRUCache.get(1);    // return -1 (not found)
+        lRUCache.get(3);    // return 3
+        lRUCache.get(4);    // return 4
+
+    **Constraints:**
+      - 1 <= capacity <= 3000
+      - 0 <= key <= 10^4
+      - 0 <= value <= 10^5
+      - At most 2 * 10^5 calls will be made to get and put.
+  time: "O(1)"
+  space: "O(n)"
+  approach: |
+    Combine a hash map (key → node) with a doubly linked list ordered by recency. Maintain
+    dummy head (LRU end) and tail (MRU end) sentinels. On get or put, remove the node from its
+    current position and reinsert it just before the tail. On eviction, remove the node just
+    after the head (the least recently used item).
+  solution: |
+    class Node:
+        def __init__(self, key, val):
+            self.key, self.val = key, val
+            self.prev = self.next = None
+
+    class LRUCache:
+        def __init__(self, capacity: int):
+            self.cap = capacity
+            self.cache = {}
+            self.left = Node(0, 0)
+            self.right = Node(0, 0)
+            self.left.next = self.right
+            self.right.prev = self.left
+
+        def remove(self, node):
+            prev, nxt = node.prev, node.next
+            prev.next, nxt.prev = nxt, prev
+
+        def insert(self, node):
+            prev, nxt = self.right.prev, self.right
+            prev.next = nxt.prev = node
+            node.next, node.prev = nxt, prev
+
+        def get(self, key: int) -> int:
+            if key in self.cache:
+                self.remove(self.cache[key])
+                self.insert(self.cache[key])
+                return self.cache[key].val
+            return -1
+
+        def put(self, key: int, value: int) -> None:
+            if key in self.cache:
+                self.remove(self.cache[key])
+            self.cache[key] = Node(key, value)
+            self.insert(self.cache[key])
+            if len(self.cache) > self.cap:
+                lru = self.left.next
+                self.remove(lru)
+                del self.cache[lru.key]
 - id: 150
   title: "Evaluate Reverse Polish Notation"
   difficulty: Medium
@@ -1090,6 +1611,47 @@
             else:
                 l += 1
         return []
+- id: 206
+  title: "Reverse Linked List"
+  difficulty: Easy
+  tags: [Linked List, Recursion]
+  verified: false
+  description: |
+    Given the head of a singly linked list, reverse the list, and return the reversed list.
+
+    **Example 1:**
+      Input:  head = [1,2,3,4,5]
+      Output: [5,4,3,2,1]
+
+    **Example 2:**
+      Input:  head = [1,2]
+      Output: [2,1]
+
+    **Example 3:**
+      Input:  head = [1]
+      Output: [1]
+
+    **Constraints:**
+      - The number of nodes in the list is the range [0, 5000].
+      - -5000 <= Node.val <= 5000
+
+    **Follow up:** A linked list can be reversed either iteratively or recursively. Could you
+    implement both?
+  time: "O(n)"
+  space: "O(1)"
+  approach: |
+    Iterative: maintain prev (starts as None) and curr (starts at head). At each step, save
+    curr.next, point curr.next back to prev, then advance both pointers. When curr is None,
+    prev is the new head.
+  solution: |
+    def reverseList(head: Optional[ListNode]) -> Optional[ListNode]:
+        prev, curr = None, head
+        while curr:
+            next_node = curr.next
+            curr.next = prev
+            prev = curr
+            curr = next_node
+        return prev
 - id: 217
   title: "Contains Duplicate"
   difficulty: Easy
@@ -1323,6 +1885,59 @@
             result.append(s[j + 1:j + 1 + length])
             i = j + 1 + length
         return result
+- id: 287
+  title: "Find The Duplicate Number"
+  difficulty: Medium
+  tags: [Array, Two Pointers, Binary Search, Bit Manipulation]
+  verified: false
+  description: |
+    Given an array of integers `nums` containing `n + 1` integers where each integer is in the
+    range `[1, n]` inclusive.
+
+    There is only **one repeated number** in `nums`, return this repeated number.
+
+    You must solve the problem **without** modifying the array `nums` and uses only constant
+    extra space.
+
+    **Example 1:**
+      Input:  nums = [1,3,4,2,2]
+      Output: 2
+
+    **Example 2:**
+      Input:  nums = [3,1,3,4,2]
+      Output: 3
+
+    **Example 3:**
+      Input:  nums = [3,3,3,3,3]
+      Output: 3
+
+    **Constraints:**
+      - 1 <= n <= 10^5
+      - nums.length == n + 1
+      - 1 <= nums[i] <= n
+      - All the integers in nums appear only once except for precisely one integer which appears
+        two or more times.
+  time: "O(n)"
+  space: "O(1)"
+  approach: |
+    Floyd's cycle detection: treat each value as a pointer to the next index. The duplicate
+    creates a cycle. Phase 1 — find the intersection of slow (1 step) and fast (2 steps)
+    pointers. Phase 2 — reset a second slow pointer to index 0 and advance both slow pointers
+    one step at a time; where they meet is the duplicate.
+  solution: |
+    def findDuplicate(nums: list[int]) -> int:
+        slow, fast = 0, 0
+        while True:
+            slow = nums[slow]
+            fast = nums[nums[fast]]
+            if slow == fast:
+                break
+        slow2 = 0
+        while True:
+            slow = nums[slow]
+            slow2 = nums[slow2]
+            if slow == slow2:
+                return slow
 - id: 347
   title: "Top K Frequent Elements"
   difficulty: Medium
