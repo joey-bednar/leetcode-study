@@ -42,7 +42,7 @@
   title: "Add Two Numbers"
   difficulty: Medium
   tags: [Linked List, Math, Recursion]
-  verified: false
+  verified: true
   description: |
     You are given two **non-empty** linked lists representing two non-negative integers. The
     digits are stored in **reverse order**, and each of their nodes contains a single digit.
@@ -68,7 +68,7 @@
       - 0 <= Node.val <= 9
       - It is guaranteed that the list represents a number that does not have leading zeros.
   time: "O(n + m)"
-  space: "O(n + m)"
+  space: "O(1) extra space, O(max(m,n)) for the output list"
   approach: |
     Use a dummy head and iterate through both lists simultaneously, summing node values with
     carry. Treat exhausted lists as 0. After the loop, if a remaining carry exists append a
@@ -81,10 +81,14 @@
         while l1 or l2 or carry:
             v1 = l1.val if l1 else 0
             v2 = l2.val if l2 else 0
+
+            # new digit
             val = v1 + v2 + carry
             carry = val // 10
             val = val % 10
             cur.next = ListNode(val)
+
+            # update pointers
             cur = cur.next
             l1 = l1.next if l1 else None
             l2 = l2.next if l2 else None
@@ -93,7 +97,7 @@
   title: "Longest Substring Without Repeating Characters"
   difficulty: Medium
   tags: [Hash Table, String, Sliding Window]
-  verified: false
+  verified: true
   description: |
     Given a string `s`, find the length of the **longest substring** without duplicate
     characters.
@@ -117,13 +121,15 @@
     **Constraints:**
       - 0 <= s.length <= 5 * 10^4
       - s consists of English letters, digits, symbols and spaces.
-  time: "O(n)"
-  space: "O(1)"
-  approach: |
-    Sliding window with a character set. Expand the right pointer, adding each character to the
-    set. If the new character is already in the set (duplicate), shrink from the left, removing
-    characters until the duplicate is eliminated. Track the maximum window size throughout.
-  solution: |
+  easy_time: "O(n), n is the length of the string"
+  easy_space: "O(m), m is the total number of unique characters in the string."
+  easy_approach: |
+    Use one window that always has unique characters. We expand the window by
+    moving the right pointer. If we ever see a repeated character, we shrink
+    the window from the left until the duplicate is removed. This way, the
+    window always represents a valid substring, and we track its maximum size.
+    It's efficient because each character is added and removed at most once.
+  easy_solution: |
     def length_of_longest_substring(s: str) -> int:
         char_set = set()
         l = 0
@@ -135,11 +141,33 @@
             char_set.add(s[r])
             res = max(res, r - l + 1)
         return res
+  time: "O(n), n is the length of the string"
+  space: "O(m), m is the total number of unique characters in the string."
+  approach: |
+    Instead of removing characters one by one when we see a repeat, we can jump
+    the left pointer directly to the correct position. We keep a map that
+    stores the last index where each character appeared. When a character
+    repeats, the earliest valid starting point moves to one position after its
+    previous occurrence. This lets us adjust the window in one step and always
+    keep it valid, making the approach fast and clean.
+  solution: |
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        mp = {}
+        l = 0
+        res = 0
+
+        for r in range(len(s)):
+            if s[r] in mp:
+                l = max(mp[s[r]] + 1, l)
+            mp[s[r]] = r
+            res = max(res, r - l + 1)
+        return res
+
 - id: 4
   title: "Median of Two Sorted Arrays"
   difficulty: Hard
   tags: [Array, Binary Search, Divide and Conquer]
-  verified: false
+  verified: true
   description: |
     Given two sorted arrays `nums1` and `nums2` of size `m` and `n` respectively, return the
     **median** of the two sorted arrays.
@@ -163,41 +191,105 @@
       - 0 <= n <= 1000
       - 1 <= m + n <= 2000
       - -10^6 <= nums1[i], nums2[i] <= 10^6
+  easy_time: "O(log(m+n))"
+  easy_space: "O(log(m+n)) for recursion stack"
+  easy_approach: |
+    Instead of fully merging the two arrays, think about this question:
+
+        “What is the k-th smallest element in the union of two sorted arrays?” 
+
+    If we can find the k-th smallest element efficiently, then:
+
+        - The median is just the middle element (or the average of the two middle elements).
+
+    To find the k-th smallest:
+
+        - We compare the k/2-th element of each array.
+        - The smaller one (and everything before it in that array) cannot be the k-th element,
+        - because there are at least k/2 elements smaller than or equal to it.
+        - So we discard that many elements from one array and reduce k accordingly.
+        - We repeat this process, shrinking the problem each time.
+
+    This is like a binary search on k: every step cuts off about half of the remaining elements, giving an O(log(k)) (or O(log(m + n))) solution.
+  easy_solution: |
+    def get_kth(self, a: List[int], m: int, b: List[int], n: int, k: int, a_start: int = 0, b_start: int = 0) -> int:
+            if m > n:
+                return self.get_kth(b, n, a, m, k, b_start, a_start)
+            if m == 0:
+                return b[b_start + k - 1]
+            if k == 1:
+                return min(a[a_start], b[b_start])
+
+            i = min(m, k // 2)
+            j = min(n, k // 2)
+
+            if a[a_start + i - 1] > b[b_start + j - 1]:
+                return self.get_kth(a, m, b, n - j, k - j, a_start, b_start + j)
+            else:
+                return self.get_kth(a, m - i, b, n, k - i, a_start + i, b_start)
+
+        def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:
+            left = (len(nums1) + len(nums2) + 1) // 2
+            right = (len(nums1) + len(nums2) + 2) // 2
+            return (self.get_kth(nums1, len(nums1), nums2, len(nums2), left) +
+                    self.get_kth(nums1, len(nums1), nums2, len(nums2), right)) / 2.0
   time: "O(log(min(m, n)))"
   space: "O(1)"
   approach: |
-    Binary search on the smaller array. Find partition points i (in A) and j = half - i - 2
-    (in B) such that A[i] <= B[j+1] and B[j] <= A[i+1]. Use boundary sentinels (-inf/+inf)
-    for out-of-range indices. Once the correct partition is found, the median is derived from
-    the max of the left elements and the min of the right elements.
+    We want the median of two sorted arrays without fully merging them.
+    Think of placing the two arrays side by side and making a cut (partition) so that:
+
+        - The left side of the cut contains exactly half of the total elements (or half + 1 if odd).
+        - All elements on the left side are <= all elements on the right side.
+
+    If we can find such a partition, then:
+
+      - The median must come from the border elements around this cut:
+        - The largest element on the left side,
+        - And the smallest element on the right side.
+
+    To find this cut efficiently, we:
+
+        - Only binary search on the smaller array.
+        - For a chosen cut in the smaller array, the cut in the larger array is fixed (so total elements on the left is half).
+        - Check if this partition is valid:
+          - Aleft <= Bright and Bleft <= Aright
+        - If not valid:
+          - Move the cut left or right (like normal binary search) until it becomes valid.
+
+    Once we have a valid partition, we compute the median using the max of left side and min of right side.
   solution: |
-    def find_median_sorted_arrays(nums1: list[int], nums2: list[int]) -> float:
-        A, B = nums1, nums2
-        total = len(nums1) + len(nums2)
-        half = total // 2
-        if len(B) < len(A):
-            A, B = B, A
-        l, r = 0, len(A) - 1
-        while True:
-            i = (l + r) // 2
-            j = half - i - 2
-            Aleft = A[i] if i >= 0 else float("-infinity")
-            Aright = A[i + 1] if (i + 1) < len(A) else float("infinity")
-            Bleft = B[j] if j >= 0 else float("-infinity")
-            Bright = B[j + 1] if (j + 1) < len(B) else float("infinity")
-            if Aleft <= Bright and Bleft <= Aright:
-                if total % 2:
-                    return min(Aright, Bright)
-                return (max(Aleft, Bleft) + min(Aright, Bright)) / 2
-            elif Aleft > Bright:
-                r = i - 1
-            else:
-                l = i + 1
+    def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:
+            A, B = nums1, nums2
+            total = len(nums1) + len(nums2)
+            half = total // 2
+
+            if len(B) < len(A):
+                A, B = B, A
+
+            l, r = 0, len(A) - 1
+            while True:
+                i = (l + r) // 2
+                j = half - i - 2
+
+                Aleft = A[i] if i >= 0 else float("-infinity")
+                Aright = A[i + 1] if (i + 1) < len(A) else float("infinity")
+                Bleft = B[j] if j >= 0 else float("-infinity")
+                Bright = B[j + 1] if (j + 1) < len(B) else float("infinity")
+
+                if Aleft <= Bright and Bleft <= Aright:
+                    if total % 2:
+                        return min(Aright, Bright)
+                    return (max(Aleft, Bleft) + min(Aright, Bright)) / 2
+                elif Aleft > Bright:
+                    r = i - 1
+                else:
+                    l = i + 1
 - id: 11
   title: "Container With Most Water"
   difficulty: Medium
   tags: [Array, Two Pointers, Greedy]
-  verified: false
+  verified: true
   description: |
     You are given an integer array `height` of length `n`. There are `n` vertical lines drawn
     such that the two endpoints of the `i`th line are `(i, 0)` and `(i, height[i])`.
@@ -226,17 +318,20 @@
   time: "O(n)"
   space: "O(1)"
   approach: |
-    Use two pointers starting at each end of the array. At each step, calculate the water
-    trapped between them as min(height[l], height[r]) * (r - l). Move the pointer with the
-    smaller height inward, since the width decreases regardless, and only a taller boundary
-    could increase the area.
+    Using two pointers lets us efficiently search for the maximum area without checking every pair.
+    We start with the widest container (left at start, right at end).
+    The height is limited by the shorter line, so to potentially increase the area, we must move the pointer at the shorter line inward.
+    Moving the taller line never helps because it keeps the height the same but reduces the width.
+    By always moving the shorter side, we explore all meaningful possibilities.
   solution: |
-    def max_area(height: list[int]) -> int:
-        l, r = 0, len(height) - 1
+    def maxArea(self, heights: List[int]) -> int:
+        l, r = 0, len(heights) - 1
         res = 0
+
         while l < r:
-            res = max(res, min(height[l], height[r]) * (r - l))
-            if height[l] < height[r]:
+            area = min(heights[l], heights[r]) * (r - l)
+            res = max(res, area)
+            if heights[l] <= heights[r]:
                 l += 1
             else:
                 r -= 1
@@ -245,7 +340,7 @@
   title: "3Sum"
   difficulty: Medium
   tags: [Array, Two Pointers, Sorting]
-  verified: false
+  verified: true
   description: |
     Given an integer array `nums`, return all the triplets `[nums[i], nums[j], nums[k]]` such
     that `i != j`, `i != k`, and `j != k`, and `nums[i] + nums[j] + nums[k] == 0`.
@@ -275,12 +370,22 @@
       - 3 <= nums.length <= 3000
       - -10^5 <= nums[i] <= 10^5
   time: "O(n^2)"
-  space: "O(1)"
+  space: "O(1), O(m) space for output list"
   approach: |
-    Sort the array, then iterate with a fixed index i. For each i, skip duplicates and use
-    two pointers (l = i+1, r = end) to find pairs that sum to -nums[i]. If the sum is too
-    large, move r left; if too small, move l right. When a valid triplet is found, record it
-    and advance l past any duplicate values before continuing.
+    After sorting the array, we can fix one number and then search for the other two using the two-pointer technique.
+    Sorting helps in two ways:
+
+        It lets us skip duplicates easily.
+        It ensures that moving the left or right pointer will increase or decrease the sum in a predictable way.
+
+    For each fixed number a, we place two pointers:
+
+        l starts just after i,
+        r starts at the end.
+
+    If the current sum is too large, we move r left to reduce it.
+    If the sum is too small, we move l right to increase it.
+    When the sum is exactly zero, we record the triplet and skip duplicates.
   solution: |
     def three_sum(nums: list[int]) -> list[list[int]]:
         nums.sort()
@@ -305,7 +410,7 @@
   title: "Remove Nth Node From End of List"
   difficulty: Medium
   tags: [Linked List, Two Pointers]
-  verified: false
+  verified: true
   description: |
     Given the head of a linked list, remove the `n`th node from the end of the list and return
     its head.
@@ -332,28 +437,32 @@
   time: "O(n)"
   space: "O(1)"
   approach: |
-    Use a dummy node pointing to head and two pointers (left starting at dummy, right starting
-    at head). Advance right by n steps. Then advance both together until right reaches null.
-    left is now just before the target node — set left.next = left.next.next and return
-    dummy.next.
+    Use two pointers so that the gap between them is exactly n.
+    Move the right pointer n steps ahead first.
+    Then move both pointers together.
+    When the right pointer reaches the end, the left pointer will be just before the node we must remove.
+    This avoids counting the entire list and removes the target in one pass.
   solution: |
-    def removeNthFromEnd(head: Optional[ListNode], n: int) -> Optional[ListNode]:
+    def removeNthFromEnd(self, head: Optional[ListNode], n: int) -> Optional[ListNode]:
         dummy = ListNode(0, head)
         left = dummy
         right = head
+
         while n > 0:
             right = right.next
             n -= 1
+
         while right:
             left = left.next
             right = right.next
+
         left.next = left.next.next
         return dummy.next
 - id: 20
   title: "Valid Parentheses"
   difficulty: Easy
   tags: [String, Stack]
-  verified: false
+  verified: true
   description: |
     Given a string `s` containing just the characters `'('`, `')'`, `'{'`, `'}'`, `'['` and
     `']'`, determine if the input string is valid.
@@ -405,7 +514,7 @@
   title: "Merge Two Sorted Lists"
   difficulty: Easy
   tags: [Linked List, Recursion]
-  verified: false
+  verified: true
   description: |
     You are given the heads of two sorted linked lists `list1` and `list2`.
 
@@ -437,18 +546,20 @@
     and append the smaller one to cur, advancing that list. After either list is exhausted,
     attach the remainder of the other. Return dummy.next.
   solution: |
-    def mergeTwoLists(list1: Optional[ListNode], list2: Optional[ListNode]) -> Optional[ListNode]:
-        dummy = ListNode()
-        cur = dummy
+    def mergeTwoLists(self, list1: ListNode, list2: ListNode) -> ListNode:
+        dummy = node = ListNode()
+
         while list1 and list2:
-            if list1.val <= list2.val:
-                cur.next = list1
+            if list1.val < list2.val:
+                node.next = list1
                 list1 = list1.next
             else:
-                cur.next = list2
+                node.next = list2
                 list2 = list2.next
-            cur = cur.next
-        cur.next = list1 if list1 else list2
+            node = node.next
+
+        node.next = list1 or list2
+
         return dummy.next
 - id: 23
   title: "Merge K Sorted Lists"
@@ -1997,7 +2108,7 @@
   title: "Contains Duplicate"
   difficulty: Easy
   tags: [Array, Hash Table, Sorting]
-  verified: false
+  verified: true
   description: |
     Given an integer array `nums`, return `True` if any value appears **at least twice**
     in the array, and return `False` if every element is distinct.
@@ -2031,6 +2142,10 @@
                 return True
             seen.add(num)
         return False
+
+    # shorthand
+    def contains_duplicate(nums: list[int]) -> bool:
+        return len(set(nums)) < len(nums)
 - id: 226
   title: "Invert Binary Tree"
   difficulty: Easy
@@ -2462,7 +2577,17 @@
 - id: 347
   title: "Top K Frequent Elements"
   difficulty: Medium
-  tags: [Array, Hash Table, Divide and Conquer, Sorting, Heap, Bucket Sort, Counting, Quickselect]
+  tags:
+    [
+      Array,
+      Hash Table,
+      Divide and Conquer,
+      Sorting,
+      Heap,
+      Bucket Sort,
+      Counting,
+      Quickselect,
+    ]
   verified: false
   description: |
     Given an integer array `nums` and an integer `k`, return the `k` most frequent elements.
