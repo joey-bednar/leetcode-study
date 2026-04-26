@@ -172,9 +172,7 @@ def prompt_solution():
 
 def print_solution(problem):
 
-    verified_string = f"[{B_YELLOW}UNVERIFIED{RESET}]"
-    if problem['verified']:
-        verified_string = f"[{B_GREEN}VERIFIED{RESET}]"
+    verified_string = f" [{B_GREEN}VERIFIED{RESET}]" if problem['verified'] else ""
 
     if problem.get('easy_solution'):
         print()
@@ -200,7 +198,7 @@ def print_solution(problem):
     print(f"  Space: {problem['space']}")
 
     print()
-    print(f"  {BOLD}{B_MAGENTA}SOLUTION{RESET} {verified_string}\n")
+    print(f"  {BOLD}{B_MAGENTA}SOLUTION{RESET}{verified_string}\n")
     print_code(problem["solution"])
     print()
 
