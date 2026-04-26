@@ -162,7 +162,6 @@
             mp[s[r]] = r
             res = max(res, r - l + 1)
         return res
-
 - id: 4
   title: "Median of Two Sorted Arrays"
   difficulty: Hard
@@ -595,38 +594,39 @@
       - lists[i] is sorted in ascending order.
       - The sum of lists[i].length will not exceed 10^4.
   time: "O(n log k)"
-  space: "O(1)"
+  space: "O(log k)"
   approach: |
-    Divide and conquer: repeatedly merge adjacent pairs of lists until only one remains. Each
-    round halves the number of lists. With log k rounds each processing O(n) total nodes, the
-    overall complexity is O(n log k). Each pair is merged with the standard two-pointer dummy
-    head approach.
+    Divide and conquer: recursively split the list array in half, merge each half independently, then combine the results. This takes log k rounds, each processing all n nodes, for O(n log k) overall. Each pair of lists is merged with the standard two-pointer dummy-head technique.
   solution: |
-    def mergeKLists(lists: List[Optional[ListNode]]) -> Optional[ListNode]:
-        if not lists or len(lists) == 0:
-            return None
-        while len(lists) > 1:
-            merged = []
-            for i in range(0, len(lists), 2):
-                l1 = lists[i]
-                l2 = lists[i + 1] if (i + 1) < len(lists) else None
-                merged.append(mergeList(l1, l2))
-            lists = merged
-        return lists[0]
+    class Solution:
+        def mergeKLists(self, lists: List[Optional[ListNode]]) -> Optional[ListNode]:
+            if not lists or len(lists) == 0:
+                return None
+            return self.divide(lists, 0, len(lists) - 1)
 
-    def mergeList(l1, l2):
-        dummy = ListNode()
-        tail = dummy
-        while l1 and l2:
-            if l1.val <= l2.val:
-                tail.next = l1
-                l1 = l1.next
-            else:
-                tail.next = l2
-                l2 = l2.next
-            tail = tail.next
-        tail.next = l1 if l1 else l2
-        return dummy.next
+        def divide(self, lists, l, r):
+            if l > r:
+                return None
+            if l == r:
+                return lists[l]
+            mid = l + (r - l) // 2
+            left = self.divide(lists, l, mid)
+            right = self.divide(lists, mid + 1, r)
+            return self.conquer(left, right)
+
+        def conquer(self, l1, l2):
+            dummy = ListNode(0)
+            curr = dummy
+            while l1 and l2:
+                if l1.val <= l2.val:
+                    curr.next = l1
+                    l1 = l1.next
+                else:
+                    curr.next = l2
+                    l2 = l2.next
+                curr = curr.next
+            curr.next = l1 if l1 else l2
+            return dummy.next
 - id: 25
   title: "Reverse Nodes In K Group"
   difficulty: Hard
@@ -659,35 +659,36 @@
   time: "O(n)"
   space: "O(1)"
   approach: |
-    Use a dummy node and a groupPrev pointer. For each group, find the k-th node with a helper
-    (return if fewer than k remain). Save groupNext (the node after the group). Reverse the k
-    nodes between groupPrev and groupNext. Connect groupPrev to the reversed head (kth node)
-    and the reversed tail (original first node) to groupNext. Advance groupPrev to the tail.
+    Use a dummy node and a groupPrev pointer. For each group, find the k-th node with a helper (return early if fewer than k remain). Save groupNext. Reverse the k nodes by rewiring curr.next = prev and advancing both pointers. Reconnect groupPrev to the new head (kth node) and the new tail (original first node) to groupNext. Advance groupPrev to the tail and repeat.
   solution: |
-    def reverseKGroup(head: Optional[ListNode], k: int) -> Optional[ListNode]:
-        dummy = ListNode(0, head)
-        groupPrev = dummy
-        while True:
-            kth = getKth(groupPrev, k)
-            if not kth:
-                break
-            groupNext = kth.next
-            prev, curr = kth.next, groupPrev.next
-            while curr != groupNext:
-                tmp = curr.next
-                curr.next = prev
-                prev = curr
-                curr = tmp
-            tmp = groupPrev.next
-            groupPrev.next = kth
-            groupPrev = tmp
-        return dummy.next
+    class Solution:
+        def reverseKGroup(self, head: Optional[ListNode], k: int) -> Optional[ListNode]:
+            dummy = ListNode(0, head)
+            groupPrev = dummy
 
-    def getKth(curr, k):
-        while curr and k > 0:
-            curr = curr.next
-            k -= 1
-        return curr
+            while True:
+                kth = self.getKth(groupPrev, k)
+                if not kth:
+                    break
+                groupNext = kth.next
+
+                prev, curr = kth.next, groupPrev.next
+                while curr != groupNext:
+                    tmp = curr.next
+                    curr.next = prev
+                    prev = curr
+                    curr = tmp
+
+                tmp = groupPrev.next
+                groupPrev.next = kth
+                groupPrev = tmp
+            return dummy.next
+
+        def getKth(self, curr, k):
+            while curr and k > 0:
+                curr = curr.next
+                k -= 1
+            return curr
 - id: 33
   title: "Search In Rotated Sorted Array"
   difficulty: Medium
@@ -728,28 +729,37 @@
   time: "O(log n)"
   space: "O(1)"
   approach: |
-    Standard binary search with rotation detection at each step. If the left half is sorted
-    (nums[l] <= nums[mid]), check if target falls in [nums[l], nums[mid]); if so search left,
-    otherwise right. If the right half is sorted, check if target falls in (nums[mid], nums[r]];
-    if so search right, otherwise left.
+    Two-pass binary search. First pass finds the pivot (rotation point): if nums[mid] > nums[r], the pivot is in the right half (l = mid + 1), otherwise the left (r = mid). Second pass performs standard binary search in the correct segment: if target is in [nums[pivot], nums[r]], search [pivot, r]; otherwise search [0, pivot-1].
   solution: |
-    def search(nums: list[int], target: int) -> int:
-        l, r = 0, len(nums) - 1
-        while l <= r:
-            mid = (l + r) // 2
-            if nums[mid] == target:
-                return mid
-            if nums[l] <= nums[mid]:
-                if nums[l] <= target < nums[mid]:
-                    r = mid - 1
+    class Solution:
+        def search(self, nums: List[int], target: int) -> int:
+            l, r = 0, len(nums) - 1
+
+            while l < r:
+                m = (l + r) // 2
+                if nums[m] > nums[r]:
+                    l = m + 1
                 else:
-                    l = mid + 1
+                    r = m
+
+            pivot = l
+            l, r = 0, len(nums) - 1
+
+            if target >= nums[pivot] and target <= nums[r]:
+                l = pivot
             else:
-                if nums[mid] < target <= nums[r]:
-                    l = mid + 1
+                r = pivot - 1
+
+            while l <= r:
+                m = (l + r) // 2
+                if nums[m] == target:
+                    return m
+                elif nums[m] < target:
+                    l = m + 1
                 else:
-                    r = mid - 1
-        return -1
+                    r = m - 1
+
+            return -1
 - id: 36
   title: "Valid Sudoku"
   difficulty: Medium
@@ -800,31 +810,30 @@
       - board.length == 9
       - board[i].length == 9
       - board[i][j] is a digit 1-9 or '.'.
-  time: "O(n^2) where n is the number of rows in the grid"
+  time: "O(n^2)"
   space: "O(n^2)"
   approach: |
-    Use three arrays of sets — one per row, one per column, one per 3x3 box.
-    The box index for cell (r, c) is (r // 3) * 3 + (c // 3).
-    Iterate every cell; skip '.'. If the digit is already in any of the three
-    corresponding sets, return False. Otherwise add it to all three.
+    Single pass through all 81 cells using three defaultdict sets — one per row, one per column, one per 3x3 box indexed by (r // 3, c // 3). Skip '.'. If any digit is already in its row, column, or box set, return False. Otherwise add it to all three.
   solution: |
-    def is_valid_sudoku(board: list[list[str]]) -> bool:
-        rows = [set() for _ in range(9)]
-        cols = [set() for _ in range(9)]
-        boxes = [set() for _ in range(9)]
+    class Solution:
+        def isValidSudoku(self, board: List[List[str]]) -> bool:
+            cols = defaultdict(set)
+            rows = defaultdict(set)
+            squares = defaultdict(set)
 
-        for r in range(9):
-            for c in range(9):
-                val = board[r][c]
-                if val == ".":
-                    continue
-                box = (r // 3) * 3 + (c // 3)
-                if val in rows[r] or val in cols[c] or val in boxes[box]:
-                    return False
-                rows[r].add(val)
-                cols[c].add(val)
-                boxes[box].add(val)
-        return True
+            for r in range(9):
+                for c in range(9):
+                    if board[r][c] == ".":
+                        continue
+                    if (board[r][c] in rows[r] or
+                        board[r][c] in cols[c] or
+                        board[r][c] in squares[(r // 3, c // 3)]):
+                        return False
+                    cols[c].add(board[r][c])
+                    rows[r].add(board[r][c])
+                    squares[(r // 3, c // 3)].add(board[r][c])
+
+            return True
 - id: 42
   title: "Trapping Rain Water"
   difficulty: Hard
@@ -852,25 +861,28 @@
   time: "O(n)"
   space: "O(1)"
   approach: |
-    Use two pointers starting at each end. Track the maximum height seen from each side
-    (left_max and right_max). At each step, process the side with the smaller max — the water
-    it can hold at that position is max - current height. Move that pointer inward. This works
-    because the water level is bounded by the smaller of the two surrounding maximums.
+    Two pointers starting at each end. Track leftMax and rightMax. Always process the side with the smaller maximum — the water at that position is max - current height. Advance that pointer inward and update its running maximum.
   solution: |
-    def trap(height: list[int]) -> int:
-        l, r = 0, len(height) - 1
-        left_max, right_max = height[l], height[r]
-        res = 0
-        while l < r:
-            if left_max < right_max:
-                l += 1
-                left_max = max(left_max, height[l])
-                res += left_max - height[l]
-            else:
-                r -= 1
-                right_max = max(right_max, height[r])
-                res += right_max - height[r]
-        return res
+    class Solution:
+        def trap(self, height: List[int]) -> int:
+            if not height:
+                return 0
+
+            l, r = 0, len(height) - 1
+            leftMax, rightMax = height[l], height[r]
+            res = 0
+
+            while l < r:
+                if leftMax < rightMax:
+                    l += 1
+                    leftMax = max(leftMax, height[l])
+                    res += leftMax - height[l]
+                else:
+                    r -= 1
+                    rightMax = max(rightMax, height[r])
+                    res += rightMax - height[r]
+
+            return res
 - id: 49
   title: "Group Anagrams"
   difficulty: Medium
@@ -941,23 +953,23 @@
   time: "O(log(m * n))"
   space: "O(1)"
   approach: |
-    Treat the 2D matrix as a flattened 1D sorted array of length m*n. Binary search with l=0
-    and r=m*n-1. For each midpoint, convert to row = mid // COLS and col = mid % COLS to
-    access matrix[row][col]. Adjust l or r based on comparison with target.
+    Treat the 2D matrix as a flattened 1D sorted array of length m*n. Binary search from 0 to m*n-1. For each midpoint, convert to 2D coordinates: row = mid // COLS, col = mid % COLS. Compare matrix[row][col] to target and adjust l or r.
   solution: |
-    def search_matrix(matrix: list[list[int]], target: int) -> bool:
-        ROWS, COLS = len(matrix), len(matrix[0])
-        l, r = 0, ROWS * COLS - 1
-        while l <= r:
-            mid = (l + r) // 2
-            row, col = mid // COLS, mid % COLS
-            if matrix[row][col] == target:
-                return True
-            elif matrix[row][col] < target:
-                l = mid + 1
-            else:
-                r = mid - 1
-        return False
+    class Solution:
+        def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:
+            ROWS, COLS = len(matrix), len(matrix[0])
+
+            l, r = 0, ROWS * COLS - 1
+            while l <= r:
+                m = l + (r - l) // 2
+                row, col = m // COLS, m % COLS
+                if target > matrix[row][col]:
+                    l = m + 1
+                elif target < matrix[row][col]:
+                    r = m - 1
+                else:
+                    return True
+            return False
 - id: 76
   title: "Minimum Window Substring"
   difficulty: Hard
@@ -994,38 +1006,42 @@
       - s and t consist of uppercase and lowercase English letters.
 
     **Follow up:** Could you find an algorithm that runs in `O(m + n)` time?
-  time: "O(n)"
-  space: "O(1)"
+  time: "O(n + m)"
+  space: "O(m)"
   approach: |
-    Use two frequency maps (count_t and window) and counters `have` and `need`. `need` is the
-    number of unique characters in t that must be satisfied. Expand right; when a character's
-    window count meets its required count in t, increment `have`. When have == need, record the
-    window if it's the smallest so far, then shrink from the left until the window is invalid.
+    Sliding window with have/need counters. Build countT from t. Expand right, updating window counts; when a character's count matches its required count, increment have. Once have == need, record the window if smallest so far, then shrink from the left until the window is no longer valid.
   solution: |
-    def min_window(s: str, t: str) -> str:
-        if t == "":
-            return ""
-        count_t, window = {}, {}
-        for c in t:
-            count_t[c] = 1 + count_t.get(c, 0)
-        have, need = 0, len(count_t)
-        res, res_len = [-1, -1], float("infinity")
-        l = 0
-        for r in range(len(s)):
-            c = s[r]
-            window[c] = 1 + window.get(c, 0)
-            if c in count_t and window[c] == count_t[c]:
-                have += 1
-            while have == need:
-                if (r - l + 1) < res_len:
-                    res = [l, r]
-                    res_len = r - l + 1
-                window[s[l]] -= 1
-                if s[l] in count_t and window[s[l]] < count_t[s[l]]:
-                    have -= 1
-                l += 1
-        l, r = res
-        return s[l:r + 1] if res_len != float("infinity") else ""
+    class Solution:
+        def minWindow(self, s: str, t: str) -> str:
+            if t == "":
+                return ""
+
+            countT, window = {}, {}
+            for c in t:
+                countT[c] = 1 + countT.get(c, 0)
+
+            have, need = 0, len(countT)
+            res, resLen = [-1, -1], float("infinity")
+            l = 0
+
+            for r in range(len(s)):
+                c = s[r]
+                window[c] = 1 + window.get(c, 0)
+
+                if c in countT and window[c] == countT[c]:
+                    have += 1
+
+                while have == need:
+                    if (r - l + 1) < resLen:
+                        res = [l, r]
+                        resLen = r - l + 1
+                    window[s[l]] -= 1
+                    if s[l] in countT and window[s[l]] < countT[s[l]]:
+                        have -= 1
+                    l += 1
+
+            l, r = res
+            return s[l:r + 1] if resLen != float("infinity") else ""
 - id: 84
   title: "Largest Rectangle In Histogram"
   difficulty: Hard
@@ -1051,25 +1067,21 @@
   time: "O(n)"
   space: "O(n)"
   approach: |
-    Use a monotonic increasing stack of (index, height) pairs. For each bar, if it is shorter
-    than the stack top, pop and compute the rectangle area using the popped height extended
-    back to the popped index. Track the start index so the current bar can extend left as far
-    as bars were popped. After the loop, compute areas for all remaining stack entries
-    extending to the end.
+    Monotonic increasing stack of indices. For each bar (plus a virtual height-0 sentinel at position n), while the stack top's height >= current height, pop it and compute the rectangle: height = heights[popped], width = i if stack is empty else i - stack[-1] - 1. Push the current index. Track the max area throughout.
   solution: |
-    def largest_rectangle_area(heights: list[int]) -> int:
-        stack = []  # (index, height)
-        max_area = 0
-        for i, h in enumerate(heights):
-            start = i
-            while stack and stack[-1][1] > h:
-                idx, height = stack.pop()
-                max_area = max(max_area, height * (i - idx))
-                start = idx
-            stack.append((start, h))
-        for idx, height in stack:
-            max_area = max(max_area, height * (len(heights) - idx))
-        return max_area
+    class Solution:
+        def largestRectangleArea(self, heights: List[int]) -> int:
+            n = len(heights)
+            maxArea = 0
+            stack = []
+
+            for i in range(n + 1):
+                while stack and (i == n or heights[stack[-1]] >= heights[i]):
+                    height = heights[stack.pop()]
+                    width = i if not stack else i - stack[-1] - 1
+                    maxArea = max(maxArea, height * width)
+                stack.append(i)
+            return maxArea
 - id: 98
   title: "Validate Binary Search Tree"
   difficulty: Medium
@@ -1098,18 +1110,18 @@
   time: "O(n)"
   space: "O(n)"
   approach: |
-    DFS with a valid range [min, max] passed down. Each node must satisfy min < val < max. When
-    going left, the current node's value becomes the new max. When going right, it becomes the
-    new min. Start with (-inf, inf) at the root.
+    DFS with an inherited valid range. Pass float('-inf') and float('inf') at the root. Each node must satisfy left < node.val < right. Recurse left with right bound = node.val; recurse right with left bound = node.val.
   solution: |
-    def isValidBST(root: Optional[TreeNode]) -> bool:
-        def valid(node, left, right):
-            if not node:
-                return True
-            if not (node.val < right and node.val > left):
-                return False
-            return valid(node.left, left, node.val) and valid(node.right, node.val, right)
-        return valid(root, float("-inf"), float("inf"))
+    class Solution:
+        def isValidBST(self, root: Optional[TreeNode]) -> bool:
+            def valid(node, left, right):
+                if not node:
+                    return True
+                if not (left < node.val < right):
+                    return False
+                return valid(node.left, left, node.val) and valid(node.right, node.val, right)
+
+            return valid(root, float("-inf"), float("inf"))
 - id: 100
   title: "Same Tree"
   difficulty: Easy
@@ -1140,15 +1152,16 @@
   time: "O(n)"
   space: "O(n)"
   approach: |
-    Recursively compare both trees. If both nodes are None, return True. If one is None or
-    values differ, return False. Otherwise recurse on left and right subtrees.
+    Recursive DFS: if both nodes are null return True; if both exist with matching values recurse on both subtrees; otherwise return False.
   solution: |
-    def isSameTree(p: Optional[TreeNode], q: Optional[TreeNode]) -> bool:
-        if not p and not q:
-            return True
-        if not p or not q or p.val != q.val:
-            return False
-        return isSameTree(p.left, q.left) and isSameTree(p.right, q.right)
+    class Solution:
+        def isSameTree(self, p: Optional[TreeNode], q: Optional[TreeNode]) -> bool:
+            if not p and not q:
+                return True
+            if p and q and p.val == q.val:
+                return self.isSameTree(p.left, q.left) and self.isSameTree(p.right, q.right)
+            else:
+                return False
 - id: 102
   title: "Binary Tree Level Order Traversal"
   difficulty: Medium
@@ -1176,25 +1189,28 @@
   time: "O(n)"
   space: "O(n)"
   approach: |
-    BFS with a queue. For each level, process all currently-queued nodes, collect their values,
-    and enqueue their children. Append each level's values to the result list.
+    BFS with a deque. Enqueue root (if not None). For each level, process all currently-queued nodes: append value to the level list and enqueue left and right children. Append non-empty levels to the result.
   solution: |
-    def levelOrder(root: Optional[TreeNode]) -> list[list[int]]:
-        res = []
-        q = collections.deque()
-        if root:
+    class Solution:
+        def levelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:
+            res = []
+
+            q = collections.deque()
             q.append(root)
-        while q:
-            level = []
-            for _ in range(len(q)):
-                node = q.popleft()
-                level.append(node.val)
-                if node.left:
-                    q.append(node.left)
-                if node.right:
-                    q.append(node.right)
-            res.append(level)
-        return res
+
+            while q:
+                qLen = len(q)
+                level = []
+                for i in range(qLen):
+                    node = q.popleft()
+                    if node:
+                        level.append(node.val)
+                        q.append(node.left)
+                        q.append(node.right)
+                if level:
+                    res.append(level)
+
+            return res
 - id: 104
   title: "Maximum Depth of Binary Tree"
   difficulty: Easy
@@ -1218,14 +1234,15 @@
       - The number of nodes in the tree is in the range [0, 10^4].
       - -100 <= Node.val <= 100
   time: "O(n)"
-  space: "O(n)"
+  space: "O(h)"
   approach: |
-    Recursively return 1 + max(depth(left), depth(right)). Base case: a None node has depth 0.
+    Recursive DFS: return 0 for a null node; otherwise return 1 + max(depth(left), depth(right)).
   solution: |
-    def maxDepth(root: Optional[TreeNode]) -> int:
-        if not root:
-            return 0
-        return 1 + max(maxDepth(root.left), maxDepth(root.right))
+    class Solution:
+        def maxDepth(self, root: Optional[TreeNode]) -> int:
+            if not root:
+                return 0
+            return 1 + max(self.maxDepth(root.left), self.maxDepth(root.right))
 - id: 105
   title: "Construct Binary Tree From Preorder And Inorder Traversal"
   difficulty: Medium
@@ -1255,17 +1272,26 @@
   time: "O(n)"
   space: "O(n)"
   approach: |
-    The first element of preorder is always the root. Find that root value in inorder to split
-    into left and right subtrees. Recurse on each half. Use a hash map for O(1) inorder lookups.
+    Limit-based DFS with global preIdx and inIdx counters. Each call builds a subtree until the inorder element at inIdx matches the limit value. The preorder array provides the root (preorder[preIdx]); the inorder array defines subtree boundaries. Build the left subtree first (limit = root.val), then the right (inherited limit).
   solution: |
-    def buildTree(preorder: list[int], inorder: list[int]) -> Optional[TreeNode]:
-        if not preorder or not inorder:
-            return None
-        root = TreeNode(preorder[0])
-        mid = inorder.index(preorder[0])
-        root.left = buildTree(preorder[1:mid + 1], inorder[:mid])
-        root.right = buildTree(preorder[mid + 1:], inorder[mid + 1:])
-        return root
+    class Solution:
+        def buildTree(self, preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:
+            preIdx = inIdx = 0
+
+            def dfs(limit):
+                nonlocal preIdx, inIdx
+                if preIdx >= len(preorder):
+                    return None
+                if inorder[inIdx] == limit:
+                    inIdx += 1
+                    return None
+                root = TreeNode(preorder[preIdx])
+                preIdx += 1
+                root.left = dfs(root.val)
+                root.right = dfs(limit)
+                return root
+
+            return dfs(float('inf'))
 - id: 110
   title: "Balanced Binary Tree"
   difficulty: Easy
@@ -1295,24 +1321,18 @@
   time: "O(n)"
   space: "O(n)"
   approach: |
-    DFS that returns the height or -1 if unbalanced. At each node, compute left and right
-    heights. If either is -1 or they differ by more than 1, return -1. Otherwise return
-    1 + max(left, right).
+    DFS that returns [balanced, height] for each subtree. At each node, check both children's balance flags and whether their heights differ by more than 1. Propagate failure upward immediately. Return [True, 1 + max(left_h, right_h)] if balanced.
   solution: |
-    def isBalanced(root: Optional[TreeNode]) -> bool:
-        def dfs(root):
-            if not root:
-                return 0
-            left = dfs(root.left)
-            if left == -1:
-                return -1
-            right = dfs(root.right)
-            if right == -1:
-                return -1
-            if abs(left - right) > 1:
-                return -1
-            return 1 + max(left, right)
-        return dfs(root) != -1
+    class Solution:
+        def isBalanced(self, root: Optional[TreeNode]) -> bool:
+            def dfs(root):
+                if not root:
+                    return [True, 0]
+                left, right = dfs(root.left), dfs(root.right)
+                balanced = left[0] and right[0] and abs(left[1] - right[1]) <= 1
+                return [balanced, 1 + max(left[1], right[1])]
+
+            return dfs(root)[0]
 - id: 121
   title: "Best Time to Buy And Sell Stock"
   difficulty: Easy
@@ -1346,21 +1366,17 @@
   time: "O(n)"
   space: "O(1)"
   approach: |
-    Use two pointers l (buy day) and r (sell day), starting at 0 and 1. If prices[l] <
-    prices[r], compute the profit and update the maximum. Otherwise, the current sell price is
-    lower than the buy price, so move l to r (new minimum buy candidate). Advance r each step.
+    Single pass tracking the minimum buy price seen so far (minBuy) and the maximum profit. For each price, update maxP = max(maxP, price - minBuy), then update minBuy = min(minBuy, price).
   solution: |
-    def max_profit(prices: list[int]) -> int:
-        l, r = 0, 1
-        max_p = 0
-        while r < len(prices):
-            if prices[l] < prices[r]:
-                profit = prices[r] - prices[l]
-                max_p = max(max_p, profit)
-            else:
-                l = r
-            r += 1
-        return max_p
+    class Solution:
+        def maxProfit(self, prices: List[int]) -> int:
+            maxP = 0
+            minBuy = prices[0]
+
+            for sell in prices:
+                maxP = max(maxP, sell - minBuy)
+                minBuy = min(minBuy, sell)
+            return maxP
 - id: 124
   title: "Binary Tree Maximum Path Sum"
   difficulty: Hard
@@ -1391,24 +1407,24 @@
   time: "O(n)"
   space: "O(n)"
   approach: |
-    DFS returning max gain through one direction from each node. Track a global max which can
-    combine both left and right children. At each node, clamp left/right gains to 0 (skip
-    negative branches), compute val + left + right as a candidate, and return val + max(left, right)
-    as the gain upward.
+    DFS returning the maximum gain through one direction from each node. Track a global result initialized to root.val. At each node, clamp left and right gains to 0 (skip negative branches), update result with val + left + right (path through both children), and return val + max(left, right) as the upward gain.
   solution: |
-    def maxPathSum(root: Optional[TreeNode]) -> int:
-        res = [root.val]
+    class Solution:
+        def maxPathSum(self, root: Optional[TreeNode]) -> int:
+            res = [root.val]
 
-        def dfs(root):
-            if not root:
-                return 0
-            left_max = max(dfs(root.left), 0)
-            right_max = max(dfs(root.right), 0)
-            res[0] = max(res[0], root.val + left_max + right_max)
-            return root.val + max(left_max, right_max)
+            def dfs(root):
+                if not root:
+                    return 0
+                leftMax = dfs(root.left)
+                rightMax = dfs(root.right)
+                leftMax = max(leftMax, 0)
+                rightMax = max(rightMax, 0)
+                res[0] = max(res[0], root.val + leftMax + rightMax)
+                return root.val + max(leftMax, rightMax)
 
-        dfs(root)
-        return res[0]
+            dfs(root)
+            return res[0]
 - id: 125
   title: "Valid Palindrome"
   difficulty: Easy
@@ -1443,22 +1459,26 @@
   time: "O(n)"
   space: "O(1)"
   approach: |
-    Use two pointers starting at each end of the string. Skip non-alphanumeric characters on
-    both sides. Compare characters case-insensitively — if they differ at any point, return
-    False. If the pointers meet without a mismatch, return True.
+    Two pointers from each end. Skip non-alphanumeric characters on both sides. Compare characters case-insensitively. Return False on any mismatch; True if pointers cross without a mismatch.
   solution: |
-    def is_palindrome(s: str) -> bool:
-        l, r = 0, len(s) - 1
-        while l < r:
-            while l < r and not s[l].isalnum():
-                l += 1
-            while l < r and not s[r].isalnum():
-                r -= 1
-            if s[l].lower() != s[r].lower():
-                return False
-            l += 1
-            r -= 1
-        return True
+    class Solution:
+        def isPalindrome(self, s: str) -> bool:
+            l, r = 0, len(s) - 1
+
+            while l < r:
+                while l < r and not self.alphaNum(s[l]):
+                    l += 1
+                while r > l and not self.alphaNum(s[r]):
+                    r -= 1
+                if s[l].lower() != s[r].lower():
+                    return False
+                l, r = l + 1, r - 1
+            return True
+
+        def alphaNum(self, c):
+            return (ord('A') <= ord(c) <= ord('Z') or
+                    ord('a') <= ord(c) <= ord('z') or
+                    ord('0') <= ord(c) <= ord('9'))
 - id: 128
   title: "Longest Consecutive Sequence"
   difficulty: Medium
@@ -1504,21 +1524,20 @@
   time: "O(n)"
   space: "O(n)"
   approach: |
-    Put all numbers into a hash set for O(1) lookup.
-    For each number, check if (num - 1) is absent — that means it's the start of a sequence.
-    From each sequence start, extend right while consecutive numbers exist and track the max length.
-    Each number is visited at most twice overall, so the algorithm is O(n).
+    Put all numbers into a hash set for O(1) lookup. For each number where (num - 1) is absent (sequence start), count right while consecutive numbers exist and track the maximum length.
   solution: |
-    def longest_consecutive(nums: list[int]) -> int:
-        num_set = set(nums)
-        best = 0
-        for num in num_set:
-            if num - 1 not in num_set:
-                length = 1
-                while num + length in num_set:
-                    length += 1
-                best = max(best, length)
-        return best
+    class Solution:
+        def longestConsecutive(self, nums: List[int]) -> int:
+            numSet = set(nums)
+            longest = 0
+
+            for num in numSet:
+                if (num - 1) not in numSet:
+                    length = 1
+                    while (num + length) in numSet:
+                        length += 1
+                    longest = max(length, longest)
+            return longest
 - id: 138
   title: "Copy List With Random Pointer"
   difficulty: Medium
@@ -1556,22 +1575,26 @@
   time: "O(n)"
   space: "O(n)"
   approach: |
-    Use a hash map from original nodes to their new copies, pre-seeded with {None: None}.
-    First pass: create all new nodes. Second pass: assign next and random pointers using the
-    map to translate original references to new copies.
+    Two-pass hash map (original node → copy), pre-seeded with {None: None}. First pass: create all new nodes. Second pass: assign next and random pointers on each copy using the map to translate original references.
   solution: |
-    def copyRandomList(head: Optional[Node]) -> Optional[Node]:
-        old_to_new = {None: None}
-        cur = head
-        while cur:
-            old_to_new[cur] = Node(cur.val)
-            cur = cur.next
-        cur = head
-        while cur:
-            old_to_new[cur].next = old_to_new[cur.next]
-            old_to_new[cur].random = old_to_new[cur.random]
-            cur = cur.next
-        return old_to_new[head]
+    class Solution:
+        def copyRandomList(self, head: 'Optional[Node]') -> 'Optional[Node]':
+            oldToCopy = {None: None}
+
+            cur = head
+            while cur:
+                copy = Node(cur.val)
+                oldToCopy[cur] = copy
+                cur = cur.next
+
+            cur = head
+            while cur:
+                copy = oldToCopy[cur]
+                copy.next = oldToCopy[cur.next]
+                copy.random = oldToCopy[cur.random]
+                cur = cur.next
+
+            return oldToCopy[head]
 - id: 141
   title: "Linked List Cycle"
   difficulty: Easy
@@ -1612,18 +1635,18 @@
   time: "O(n)"
   space: "O(1)"
   approach: |
-    Floyd's cycle detection (tortoise and hare). Use slow and fast pointers both starting at
-    head. Slow advances one step; fast advances two. If they ever meet, a cycle exists. If fast
-    reaches null, there is no cycle.
+    Floyd's cycle detection: slow and fast pointers both start at head. Slow advances one step, fast advances two. If they meet, a cycle exists. If fast reaches null, there is no cycle.
   solution: |
-    def hasCycle(head: Optional[ListNode]) -> bool:
-        slow, fast = head, head
-        while fast and fast.next:
-            slow = slow.next
-            fast = fast.next.next
-            if slow == fast:
-                return True
-        return False
+    class Solution:
+        def hasCycle(self, head: Optional[ListNode]) -> bool:
+            slow, fast = head, head
+
+            while fast and fast.next:
+                slow = slow.next
+                fast = fast.next.next
+                if slow == fast:
+                    return True
+            return False
 - id: 143
   title: "Reorder List"
   difficulty: Medium
@@ -1654,29 +1677,29 @@
   time: "O(n)"
   space: "O(1)"
   approach: |
-    Three steps: (1) Find the middle of the list using slow/fast pointers. (2) Reverse the
-    second half in place. (3) Merge the two halves by alternating one node from each half
-    until the second half is exhausted.
+    Three steps: (1) find the middle using slow/fast pointers, (2) reverse the second half in place, (3) merge the two halves by alternating one node from each, until the second half is exhausted.
   solution: |
-    def reorderList(head: Optional[ListNode]) -> None:
-        slow, fast = head, head.next
-        while fast and fast.next:
-            slow = slow.next
-            fast = fast.next.next
-        second = slow.next
-        slow.next = None
-        prev = None
-        while second:
-            tmp = second.next
-            second.next = prev
-            prev = second
-            second = tmp
-        first, second = head, prev
-        while second:
-            tmp1, tmp2 = first.next, second.next
-            first.next = second
-            second.next = tmp1
-            first, second = tmp1, tmp2
+    class Solution:
+        def reorderList(self, head: Optional[ListNode]) -> None:
+            slow, fast = head, head.next
+            while fast and fast.next:
+                slow = slow.next
+                fast = fast.next.next
+
+            second = slow.next
+            prev = slow.next = None
+            while second:
+                tmp = second.next
+                second.next = prev
+                prev = second
+                second = tmp
+
+            first, second = head, prev
+            while second:
+                tmp1, tmp2 = first.next, second.next
+                first.next = second
+                second.next = tmp1
+                first, second = tmp1, tmp2
 - id: 146
   title: "LRU Cache"
   difficulty: Medium
@@ -1721,10 +1744,7 @@
   time: "O(1)"
   space: "O(n)"
   approach: |
-    Combine a hash map (key → node) with a doubly linked list ordered by recency. Maintain
-    dummy head (LRU end) and tail (MRU end) sentinels. On get or put, remove the node from its
-    current position and reinsert it just before the tail. On eviction, remove the node just
-    after the head (the least recently used item).
+    Combine a hash map (key → node) with a doubly linked list ordered by recency, using dummy sentinel nodes at head (LRU end) and tail (MRU end). On get or put, remove the node and reinsert just before the tail. On eviction, remove the node just after the head.
   solution: |
     class Node:
         def __init__(self, key, val):
@@ -1735,10 +1755,8 @@
         def __init__(self, capacity: int):
             self.cap = capacity
             self.cache = {}
-            self.left = Node(0, 0)
-            self.right = Node(0, 0)
-            self.left.next = self.right
-            self.right.prev = self.left
+            self.left, self.right = Node(0, 0), Node(0, 0)
+            self.left.next, self.right.prev = self.right, self.left
 
         def remove(self, node):
             prev, nxt = node.prev, node.next
@@ -1806,27 +1824,25 @@
   time: "O(n)"
   space: "O(n)"
   approach: |
-    Use a stack. For each token, if it is a number push it. If it is an operator, pop two
-    operands (b then a), apply the operation (a op b), and push the result. For division,
-    use int(a / b) to truncate toward zero. The final answer is the single remaining value
-    on the stack.
+    Stack-based: push numbers, pop two operands for each operator (first pop is right operand, second is left), compute, and push the result. For division use int(float(b) / a) to truncate toward zero.
   solution: |
-    def eval_rpn(tokens: list[str]) -> int:
-        stack = []
-        for t in tokens:
-            if t == '+':
-                stack.append(stack.pop() + stack.pop())
-            elif t == '-':
-                b, a = stack.pop(), stack.pop()
-                stack.append(a - b)
-            elif t == '*':
-                stack.append(stack.pop() * stack.pop())
-            elif t == '/':
-                b, a = stack.pop(), stack.pop()
-                stack.append(int(a / b))
-            else:
-                stack.append(int(t))
-        return stack[0]
+    class Solution:
+        def evalRPN(self, tokens: List[str]) -> int:
+            stack = []
+            for c in tokens:
+                if c == "+":
+                    stack.append(stack.pop() + stack.pop())
+                elif c == "-":
+                    a, b = stack.pop(), stack.pop()
+                    stack.append(b - a)
+                elif c == "*":
+                    stack.append(stack.pop() * stack.pop())
+                elif c == "/":
+                    a, b = stack.pop(), stack.pop()
+                    stack.append(int(float(b) / a))
+                else:
+                    stack.append(int(c))
+            return stack[0]
 - id: 153
   title: "Find Minimum In Rotated Sorted Array"
   difficulty: Medium
@@ -1870,26 +1886,18 @@
   time: "O(log n)"
   space: "O(1)"
   approach: |
-    Binary search tracking the minimum seen so far. If nums[l] < nums[r], the current
-    subarray is fully sorted so nums[l] is the local minimum — record it and break. Otherwise
-    compute mid, update res with nums[mid], and detect which half contains the rotation: if
-    nums[mid] >= nums[l], the left half is sorted and the minimum lies in the right half
-    (l = mid + 1); otherwise search the left half (r = mid - 1).
+    Binary search comparing mid to right. If nums[mid] < nums[r], the minimum is in [l, mid] so r = mid. Otherwise the minimum is in [mid+1, r] so l = mid+1. Continue until l == r, then return nums[l].
   solution: |
-    def find_min(nums: list[int]) -> int:
-        l, r = 0, len(nums) - 1
-        res = nums[0]
-        while l <= r:
-            if nums[l] < nums[r]:
-                res = min(res, nums[l])
-                break
-            mid = (l + r) // 2
-            res = min(res, nums[mid])
-            if nums[mid] >= nums[l]:
-                l = mid + 1
-            else:
-                r = mid - 1
-        return res
+    class Solution:
+        def findMin(self, nums: List[int]) -> int:
+            l, r = 0, len(nums) - 1
+            while l < r:
+                m = l + (r - l) // 2
+                if nums[m] < nums[r]:
+                    r = m
+                else:
+                    l = m + 1
+            return nums[l]
 - id: 155
   title: "Min Stack"
   difficulty: Medium
@@ -1930,30 +1938,27 @@
   time: "O(1)"
   space: "O(n)"
   approach: |
-    Use two stacks: one for values and one to track the running minimum. On each push,
-    append the new value to the main stack and append the minimum of the new value and the
-    current min (stack top) to the min stack. On pop, pop both stacks. getMin() returns the
-    top of the min stack.
+    Two synchronized stacks: one for values, one tracking the running minimum. On push, append val to the main stack and min(val, current_min) to the min stack. Pop both stacks simultaneously. getMin() returns the min stack's top.
   solution: |
     class MinStack:
         def __init__(self):
             self.stack = []
-            self.min_stack = []
+            self.minStack = []
 
         def push(self, val: int) -> None:
             self.stack.append(val)
-            min_val = min(val, self.min_stack[-1] if self.min_stack else val)
-            self.min_stack.append(min_val)
+            val = min(val, self.minStack[-1] if self.minStack else val)
+            self.minStack.append(val)
 
         def pop(self) -> None:
             self.stack.pop()
-            self.min_stack.pop()
+            self.minStack.pop()
 
         def top(self) -> int:
             return self.stack[-1]
 
         def getMin(self) -> int:
-            return self.min_stack[-1]
+            return self.minStack[-1]
 - id: 167
   title: "Two Sum II - Input Array Is Sorted"
   difficulty: Medium
@@ -1997,22 +2002,22 @@
   time: "O(n)"
   space: "O(1)"
   approach: |
-    Use two pointers starting at each end. If the sum equals target, return the 1-indexed
-    positions. If the sum is greater than target, move the right pointer left to decrease it.
-    If less, move the left pointer right to increase it. The sorted order guarantees
-    convergence to exactly one solution.
+    Two pointers at each end of the sorted array. If curSum > target move right left; if curSum < target move left right; if equal return [l+1, r+1] (1-indexed).
   solution: |
-    def two_sum(numbers: list[int], target: int) -> list[int]:
-        l, r = 0, len(numbers) - 1
-        while l < r:
-            s = numbers[l] + numbers[r]
-            if s == target:
-                return [l + 1, r + 1]
-            elif s > target:
-                r -= 1
-            else:
-                l += 1
-        return []
+    class Solution:
+        def twoSum(self, numbers: List[int], target: int) -> List[int]:
+            l, r = 0, len(numbers) - 1
+
+            while l < r:
+                curSum = numbers[l] + numbers[r]
+
+                if curSum > target:
+                    r -= 1
+                elif curSum < target:
+                    l += 1
+                else:
+                    return [l + 1, r + 1]
+            return []
 - id: 199
   title: "Binary Tree Right Side View"
   difficulty: Medium
@@ -2044,25 +2049,22 @@
   time: "O(n)"
   space: "O(n)"
   approach: |
-    BFS level by level. For each level, the last node processed is the rightmost node visible
-    from the right side. Append its value to the result.
+    DFS visiting right child before left. The first node encountered at each depth is the rightmost visible node — append its value to the result only when reaching a new depth level.
   solution: |
-    def rightSideView(root: Optional[TreeNode]) -> list[int]:
-        res = []
-        q = collections.deque()
-        if root:
-            q.append(root)
-        while q:
-            rightSide = None
-            for _ in range(len(q)):
-                node = q.popleft()
-                if node:
-                    rightSide = node
-                    q.append(node.left)
-                    q.append(node.right)
-            if rightSide:
-                res.append(rightSide.val)
-        return res
+    class Solution:
+        def rightSideView(self, root: Optional[TreeNode]) -> List[int]:
+            res = []
+
+            def dfs(node, depth):
+                if not node:
+                    return None
+                if depth == len(res):
+                    res.append(node.val)
+                dfs(node.right, depth + 1)
+                dfs(node.left, depth + 1)
+
+            dfs(root, 0)
+            return res
 - id: 206
   title: "Reverse Linked List"
   difficulty: Easy
@@ -2092,18 +2094,18 @@
   time: "O(n)"
   space: "O(1)"
   approach: |
-    Iterative: maintain prev (starts as None) and curr (starts at head). At each step, save
-    curr.next, point curr.next back to prev, then advance both pointers. When curr is None,
-    prev is the new head.
+    Iterative: maintain prev (None) and curr (head). At each step save curr.next, point curr.next to prev, then advance both pointers. When curr is None, prev is the new head.
   solution: |
-    def reverseList(head: Optional[ListNode]) -> Optional[ListNode]:
-        prev, curr = None, head
-        while curr:
-            next_node = curr.next
-            curr.next = prev
-            prev = curr
-            curr = next_node
-        return prev
+    class Solution:
+        def reverseList(self, head: ListNode) -> ListNode:
+            prev, curr = None, head
+
+            while curr:
+                temp = curr.next
+                curr.next = prev
+                prev = curr
+                curr = temp
+            return prev
 - id: 217
   title: "Contains Duplicate"
   difficulty: Easy
@@ -2172,15 +2174,16 @@
   time: "O(n)"
   space: "O(n)"
   approach: |
-    Recursively swap left and right children at each node, then recurse into both subtrees.
+    Recursive DFS: swap left and right children at each node, then recurse into both subtrees. Return the root.
   solution: |
-    def invertTree(root: Optional[TreeNode]) -> Optional[TreeNode]:
-        if not root:
-            return None
-        root.left, root.right = root.right, root.left
-        invertTree(root.left)
-        invertTree(root.right)
-        return root
+    class Solution:
+        def invertTree(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+            if not root:
+                return None
+            root.left, root.right = root.right, root.left
+            self.invertTree(root.left)
+            self.invertTree(root.right)
+            return root
 - id: 230
   title: "Kth Smallest Element In a Bst"
   difficulty: Medium
@@ -2202,24 +2205,31 @@
       - The number of nodes in the tree is n.
       - 1 <= k <= n <= 10^4
       - 0 <= Node.val <= 10^4
-  time: "O(n)"
-  space: "O(n)"
+  time: "O(h + k)"
+  space: "O(h)"
   approach: |
-    Iterative in-order traversal (left, root, right) using a stack, which visits BST nodes in
-    ascending order. Decrement k each time a node is popped; return the value when k reaches 0.
+    Recursive in-order DFS (left → node → right) with a nonlocal counter initialized to k. Decrement the counter for each visited node; when it reaches 0, record the current value and stop. In-order traversal visits BST nodes in ascending order.
   solution: |
-    def kthSmallest(root: Optional[TreeNode], k: int) -> int:
-        stack = []
-        curr = root
-        while True:
-            while curr:
-                stack.append(curr)
-                curr = curr.left
-            curr = stack.pop()
-            k -= 1
-            if k == 0:
-                return curr.val
-            curr = curr.right
+    class Solution:
+        def kthSmallest(self, root: Optional[TreeNode], k: int) -> int:
+            cnt = k
+            res = root.val
+
+            def dfs(node):
+                nonlocal cnt, res
+                if not node:
+                    return
+                dfs(node.left)
+                if cnt == 0:
+                    return
+                cnt -= 1
+                if cnt == 0:
+                    res = node.val
+                    return
+                dfs(node.right)
+
+            dfs(root)
+            return res
 - id: 235
   title: "Lowest Common Ancestor of a Binary Search Tree"
   difficulty: Medium
@@ -2249,20 +2259,22 @@
       - All Node.val are unique.
       - p != q
       - p and q will exist in the BST.
-  time: "O(n)"
+  time: "O(h)"
   space: "O(1)"
   approach: |
-    Use the BST property. If both p and q are less than the current node, go left. If both are
-    greater, go right. Otherwise the current node is the split point and thus the LCA.
+    Iterative BST traversal. If both p and q are greater than the current node, go right. If both are less, go left. Otherwise the current node is the split point and thus the LCA.
   solution: |
-    def lowestCommonAncestor(root: TreeNode, p: TreeNode, q: TreeNode) -> TreeNode:
-        while True:
-            if p.val < root.val and q.val < root.val:
-                root = root.left
-            elif p.val > root.val and q.val > root.val:
-                root = root.right
-            else:
-                return root
+    class Solution:
+        def lowestCommonAncestor(self, root: TreeNode, p: TreeNode, q: TreeNode) -> TreeNode:
+            cur = root
+
+            while cur:
+                if p.val > cur.val and q.val > cur.val:
+                    cur = cur.right
+                elif p.val < cur.val and q.val < cur.val:
+                    cur = cur.left
+                else:
+                    return cur
 - id: 238
   title: "Product of Array Except Self"
   difficulty: Medium
@@ -2294,26 +2306,23 @@
   time: "O(n)"
   space: "O(1)"
   approach: |
-    Two-pass prefix/suffix approach using the output array itself.
-    First pass (left → right): store the running prefix product before each index.
-    Second pass (right → left): multiply each position by the running suffix product.
-    No extra array needed — only two scalar accumulators.
+    Two-pass prefix/suffix using the output array itself. First pass (left to right): store the running prefix product before each index. Second pass (right to left): multiply each position by the running postfix product. Only two scalar accumulators needed beyond the output array.
   solution: |
-    def product_except_self(nums: list[int]) -> list[int]:
-        n = len(nums)
-        result = [1] * n
+    class Solution:
+        def productExceptSelf(self, nums: List[int]) -> List[int]:
+            res = [1] * (len(nums))
 
-        prefix = 1
-        for i in range(n):
-            result[i] = prefix
-            prefix *= nums[i]
+            prefix = 1
+            for i in range(len(nums)):
+                res[i] = prefix
+                prefix *= nums[i]
 
-        suffix = 1
-        for i in range(n - 1, -1, -1):
-            result[i] *= suffix
-            suffix *= nums[i]
+            postfix = 1
+            for i in range(len(nums) - 1, -1, -1):
+                res[i] *= postfix
+                postfix *= nums[i]
 
-        return result
+            return res
 - id: 239
   title: "Sliding Window Maximum"
   difficulty: Hard
@@ -2350,26 +2359,28 @@
   time: "O(n)"
   space: "O(n)"
   approach: |
-    Use a monotonic decreasing deque of indices. For each new element r, pop from the back
-    while the element there is smaller than nums[r] — those indices can never be the window
-    maximum. Remove the front index if it has left the window (index < l). Append r. Once the
-    window reaches size k, record nums[deque[0]] as the current maximum and advance l.
+    Monotonic decreasing deque of indices. For each new element, pop from the back while that element is smaller (it can never be a future window maximum). Remove the front if its index is outside the window. Once the window reaches size k, record nums[deque[0]] as the maximum and advance the left pointer.
   solution: |
-    def max_sliding_window(nums: list[int], k: int) -> list[int]:
-        output = []
-        q = deque()  # indices
-        l = r = 0
-        while r < len(nums):
-            while q and nums[q[-1]] < nums[r]:
-                q.pop()
-            q.append(r)
-            if l > q[0]:
-                q.popleft()
-            if (r + 1) >= k:
-                output.append(nums[q[0]])
-                l += 1
-            r += 1
-        return output
+    class Solution:
+        def maxSlidingWindow(self, nums: List[int], k: int) -> List[int]:
+            output = []
+            q = deque()  # indices
+            l = r = 0
+
+            while r < len(nums):
+                while q and nums[q[-1]] < nums[r]:
+                    q.pop()
+                q.append(r)
+
+                if l > q[0]:
+                    q.popleft()
+
+                if (r + 1) >= k:
+                    output.append(nums[q[0]])
+                    l += 1
+                r += 1
+
+            return output
 - id: 242
   title: "Valid Anagram"
   difficulty: Easy
@@ -2393,27 +2404,25 @@
 
     **Follow up:** What if the inputs contain Unicode characters? How would you adapt your
     solution to such a case?
-  time: "O(n)"
+  time: "O(n + m)"
   space: "O(1)"
   approach: |
-    If lengths differ, immediately return False.
-    Use a hash map to count character frequencies in s, then decrement for each character in t.
-    If any count goes negative or a character is missing, return False.
-    If all counts reach zero, the strings are anagrams.
+    Use a fixed 26-element array. Simultaneously iterate both strings: increment for each character in s, decrement for each in t. Anagrams produce all zeros; any non-zero value indicates a mismatch. Check lengths first.
   solution: |
-    def is_anagram(s: str, t: str) -> bool:
-        if len(s) != len(t):
-            return False
-        count = {}
-        for c in s:
-            count[c] = count.get(c, 0) + 1
-        for c in t:
-            if c not in count:
+    class Solution:
+        def isAnagram(self, s: str, t: str) -> bool:
+            if len(s) != len(t):
                 return False
-            count[c] -= 1
-            if count[c] == 0:
-                del count[c]
-        return len(count) == 0
+
+            count = [0] * 26
+            for i in range(len(s)):
+                count[ord(s[i]) - ord('a')] += 1
+                count[ord(t[i]) - ord('a')] -= 1
+
+            for val in count:
+                if val != 0:
+                    return False
+            return True
 - id: 271
   title: "Encode and Decode Strings"
   difficulty: Medium
@@ -2439,25 +2448,33 @@
       - 1 <= strs.length <= 200
       - 0 <= strs[i].length <= 200
       - strs[i] contains any possible characters out of 256 valid ASCII characters.
-  time: "O(n)"
-  space: "O(n)"
+  time: "O(m)"
+  space: "O(m + n)"
   approach: |
-    Use length-prefixed encoding: for each string, write its length, a '#' delimiter, then the
-    string content. During decoding, read up to the next '#' to get the length, then slice
-    exactly that many characters. This handles any character including '#' itself.
+    Length-prefix encoding: for each string, prepend its length and a '#' delimiter then the string content. During decoding, scan from i until '#' to get the length, then slice exactly that many characters as the original string.
   solution: |
-    def encode(strs: list[str]) -> str:
-        return "".join(f"{len(s)}#{s}" for s in strs)
+    class Solution:
+        def encode(self, strs: List[str]) -> str:
+            res = ""
+            for s in strs:
+                res += str(len(s)) + "#" + s
+            return res
 
-    def decode(s: str) -> list[str]:
-        result = []
-        i = 0
-        while i < len(s):
-            j = s.index("#", i)
-            length = int(s[i:j])
-            result.append(s[j + 1:j + 1 + length])
-            i = j + 1 + length
-        return result
+        def decode(self, s: str) -> List[str]:
+            res = []
+            i = 0
+
+            while i < len(s):
+                j = i
+                while s[j] != '#':
+                    j += 1
+                length = int(s[i:j])
+                i = j + 1
+                j = i + length
+                res.append(s[i:j])
+                i = j
+
+            return res
 - id: 287
   title: "Find The Duplicate Number"
   difficulty: Medium
@@ -2493,24 +2510,23 @@
   time: "O(n)"
   space: "O(1)"
   approach: |
-    Floyd's cycle detection: treat each value as a pointer to the next index. The duplicate
-    creates a cycle. Phase 1 — find the intersection of slow (1 step) and fast (2 steps)
-    pointers. Phase 2 — reset a second slow pointer to index 0 and advance both slow pointers
-    one step at a time; where they meet is the duplicate.
+    Floyd's cycle detection treating the array as a linked list where each value is a pointer to the next index. Phase 1: advance slow (1 step) and fast (2 steps) until they meet. Phase 2: reset slow2 to 0 and advance both slow pointers one step at a time — where they meet is the duplicate.
   solution: |
-    def findDuplicate(nums: list[int]) -> int:
-        slow, fast = 0, 0
-        while True:
-            slow = nums[slow]
-            fast = nums[nums[fast]]
-            if slow == fast:
-                break
-        slow2 = 0
-        while True:
-            slow = nums[slow]
-            slow2 = nums[slow2]
-            if slow == slow2:
-                return slow
+    class Solution:
+        def findDuplicate(self, nums: List[int]) -> int:
+            slow, fast = 0, 0
+            while True:
+                slow = nums[slow]
+                fast = nums[nums[fast]]
+                if slow == fast:
+                    break
+
+            slow2 = 0
+            while True:
+                slow = nums[slow]
+                slow2 = nums[slow2]
+                if slow == slow2:
+                    return slow
 - id: 297
   title: "Serialize And Deserialize Binary Tree"
   difficulty: Hard
@@ -2540,12 +2556,10 @@
   time: "O(n)"
   space: "O(n)"
   approach: |
-    Use preorder DFS for both operations. Serialize: record each node value, or "N" for None,
-    joined by commas. Deserialize: split by comma, use a shared index pointer and recursively
-    build the tree by consuming values left to right.
+    Preorder DFS for both operations. Serialize: record each node value or 'N' for null, joined by commas. Deserialize: split on commas, use a shared self.i index and recursively build the tree consuming values left to right.
   solution: |
     class Codec:
-        def serialize(self, root):
+        def serialize(self, root: Optional[TreeNode]) -> str:
             res = []
 
             def dfs(node):
@@ -2559,7 +2573,7 @@
             dfs(root)
             return ",".join(res)
 
-        def deserialize(self, data):
+        def deserialize(self, data: str) -> Optional[TreeNode]:
             vals = data.split(",")
             self.i = 0
 
@@ -2577,17 +2591,7 @@
 - id: 347
   title: "Top K Frequent Elements"
   difficulty: Medium
-  tags:
-    [
-      Array,
-      Hash Table,
-      Divide and Conquer,
-      Sorting,
-      Heap,
-      Bucket Sort,
-      Counting,
-      Quickselect,
-    ]
+  tags: [Array, Hash Table, Divide and Conquer, Sorting, Heap, Bucket Sort, Counting, Quickselect]
   verified: false
   description: |
     Given an integer array `nums` and an integer `k`, return the `k` most frequent elements.
@@ -2612,27 +2616,24 @@
   time: "O(n)"
   space: "O(n)"
   approach: |
-    Use bucket sort to achieve O(n). Count frequencies with a hash map, then create an array of
-    buckets indexed by frequency (max frequency is at most n). Fill each bucket with numbers
-    that have that frequency. Sweep buckets from highest to lowest, collecting elements until
-    k are found.
+    Bucket sort: count frequencies with a hash map, then create n+1 frequency buckets (index = frequency). Sweep from the highest bucket downward, collecting elements until k are found.
   solution: |
-    def top_k_frequent(nums: list[int], k: int) -> list[int]:
-        count = {}
-        for num in nums:
-            count[num] = count.get(num, 0) + 1
+    class Solution:
+        def topKFrequent(self, nums: List[int], k: int) -> List[int]:
+            count = {}
+            freq = [[] for i in range(len(nums) + 1)]
 
-        buckets = [[] for _ in range(len(nums) + 1)]
-        for num, freq in count.items():
-            buckets[freq].append(num)
+            for num in nums:
+                count[num] = 1 + count.get(num, 0)
+            for num, cnt in count.items():
+                freq[cnt].append(num)
 
-        result = []
-        for i in range(len(buckets) - 1, 0, -1):
-            for num in buckets[i]:
-                result.append(num)
-                if len(result) == k:
-                    return result
-        return result
+            res = []
+            for i in range(len(freq) - 1, 0, -1):
+                for num in freq[i]:
+                    res.append(num)
+                    if len(res) == k:
+                        return res
 - id: 424
   title: "Longest Repeating Character Replacement"
   difficulty: Medium
@@ -2663,26 +2664,27 @@
       - s consists of only uppercase English letters.
       - 0 <= k <= s.length
   time: "O(n)"
-  space: "O(1)"
+  space: "O(m)"
   approach: |
-    Sliding window with a character frequency map. A window is valid if
-    (window_size - max_freq) <= k, meaning we need at most k replacements to make all
-    characters the same. Expand the right pointer; if the window becomes invalid, shrink from
-    the left. Track the maximum valid window size.
+    Sliding window with a character frequency map. A window is valid when (window_size - max_freq) <= k. Expand right tracking max_freq; when invalid shrink from the left. Track the maximum valid window size seen.
   solution: |
-    def character_replacement(s: str, k: int) -> int:
-        count = {}
-        res = 0
-        l = 0
-        maxf = 0
-        for r in range(len(s)):
-            count[s[r]] = 1 + count.get(s[r], 0)
-            maxf = max(maxf, count[s[r]])
-            while (r - l + 1) - maxf > k:
-                count[s[l]] -= 1
-                l += 1
-            res = max(res, r - l + 1)
-        return res
+    class Solution:
+        def characterReplacement(self, s: str, k: int) -> int:
+            count = {}
+            res = 0
+
+            l = 0
+            maxf = 0
+            for r in range(len(s)):
+                count[s[r]] = 1 + count.get(s[r], 0)
+                maxf = max(maxf, count[s[r]])
+
+                while (r - l + 1) - maxf > k:
+                    count[s[l]] -= 1
+                    l += 1
+                res = max(res, r - l + 1)
+
+            return res
 - id: 543
   title: "Diameter of Binary Tree"
   difficulty: Easy
@@ -2711,24 +2713,26 @@
   time: "O(n)"
   space: "O(n)"
   approach: |
-    DFS returning the height of each subtree. At each node, compute left_height + right_height
-    as the candidate diameter through that node and update the global max. Return
-    1 + max(left, right) as the height.
+    DFS returning the height of each subtree. At each node, update the global max with left_height + right_height (the diameter through this node). Return 1 + max(left, right) as the height.
   solution: |
-    def diameterOfBinaryTree(root: Optional[TreeNode]) -> int:
-        res = 0
+    class Solution:
+        def diameterOfBinaryTree(self, root: Optional[TreeNode]) -> int:
+            res = 0
 
-        def dfs(root):
-            nonlocal res
-            if not root:
-                return 0
-            left = dfs(root.left)
-            right = dfs(root.right)
-            res = max(res, left + right)
-            return 1 + max(left, right)
+            def dfs(root):
+                nonlocal res
 
-        dfs(root)
-        return res
+                if not root:
+                    return 0
+
+                left = dfs(root.left)
+                right = dfs(root.right)
+                res = max(res, left + right)
+
+                return 1 + max(left, right)
+
+            dfs(root)
+            return res
 - id: 567
   title: "Permutation In String"
   difficulty: Medium
@@ -2755,37 +2759,42 @@
   time: "O(n)"
   space: "O(1)"
   approach: |
-    Use two character-count arrays of size 26 (one for s1, one for the current window in s2).
-    Slide a fixed window of length len(s1) through s2. Track a `matches` counter for how many
-    of the 26 positions have equal counts. Update `matches` when adding the entering character
-    and removing the leaving character. Return True if matches == 26 at any position.
+    Fixed-size sliding window of length len(s1). Maintain two 26-element frequency arrays and a matches counter. Initialize both arrays and count initial matches. Slide rightward: update the entering and leaving character counts and adjust matches accordingly. Return True when matches == 26.
   solution: |
-    def check_inclusion(s1: str, s2: str) -> bool:
-        if len(s1) > len(s2):
-            return False
-        count1, count2 = [0] * 26, [0] * 26
-        for i in range(len(s1)):
-            count1[ord(s1[i]) - ord('a')] += 1
-            count2[ord(s2[i]) - ord('a')] += 1
-        matches = sum(1 for i in range(26) if count1[i] == count2[i])
-        l = 0
-        for r in range(len(s1), len(s2)):
-            if matches == 26:
-                return True
-            idx = ord(s2[r]) - ord('a')
-            count2[idx] += 1
-            if count1[idx] == count2[idx]:
-                matches += 1
-            elif count1[idx] + 1 == count2[idx]:
-                matches -= 1
-            idx = ord(s2[l]) - ord('a')
-            count2[idx] -= 1
-            if count1[idx] == count2[idx]:
-                matches += 1
-            elif count1[idx] - 1 == count2[idx]:
-                matches -= 1
-            l += 1
-        return matches == 26
+    class Solution:
+        def checkInclusion(self, s1: str, s2: str) -> bool:
+            if len(s1) > len(s2):
+                return False
+
+            s1Count, s2Count = [0] * 26, [0] * 26
+            for i in range(len(s1)):
+                s1Count[ord(s1[i]) - ord('a')] += 1
+                s2Count[ord(s2[i]) - ord('a')] += 1
+
+            matches = 0
+            for i in range(26):
+                matches += (1 if s1Count[i] == s2Count[i] else 0)
+
+            l = 0
+            for r in range(len(s1), len(s2)):
+                if matches == 26:
+                    return True
+
+                index = ord(s2[r]) - ord('a')
+                s2Count[index] += 1
+                if s1Count[index] == s2Count[index]:
+                    matches += 1
+                elif s1Count[index] + 1 == s2Count[index]:
+                    matches -= 1
+
+                index = ord(s2[l]) - ord('a')
+                s2Count[index] -= 1
+                if s1Count[index] == s2Count[index]:
+                    matches += 1
+                elif s1Count[index] - 1 == s2Count[index]:
+                    matches -= 1
+                l += 1
+            return matches == 26
 - id: 572
   title: "Subtree of Another Tree"
   difficulty: Easy
@@ -2814,24 +2823,27 @@
   time: "O(m * n)"
   space: "O(m + n)"
   approach: |
-    For each node in the main tree, check if the subtree rooted there matches subRoot using a
-    helper isSameTree function. Return True if any node matches.
+    For each node in root, check whether the subtree rooted there is identical to subRoot using a helper sameTree function. Return True if any match is found. sameTree recursively checks: both null → True; matching values with equal subtrees → True; otherwise False.
   solution: |
-    def isSubtree(root: Optional[TreeNode], subRoot: Optional[TreeNode]) -> bool:
-        if not subRoot:
-            return True
-        if not root:
-            return False
-        if isSameTree(root, subRoot):
-            return True
-        return isSubtree(root.left, subRoot) or isSubtree(root.right, subRoot)
+    class Solution:
+        def isSubtree(self, root: Optional[TreeNode], subRoot: Optional[TreeNode]) -> bool:
+            if not subRoot:
+                return True
+            if not root:
+                return False
 
-    def isSameTree(s: Optional[TreeNode], t: Optional[TreeNode]) -> bool:
-        if not s and not t:
-            return True
-        if s and t and s.val == t.val:
-            return isSameTree(s.left, t.left) and isSameTree(s.right, t.right)
-        return False
+            if self.sameTree(root, subRoot):
+                return True
+            return (self.isSubtree(root.left, subRoot) or
+                    self.isSubtree(root.right, subRoot))
+
+        def sameTree(self, root: Optional[TreeNode], subRoot: Optional[TreeNode]) -> bool:
+            if not root and not subRoot:
+                return True
+            if root and subRoot and root.val == subRoot.val:
+                return (self.sameTree(root.left, subRoot.left) and
+                        self.sameTree(root.right, subRoot.right))
+            return False
 - id: 704
   title: "Binary Search"
   difficulty: Easy
@@ -2862,22 +2874,22 @@
   time: "O(log n)"
   space: "O(1)"
   approach: |
-    Initialize l = 0 and r = len(nums) - 1. At each step compute mid = (l + r) // 2. If
-    nums[mid] == target return mid. If nums[mid] < target, the answer must be to the right
-    (l = mid + 1). Otherwise it must be to the left (r = mid - 1). Return -1 if the loop
-    ends without finding target.
+    Classic binary search: l = 0, r = len(nums) - 1. Compute mid = l + (r - l) // 2. If nums[mid] == target return mid; if less, l = mid + 1; if greater, r = mid - 1. Return -1 if the loop ends without finding target.
   solution: |
-    def search(nums: list[int], target: int) -> int:
-        l, r = 0, len(nums) - 1
-        while l <= r:
-            mid = (l + r) // 2
-            if nums[mid] == target:
-                return mid
-            elif nums[mid] < target:
-                l = mid + 1
-            else:
-                r = mid - 1
-        return -1
+    class Solution:
+        def search(self, nums: List[int], target: int) -> int:
+            l, r = 0, len(nums) - 1
+
+            while l <= r:
+                m = l + ((r - l) // 2)
+
+                if nums[m] > target:
+                    r = m - 1
+                elif nums[m] < target:
+                    l = m + 1
+                else:
+                    return m
+            return -1
 - id: 739
   title: "Daily Temperatures"
   difficulty: Medium
@@ -2907,20 +2919,19 @@
   time: "O(n)"
   space: "O(n)"
   approach: |
-    Use a monotonic decreasing stack of (temperature, index) pairs. For each day, while the
-    stack is non-empty and the current temperature is warmer than the top, pop and set the
-    answer for the popped index to (current index - popped index). Push the current day.
-    Entries remaining in the stack never found a warmer day, so their answer stays 0.
+    Monotonic decreasing stack of (temperature, index) pairs. For each day, pop all stack entries with a lower temperature — the wait for each is current_index - popped_index. Push the current day. Entries remaining in the stack have no warmer future day and keep their default 0.
   solution: |
-    def daily_temperatures(temperatures: list[int]) -> list[int]:
-        res = [0] * len(temperatures)
-        stack = []  # (temp, index)
-        for i, t in enumerate(temperatures):
-            while stack and t > stack[-1][0]:
-                _, j = stack.pop()
-                res[j] = i - j
-            stack.append((t, i))
-        return res
+    class Solution:
+        def dailyTemperatures(self, temperatures: List[int]) -> List[int]:
+            res = [0] * len(temperatures)
+            stack = []  # pair: [temp, index]
+
+            for i, t in enumerate(temperatures):
+                while stack and t > stack[-1][0]:
+                    stackT, stackInd = stack.pop()
+                    res[stackInd] = i - stackInd
+                stack.append((t, i))
+            return res
 - id: 853
   title: "Car Fleet"
   difficulty: Medium
@@ -2976,19 +2987,22 @@
   time: "O(n log n)"
   space: "O(n)"
   approach: |
-    Sort cars by starting position in descending order. Compute each car's time to reach the
-    target. Use a stack: if the current car's time is greater than the top of the stack, it
-    cannot catch the car ahead and forms a new fleet — push it. Otherwise it joins the fleet
-    ahead and is ignored. The stack size at the end is the number of fleets.
+    Sort cars by position descending. Track prevTime (time of the leading fleet). For each car, compute currTime = (target - pos) / speed. If currTime > prevTime the car can't catch the fleet ahead — it forms a new fleet and becomes the new prevTime. Count the number of fleets.
   solution: |
-    def car_fleet(target: int, position: list[int], speed: list[int]) -> int:
-        pairs = sorted(zip(position, speed), reverse=True)
-        stack = []
-        for pos, spd in pairs:
-            time = (target - pos) / spd
-            if not stack or time > stack[-1]:
-                stack.append(time)
-        return len(stack)
+    class Solution:
+        def carFleet(self, target: int, position: List[int], speed: List[int]) -> int:
+            pair = [(p, s) for p, s in zip(position, speed)]
+            pair.sort(reverse=True)
+
+            fleets = 1
+            prevTime = (target - pair[0][0]) / pair[0][1]
+            for i in range(1, len(pair)):
+                currCar = pair[i]
+                currTime = (target - currCar[0]) / currCar[1]
+                if currTime > prevTime:
+                    fleets += 1
+                    prevTime = currTime
+            return fleets
 - id: 875
   title: "Koko Eating Bananas"
   difficulty: Medium
@@ -3023,26 +3037,30 @@
       - 1 <= piles.length <= 10^4
       - piles.length <= h <= 10^9
       - 1 <= piles[i] <= 10^9
-  time: "O(log(max(p)) * n)"
+  time: "O(n log m)"
   space: "O(1)"
   approach: |
-    Binary search on eating speed from 1 to max(piles). For each candidate speed k, compute
-    total hours needed as sum of ceil(pile / k) for each pile (using integer arithmetic:
-    (pile + k - 1) // k). If total hours <= h the speed is feasible — record it and search
-    lower (r = k - 1). Otherwise search higher (l = k + 1).
+    Binary search on eating speed from 1 to max(piles). For each candidate speed k, compute total hours = sum of ceil(p / k) for each pile. If total <= h, try a lower speed (r = k - 1) and record k as a candidate. Otherwise try higher (l = k + 1).
   solution: |
-    def min_eating_speed(piles: list[int], h: int) -> int:
-        l, r = 1, max(piles)
-        res = r
-        while l <= r:
-            k = (l + r) // 2
-            hours = sum((p + k - 1) // k for p in piles)
-            if hours <= h:
-                res = k
-                r = k - 1
-            else:
-                l = k + 1
-        return res
+    class Solution:
+        def minEatingSpeed(self, piles: List[int], h: int) -> int:
+            l, r = 1, max(piles)
+            res = r
+
+            while l <= r:
+                k = (l + r) // 2
+
+                totalTime = 0
+                for p in piles:
+                    totalTime += math.ceil(float(p) / k)
+
+                if totalTime <= h:
+                    res = k
+                    r = k - 1
+                else:
+                    l = k + 1
+
+            return res
 - id: 981
   title: "Time Based Key Value Store"
   difficulty: Medium
@@ -3082,33 +3100,29 @@
       - All the timestamps timestamp of set are strictly increasing.
       - At most 2 * 10^5 calls will be made to set and get.
   time: "O(1) for set, O(log n) for get"
-  space: "O(n)"
+  space: "O(m * n)"
   approach: |
-    Use a hash map where each key maps to a list of (timestamp, value) pairs stored in
-    chronological order. For set, append the new pair to the list. For get, binary search the
-    list for the largest timestamp <= the query timestamp and return its value, or "" if none
-    exists.
+    Hash map where each key maps to a list of [value, timestamp] pairs in chronological order (naturally sorted since timestamps are strictly increasing). For set: append in O(1). For get: binary search for the largest timestamp <= query timestamp and return the corresponding value, or '' if none.
   solution: |
     class TimeMap:
         def __init__(self):
-            self.store = {}
+            self.keyStore = {}  # key : list of [val, timestamp]
 
         def set(self, key: str, value: str, timestamp: int) -> None:
-            if key not in self.store:
-                self.store[key] = []
-            self.store[key].append((timestamp, value))
+            if key not in self.keyStore:
+                self.keyStore[key] = []
+            self.keyStore[key].append([value, timestamp])
 
         def get(self, key: str, timestamp: int) -> str:
-            res = ""
-            values = self.store.get(key, [])
+            res, values = "", self.keyStore.get(key, [])
             l, r = 0, len(values) - 1
             while l <= r:
-                mid = (l + r) // 2
-                if values[mid][0] <= timestamp:
-                    res = values[mid][1]
-                    l = mid + 1
+                m = (l + r) // 2
+                if values[m][1] <= timestamp:
+                    res = values[m][0]
+                    l = m + 1
                 else:
-                    r = mid - 1
+                    r = m - 1
             return res
 - id: 1448
   title: "Count Good Nodes In Binary Tree"
@@ -3143,17 +3157,17 @@
   time: "O(n)"
   space: "O(n)"
   approach: |
-    DFS passing the maximum value seen along the path from root to the current node. A node is
-    good if its value >= that maximum. Count good nodes recursively.
+    DFS passing the maximum value seen along the current path from root. A node is good if its value >= the path maximum. Count good nodes recursively while updating the running maximum for child calls.
   solution: |
-    def goodNodes(root: TreeNode) -> int:
-        def dfs(node, maxVal):
-            if not node:
-                return 0
-            res = 1 if node.val >= maxVal else 0
-            maxVal = max(maxVal, node.val)
-            res += dfs(node.left, maxVal)
-            res += dfs(node.right, maxVal)
-            return res
+    class Solution:
+        def goodNodes(self, root: TreeNode) -> int:
+            def dfs(node, maxVal):
+                if not node:
+                    return 0
+                res = 1 if node.val >= maxVal else 0
+                maxVal = max(maxVal, node.val)
+                res += dfs(node.left, maxVal)
+                res += dfs(node.right, maxVal)
+                return res
 
-        return dfs(root, root.val)
+            return dfs(root, root.val)

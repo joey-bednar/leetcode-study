@@ -19,6 +19,32 @@ This is a terminal flashcard CLI for practicing LeetCode problems. It has two mo
 
 ## Adding problems
 
+### Fetching problem data from neetcode.io
+
+Before writing any problem entry, WebFetch the live data from neetcode.io:
+
+    https://neetcode.io/solutions/<slug>
+
+`<slug>` is the problem title lowercased, spaces replaced with hyphens, non-alphanumeric
+characters (except hyphens) removed. Examples:
+- "Two Sum" → `two-sum`
+- "LRU Cache" → `lru-cache`
+- "Valid Parentheses" → `valid-parentheses`
+
+From the fetched page, extract:
+- Problem title and LeetCode ID
+- Difficulty (Easy / Medium / Hard)
+- Tags / topic categories
+- Full problem description (all examples and constraints)
+- "Recommended Time & Space Complexity" for `time` and `space` fields
+- The approach explanation (plain text, no code) for `approach`
+- The optimal Python solution for `solution`
+
+If the URL returns no useful content, ask the user for the exact neetcode.io URL before
+proceeding.
+
+### Schema
+
 Each entry in `problems.yaml` follows this schema:
 
 ```yaml
@@ -51,7 +77,7 @@ Follow these guidelines exactly when adding new problems. If you are unsure, ask
 - The `title` field must match the title of the LeetCode problem.
 - The `difficulty` field must match the difficulty rating (Easy/Medium/Hard) of the LeetCode problem exactly.
 - The `description` should be identical to the description of the LeetCode problem with minor tweaks as necessary to ensure the markdown renders properly.
-- The `time` and `space` fields are the time complexity and space complexity (respectively) of the optimal solution. Use the "Recommended Time & Space Complexity" from neetcode.io in your training data to populate these fields.
+- The `time` and `space` fields are the time complexity and space complexity (respectively) of the optimal solution. Use the "Recommended Time & Space Complexity" fetched live from neetcode.io (per the instructions above) to populate these fields.
 - The `approach` is a summary of the approach to a solution. This should not contain code.
 - The `solution` should be python code that implements the optimal solution.
 - Do not add `easy_time`, `easy_space`, `easy_approach`, and `easy_solution` fields. Those will be manually added and populated later if applicable.
