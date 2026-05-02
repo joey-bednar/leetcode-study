@@ -1,27 +1,3 @@
-# Heap
-Kth Largest Element In a Stream
-Last Stone Weight
-K Closest Points to Origin
-Kth Largest Element In An Array
-Task Scheduler
-Design Twitter
-Find Median From Data Stream
-
-# Graphs
-Number of Islands
-Max Area of Island
-Clone Graph
-Walls And Gates
-Rotting Oranges
-Pacific Atlantic Water Flow
-Surrounded Regions
-Course Schedule
-Course Schedule II
-Graph Valid Tree
-Number of Connected Components In An Undirected Graph
-Redundant Connection
-Word Ladder
-
 # Intervals
 Insert Interval
 Merge Intervals

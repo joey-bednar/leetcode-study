@@ -2027,6 +2027,79 @@
             return (ord('A') <= ord(c) <= ord('Z') or
                     ord('a') <= ord(c) <= ord('z') or
                     ord('0') <= ord(c) <= ord('9'))
+- id: 127
+  title: "Word Ladder"
+  difficulty: Hard
+  tags: [Hash Table, String, Breadth-First Search]
+  verified: false
+  description: |
+    Given two words, `beginWord` and `endWord`, and a dictionary `wordList`, return the number
+    of words in the **shortest transformation sequence** from `beginWord` to `endWord`, or `0`
+    if no such sequence exists.
+
+    In a transformation sequence, each word differs from the previous by exactly one letter, and
+    every intermediate word must exist in `wordList`.
+
+    **Example 1:**
+      Input:  beginWord = "hit", endWord = "cog",
+              wordList = ["hot","dot","dog","lot","log","cog"]
+      Output: 5
+      Explanation: "hit" → "hot" → "dot" → "dog" → "cog"
+
+    **Example 2:**
+      Input:  beginWord = "hit", endWord = "cog",
+              wordList = ["hot","dot","dog","lot","log"]
+      Output: 0
+      Explanation: "cog" is not in wordList.
+
+    **Constraints:**
+      - 1 <= beginWord.length <= 10
+      - endWord.length == beginWord.length
+      - 1 <= wordList.length <= 5000
+      - wordList[i].length == beginWord.length
+      - beginWord, endWord, and wordList[i] consist of lowercase English letters.
+      - beginWord != endWord
+      - All words in wordList are unique.
+  time: "O(m^2 * n)"
+  space: "O(m^2 * n)"
+  approach: |
+    Model as BFS on an unweighted graph where each word is a node and edges connect words
+    differing by one character. Build a pattern-to-words map by replacing each character with
+    "*" — words sharing a pattern are neighbors. Process level by level, marking words visited
+    when enqueued. Return the level count when endWord is reached, or 0 if the queue empties.
+  solution: |
+    class Solution:
+        def ladderLength(self, beginWord: str, endWord: str, wordList: List[str]) -> int:
+            if endWord not in wordList:
+                return 0
+
+            nei = collections.defaultdict(list)
+            wordList.append(beginWord)
+
+            for word in wordList:
+                for j in range(len(word)):
+                    pattern = word[:j] + "*" + word[j + 1:]
+                    nei[pattern].append(word)
+
+            visit = set([beginWord])
+            q = deque([beginWord])
+            res = 1
+
+            while q:
+                for i in range(len(q)):
+                    word = q.popleft()
+                    if word == endWord:
+                        return res
+
+                    for j in range(len(word)):
+                        pattern = word[:j] + "*" + word[j + 1:]
+                        for neiWord in nei[pattern]:
+                            if neiWord not in visit:
+                                visit.add(neiWord)
+                                q.append(neiWord)
+                res += 1
+
+            return 0
 - id: 128
   title: "Longest Consecutive Sequence"
   difficulty: Medium
@@ -2086,6 +2159,131 @@
                         length += 1
                     longest = max(length, longest)
             return longest
+- id: 130
+  title: "Surrounded Regions"
+  difficulty: Medium
+  tags: [Array, Depth-First Search, Breadth-First Search, Union Find, Matrix]
+  verified: false
+  description: |
+    Given an `m x n` matrix `board` containing `'X'` and `'O'`, capture all regions that are
+    **4-directionally surrounded** by `'X'`.
+
+    A region is **captured** by flipping all `'O'`s into `'X'`s in that surrounded region.
+    `'O'`s on the border and `'O'`s connected to a border `'O'` are not captured.
+
+    **Example 1:**
+      Input:  board =
+        [["X","X","X","X"],
+         ["X","O","O","X"],
+         ["X","X","O","X"],
+         ["X","O","X","X"]]
+      Output:
+        [["X","X","X","X"],
+         ["X","X","X","X"],
+         ["X","X","X","X"],
+         ["X","O","X","X"]]
+      Explanation: The bottom-left 'O' is on the border, so it is not captured.
+
+    **Constraints:**
+      - m == board.length
+      - n == board[i].length
+      - 1 <= m, n <= 200
+      - board[i][j] is 'X' or 'O'.
+  time: "O(m * n)"
+  space: "O(m * n)"
+  approach: |
+    Reverse the problem: instead of finding surrounded regions, mark all border-connected 'O'
+    cells as safe. DFS from every border 'O', temporarily marking reachable cells with 'T'.
+    Then scan the board: convert remaining 'O' cells to 'X' (they are surrounded), and restore
+    'T' cells back to 'O'.
+  solution: |
+    class Solution:
+        def solve(self, board: List[List[str]]) -> None:
+            ROWS, COLS = len(board), len(board[0])
+
+            def capture(r, c):
+                if (r < 0 or c < 0 or r == ROWS or
+                    c == COLS or board[r][c] != "O"):
+                    return
+                board[r][c] = "T"
+                capture(r + 1, c)
+                capture(r - 1, c)
+                capture(r, c + 1)
+                capture(r, c - 1)
+
+            for r in range(ROWS):
+                if board[r][0] == "O":
+                    capture(r, 0)
+                if board[r][COLS - 1] == "O":
+                    capture(r, COLS - 1)
+
+            for c in range(COLS):
+                if board[0][c] == "O":
+                    capture(0, c)
+                if board[ROWS - 1][c] == "O":
+                    capture(ROWS - 1, c)
+
+            for r in range(ROWS):
+                for c in range(COLS):
+                    if board[r][c] == "O":
+                        board[r][c] = "X"
+                    elif board[r][c] == "T":
+                        board[r][c] = "O"
+- id: 133
+  title: "Clone Graph"
+  difficulty: Medium
+  tags: [Hash Table, Depth-First Search, Breadth-First Search, Graph]
+  verified: false
+  description: |
+    Given a reference of a node in a **connected** undirected graph, return a **deep copy**
+    (clone) of the graph.
+
+    Each node contains an integer value and a list of its neighbors. Nodes are numbered from
+    `1` to `n`, and the input node is always the node with value `1`.
+
+    **Example 1:**
+      Input:  adjList = [[2,4],[1,3],[2,4],[1,3]]
+      Output: [[2,4],[1,3],[2,4],[1,3]]
+
+    **Example 2:**
+      Input:  adjList = [[]]
+      Output: [[]]
+      Explanation: The graph has one node with no neighbors.
+
+    **Example 3:**
+      Input:  adjList = []
+      Output: []
+      Explanation: The graph is empty.
+
+    **Constraints:**
+      - 0 <= n <= 100
+      - 1 <= Node.val <= 100
+      - Node.val is unique for each node.
+      - There are no repeated edges and no self-loops.
+      - The graph is connected and all nodes can be visited starting from the given node.
+  time: "O(V + E)"
+  space: "O(V)"
+  approach: |
+    Use DFS with a hash map from original node to cloned node to handle cycles. When visiting a
+    node already in the map, return its existing clone instead of creating a duplicate. Create
+    each clone immediately upon first visit, then recursively build its neighbors list. Return
+    None for a null input.
+  solution: |
+    class Solution:
+        def cloneGraph(self, node: Optional['Node']) -> Optional['Node']:
+            oldToNew = {}
+
+            def dfs(node):
+                if node in oldToNew:
+                    return oldToNew[node]
+
+                copy = Node(node.val)
+                oldToNew[node] = copy
+                for nei in node.neighbors:
+                    copy.neighbors.append(dfs(nei))
+                return copy
+
+            return dfs(node) if node else None
 - id: 138
   title: "Copy List With Random Pointer"
   difficulty: Medium
@@ -2613,6 +2811,69 @@
 
             dfs(root, 0)
             return res
+- id: 200
+  title: "Number of Islands"
+  difficulty: Medium
+  tags: [Array, Depth-First Search, Breadth-First Search, Union Find, Matrix]
+  verified: false
+  description: |
+    Given an `m x n` 2D binary grid `grid` which represents a map of `'1'`s (land) and `'0'`s
+    (water), return the number of islands.
+
+    An **island** is surrounded by water and is formed by connecting adjacent lands horizontally
+    or vertically. You may assume all four edges of the grid are surrounded by water.
+
+    **Example 1:**
+      Input:  grid =
+        [["1","1","1","1","0"],
+         ["1","1","0","1","0"],
+         ["1","1","0","0","0"],
+         ["0","0","0","0","0"]]
+      Output: 1
+
+    **Example 2:**
+      Input:  grid =
+        [["1","1","0","0","0"],
+         ["1","1","0","0","0"],
+         ["0","0","1","0","0"],
+         ["0","0","0","1","1"]]
+      Output: 3
+
+    **Constraints:**
+      - m == grid.length
+      - n == grid[i].length
+      - 1 <= m, n <= 300
+      - grid[i][j] is '0' or '1'.
+  time: "O(m * n)"
+  space: "O(m * n)"
+  approach: |
+    Use DFS to explore connected land cells. Iterate over every cell; when encountering a '1',
+    run DFS to visit all connected land cells in that island, marking each as '0' to avoid
+    revisiting. Each DFS call corresponds to one island. Increment the counter each time a new
+    DFS is started.
+  solution: |
+    class Solution:
+        def numIslands(self, grid: List[List[str]]) -> int:
+            ROWS, COLS = len(grid), len(grid[0])
+            islands = 0
+
+            def dfs(r, c):
+                if (r < 0 or c < 0 or r >= ROWS or
+                    c >= COLS or grid[r][c] == "0"):
+                    return
+
+                grid[r][c] = "0"
+                directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]
+                for dr, dc in directions:
+                    dfs(r + dr, c + dc)
+
+            for r in range(ROWS):
+                for c in range(COLS):
+                    if grid[r][c] == "1":
+                        dfs(r, c)
+                        islands += 1
+
+            return islands
 - id: 206
   title: "Reverse Linked List"
   difficulty: Easy
@@ -2654,6 +2915,69 @@
                 prev = curr
                 curr = temp
             return prev
+- id: 207
+  title: "Course Schedule"
+  difficulty: Medium
+  tags: [Depth-First Search, Breadth-First Search, Graph, Topological Sort]
+  verified: false
+  description: |
+    There are a total of `numCourses` courses you have to take, labeled from `0` to
+    `numCourses - 1`. You are given an array `prerequisites` where `prerequisites[i] = [ai, bi]`
+    indicates that you **must** take course `bi` first if you want to take course `ai`.
+
+    Return `true` if you can finish all courses. Otherwise, return `false`.
+
+    **Example 1:**
+      Input:  numCourses = 2, prerequisites = [[1,0]]
+      Output: true
+      Explanation: Take course 0 first, then course 1.
+
+    **Example 2:**
+      Input:  numCourses = 2, prerequisites = [[1,0],[0,1]]
+      Output: false
+      Explanation: To take course 1 you need course 0, and vice versa.
+
+    **Constraints:**
+      - 1 <= numCourses <= 2000
+      - 0 <= prerequisites.length <= numCourses * (numCourses - 1)
+      - prerequisites[i].length == 2
+      - 0 <= ai, bi < numCourses
+      - ai != bi
+      - All prerequisite pairs are distinct.
+  time: "O(V + E)"
+  space: "O(V + E)"
+  approach: |
+    The problem reduces to cycle detection in a directed graph. Build an adjacency list mapping
+    each course to its prerequisites. Use DFS with a "currently visiting" set to detect back
+    edges (cycles). If a course is revisited during the current path, a cycle exists. After
+    fully processing a course, clear its prerequisite list to avoid redundant future checks.
+  solution: |
+    class Solution:
+        def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
+            preMap = {i: [] for i in range(numCourses)}
+            for crs, pre in prerequisites:
+                preMap[crs].append(pre)
+
+            visiting = set()
+
+            def dfs(crs):
+                if crs in visiting:
+                    return False
+                if preMap[crs] == []:
+                    return True
+
+                visiting.add(crs)
+                for pre in preMap[crs]:
+                    if not dfs(pre):
+                        return False
+                visiting.remove(crs)
+                preMap[crs] = []
+                return True
+
+            for c in range(numCourses):
+                if not dfs(c):
+                    return False
+            return True
 - id: 208
   title: "Implement Trie (Prefix Tree)"
   difficulty: Medium
@@ -2737,6 +3061,76 @@
                     return False
                 cur = cur.children[c]
             return True
+- id: 210
+  title: "Course Schedule II"
+  difficulty: Medium
+  tags: [Depth-First Search, Breadth-First Search, Graph, Topological Sort]
+  verified: false
+  description: |
+    There are a total of `numCourses` courses you have to take, labeled from `0` to
+    `numCourses - 1`. You are given an array `prerequisites` where `prerequisites[i] = [ai, bi]`
+    indicates that you **must** take course `bi` first if you want to take course `ai`.
+
+    Return the ordering of courses you should take to finish all courses. If there are many
+    valid answers, return **any** of them. If it is impossible to finish all courses, return an
+    **empty array**.
+
+    **Example 1:**
+      Input:  numCourses = 2, prerequisites = [[1,0]]
+      Output: [0,1]
+
+    **Example 2:**
+      Input:  numCourses = 4, prerequisites = [[1,0],[2,0],[3,1],[3,2]]
+      Output: [0,2,1,3]
+
+    **Example 3:**
+      Input:  numCourses = 1, prerequisites = []
+      Output: [0]
+
+    **Constraints:**
+      - 1 <= numCourses <= 2000
+      - 0 <= prerequisites.length <= numCourses * (numCourses - 1)
+      - prerequisites[i].length == 2
+      - 0 <= ai, bi < numCourses
+      - ai != bi
+      - All prerequisite pairs are distinct.
+  time: "O(V + E)"
+  space: "O(V + E)"
+  approach: |
+    Use DFS topological sort with two sets: a "cycle" set tracking the current DFS path for
+    cycle detection, and a "visit" set for fully processed courses. For each unvisited course,
+    explore its prerequisites recursively. If a course is encountered in the current path, a
+    cycle exists — return empty. After all prerequisites are processed, add the course to the
+    output list. The result is a valid topological order.
+  solution: |
+    class Solution:
+        def findOrder(self, numCourses: int, prerequisites: List[List[int]]) -> List[int]:
+            prereq = {c: [] for c in range(numCourses)}
+            for crs, pre in prerequisites:
+                prereq[crs].append(pre)
+
+            output = []
+            visit, cycle = set(), set()
+
+            def dfs(crs):
+                if crs in cycle:
+                    return False
+                if crs in visit:
+                    return True
+
+                cycle.add(crs)
+                for pre in prereq[crs]:
+                    if dfs(pre) == False:
+                        return False
+                cycle.remove(crs)
+                visit.add(crs)
+                output.append(crs)
+                return True
+
+            for c in range(numCourses):
+                if dfs(c) == False:
+                    return []
+            return output
 - id: 211
   title: "Design Add And Search Words Data Structure"
   difficulty: Medium
@@ -3265,6 +3659,62 @@
                 if val != 0:
                     return False
             return True
+- id: 261
+  title: "Graph Valid Tree"
+  difficulty: Medium
+  tags: [Depth-First Search, Breadth-First Search, Union Find, Graph]
+  verified: false
+  description: |
+    Given `n` nodes labeled from `0` to `n - 1` and a list of undirected `edges` (each edge is
+    a pair of nodes), return `true` if these edges make up a valid tree.
+
+    **Example 1:**
+      Input:  n = 5, edges = [[0,1],[0,2],[0,3],[1,4]]
+      Output: true
+
+    **Example 2:**
+      Input:  n = 5, edges = [[0,1],[1,2],[2,3],[1,3],[1,4]]
+      Output: false
+
+    **Constraints:**
+      - 1 <= n <= 2000
+      - 0 <= edges.length <= 5000
+      - edges[i].length == 2
+      - 0 <= ai, bi < n
+      - ai != bi
+      - No duplicate edges.
+  time: "O(V + E)"
+  space: "O(V + E)"
+  approach: |
+    A valid tree has no cycles and is fully connected — a tree with n nodes has exactly n-1
+    edges. Build an adjacency list and run DFS from node 0, tracking visited nodes and the
+    parent to avoid falsely flagging the incoming edge as a cycle. If DFS encounters a visited
+    non-parent node, a cycle exists. After traversal, verify all n nodes were visited.
+  solution: |
+    class Solution:
+        def validTree(self, n: int, edges: List[List[int]]) -> bool:
+            if len(edges) > n - 1:
+                return False
+
+            adj = [[] for _ in range(n)]
+            for u, v in edges:
+                adj[u].append(v)
+                adj[v].append(u)
+
+            visit = set()
+
+            def dfs(node, parent):
+                if node in visit:
+                    return False
+                visit.add(node)
+                for neighbor in adj[node]:
+                    if neighbor == parent:
+                        continue
+                    if not dfs(neighbor, node):
+                        return False
+                return True
+
+            return dfs(0, -1) and len(visit) == n
 - id: 271
   title: "Encode and Decode Strings"
   difficulty: Medium
@@ -3317,6 +3767,77 @@
                 i = j
 
             return res
+- id: 286
+  title: "Walls And Gates"
+  difficulty: Medium
+  tags: [Array, Breadth-First Search, Matrix]
+  verified: false
+  description: |
+    You are given an `m x n` grid `rooms` initialized with these possible values:
+    - `-1`: A wall or an obstacle.
+    - `0`: A gate.
+    - `2147483647`: Infinity, representing an empty room.
+
+    Fill each empty room with the distance to its **nearest gate**. If it is impossible to
+    reach a gate, leave it as `2147483647`. Movement is allowed in the four cardinal directions.
+
+    **Example 1:**
+      Input:  rooms =
+        [[2147483647,-1,0,2147483647],
+         [2147483647,2147483647,2147483647,-1],
+         [2147483647,-1,2147483647,-1],
+         [0,-1,2147483647,2147483647]]
+      Output:
+        [[3,-1,0,1],
+         [2,2,1,-1],
+         [1,-1,2,-1],
+         [0,-1,3,4]]
+
+    **Example 2:**
+      Input:  rooms = [[-1]]
+      Output: [[-1]]
+
+    **Constraints:**
+      - 1 <= m, n <= 250
+      - rooms[i][j] is -1, 0, or 2^31 - 1.
+  time: "O(m * n)"
+  space: "O(m * n)"
+  approach: |
+    Multi-source BFS starting simultaneously from all gates. Initialize the queue with all gate
+    positions. Expand outward level by level — each level represents one additional step of
+    distance. When visiting an empty room for the first time, set its value to the current
+    distance. Walls are never enqueued. Because BFS explores in distance order, the first time
+    a room is reached is always via the shortest path.
+  solution: |
+    class Solution:
+        def islandsAndTreasure(self, grid: List[List[int]]) -> None:
+            ROWS, COLS = len(grid), len(grid[0])
+            visit = set()
+            q = deque()
+
+            def addCell(r, c):
+                if (min(r, c) < 0 or r == ROWS or c == COLS or
+                    (r, c) in visit or grid[r][c] == -1):
+                    return
+                visit.add((r, c))
+                q.append([r, c])
+
+            for r in range(ROWS):
+                for c in range(COLS):
+                    if grid[r][c] == 0:
+                        q.append([r, c])
+                        visit.add((r, c))
+
+            dist = 0
+            while q:
+                for i in range(len(q)):
+                    r, c = q.popleft()
+                    grid[r][c] = dist
+                    addCell(r + 1, c)
+                    addCell(r - 1, c)
+                    addCell(r, c + 1)
+                    addCell(r, c - 1)
+                dist += 1
 - id: 287
   title: "Find The Duplicate Number"
   difficulty: Medium
@@ -3497,6 +4018,70 @@
                 return node
 
             return dfs()
+- id: 323
+  title: "Number of Connected Components In An Undirected Graph"
+  difficulty: Medium
+  tags: [Depth-First Search, Breadth-First Search, Union Find, Graph]
+  verified: false
+  description: |
+    Given an integer `n` representing the number of nodes and an array `edges` where
+    `edges[i] = [ai, bi]` represents an undirected edge between nodes `ai` and `bi`, return
+    the number of connected components in the graph.
+
+    **Example 1:**
+      Input:  n = 5, edges = [[0,1],[1,2],[3,4]]
+      Output: 2
+
+    **Example 2:**
+      Input:  n = 5, edges = [[0,1],[1,2],[2,3],[3,4]]
+      Output: 1
+
+    **Constraints:**
+      - 1 <= n <= 2000
+      - 1 <= edges.length <= 5000
+      - edges[i].length == 2
+      - 0 <= ai <= bi < n
+      - ai != bi
+      - No repeated edges.
+  time: "O(V + E)"
+  space: "O(V + E)"
+  approach: |
+    Use Disjoint Set Union (Union-Find) with path compression and union by rank. Initialize each
+    of n nodes as its own component. For each edge, attempt to union its two endpoints. If they
+    already share a root, the edge is within an existing component; otherwise merge them and
+    decrement the component count. Return the final count.
+  solution: |
+    class DSU:
+        def __init__(self, n):
+            self.parent = list(range(n))
+            self.rank = [1] * n
+
+        def find(self, node):
+            cur = node
+            while cur != self.parent[cur]:
+                self.parent[cur] = self.parent[self.parent[cur]]
+                cur = self.parent[cur]
+            return cur
+
+        def union(self, u, v):
+            pu = self.find(u)
+            pv = self.find(v)
+            if pu == pv:
+                return False
+            if self.rank[pv] > self.rank[pu]:
+                pu, pv = pv, pu
+            self.parent[pv] = pu
+            self.rank[pu] += self.rank[pv]
+            return True
+
+    class Solution:
+        def countComponents(self, n: int, edges: List[List[int]]) -> int:
+            dsu = DSU(n)
+            res = n
+            for u, v in edges:
+                if dsu.union(u, v):
+                    res -= 1
+            return res
 - id: 347
   title: "Top K Frequent Elements"
   difficulty: Medium
@@ -3623,6 +4208,76 @@
 
         def unfollow(self, followerId: int, followeeId: int) -> None:
             self.followMap[followerId].discard(followeeId)
+- id: 417
+  title: "Pacific Atlantic Water Flow"
+  difficulty: Medium
+  tags: [Array, Depth-First Search, Breadth-First Search, Matrix]
+  verified: false
+  description: |
+    There is an `m x n` rectangular island that borders both the **Pacific Ocean** and the
+    **Atlantic Ocean**. The Pacific Ocean touches the island's left and top edges, and the
+    Atlantic Ocean touches the island's right and bottom edges.
+
+    You are given an `m x n` integer matrix `heights` where `heights[r][c]` represents the
+    height above sea level of the cell at `(r, c)`. Rain water can flow to neighboring cells
+    (north, south, east, west) if the neighbor's height is **less than or equal to** the
+    current height.
+
+    Return a list of grid coordinates where water can flow to **both** the Pacific and Atlantic
+    oceans.
+
+    **Example 1:**
+      Input:  heights = [[1,2,2,3,5],[3,2,3,4,4],[2,4,5,3,1],[6,7,1,4,5],[5,1,1,2,4]]
+      Output: [[0,4],[1,3],[1,4],[2,2],[3,0],[3,1],[4,0]]
+
+    **Example 2:**
+      Input:  heights = [[1],[1]]
+      Output: [[0,0],[1,0]]
+
+    **Constraints:**
+      - m == heights.length
+      - n == heights[r].length
+      - 1 <= m, n <= 200
+      - 0 <= heights[r][c] <= 10^5
+  time: "O(m * n)"
+  space: "O(m * n)"
+  approach: |
+    Reverse the flow direction: start from the ocean boundaries and propagate inward. A cell
+    can reach an ocean if water can flow uphill from the ocean to that cell (height >=
+    neighbor). Run two DFS passes: one from the Pacific boundary (top row + left column) and
+    one from the Atlantic boundary (bottom row + right column), marking all reachable cells.
+    Cells reachable from both passes are added to the result.
+  solution: |
+    class Solution:
+        def pacificAtlantic(self, heights: List[List[int]]) -> List[List[int]]:
+            ROWS, COLS = len(heights), len(heights[0])
+            pac, atl = set(), set()
+
+            def dfs(r, c, visit, prevHeight):
+                if ((r, c) in visit or r < 0 or c < 0 or
+                    r == ROWS or c == COLS or
+                    heights[r][c] < prevHeight):
+                    return
+                visit.add((r, c))
+                dfs(r + 1, c, visit, heights[r][c])
+                dfs(r - 1, c, visit, heights[r][c])
+                dfs(r, c + 1, visit, heights[r][c])
+                dfs(r, c - 1, visit, heights[r][c])
+
+            for c in range(COLS):
+                dfs(0, c, pac, heights[0][c])
+                dfs(ROWS - 1, c, atl, heights[ROWS - 1][c])
+
+            for r in range(ROWS):
+                dfs(r, 0, pac, heights[r][0])
+                dfs(r, COLS - 1, atl, heights[r][COLS - 1])
+
+            res = []
+            for r in range(ROWS):
+                for c in range(COLS):
+                    if (r, c) in pac and (r, c) in atl:
+                        res.append([r, c])
+            return res
 - id: 424
   title: "Longest Repeating Character Replacement"
   difficulty: Medium
@@ -3881,6 +4536,127 @@
 
             time = (maxf - 1) * (n + 1) + maxCount
             return max(len(tasks), time)
+- id: 684
+  title: "Redundant Connection"
+  difficulty: Medium
+  tags: [Depth-First Search, Breadth-First Search, Union Find, Graph]
+  verified: false
+  description: |
+    In this problem, a tree is an **undirected graph** that is connected and has no cycles.
+
+    You are given a graph that started as a tree with `n` nodes labeled from `1` to `n`, with
+    one additional edge added. The added edge has both its endpoints in `[1, n]`.
+
+    The graph is represented as an array `edges` of length `n` where `edges[i] = [ai, bi]`
+    indicates there is an edge between nodes `ai` and `bi` in the graph.
+
+    Return an edge that can be removed so that the resulting graph is a tree. If there are
+    multiple answers, return the edge that occurs **last** in the input.
+
+    **Example 1:**
+      Input:  edges = [[1,2],[1,3],[2,3]]
+      Output: [2,3]
+
+    **Example 2:**
+      Input:  edges = [[1,2],[2,3],[3,4],[1,4],[1,5]]
+      Output: [1,4]
+
+    **Constraints:**
+      - n == edges.length
+      - 3 <= n <= 1000
+      - 1 <= edges[i][0] < edges[i][1] <= edges.length
+      - There are no repeated edges.
+  time: "O(V + E)"
+  space: "O(V + E)"
+  approach: |
+    Use Union-Find with path compression and union by rank. Process edges sequentially; when
+    attempting to union two nodes that already share the same root (same connected component),
+    that edge forms a cycle — return it immediately. Processing edges in order guarantees this
+    is the last such cycle-forming edge.
+  solution: |
+    class Solution:
+        def findRedundantConnection(self, edges: List[List[int]]) -> List[int]:
+            n = len(edges)
+            par = [i for i in range(n + 1)]
+            rank = [1] * (n + 1)
+
+            def find(x):
+                p = par[x]
+                while p != par[p]:
+                    par[p] = par[par[p]]
+                    p = par[p]
+                return p
+
+            def union(x, y):
+                root_x, root_y = find(x), find(y)
+                if root_x == root_y:
+                    return False
+                if rank[root_x] > rank[root_y]:
+                    par[root_y] = root_x
+                    rank[root_x] += rank[root_y]
+                else:
+                    par[root_x] = root_y
+                    rank[root_y] += rank[root_x]
+                return True
+
+            for u, v in edges:
+                if not union(u, v):
+                    return [u, v]
+
+            return []
+- id: 695
+  title: "Max Area of Island"
+  difficulty: Medium
+  tags: [Array, Depth-First Search, Breadth-First Search, Union Find, Matrix]
+  verified: false
+  description: |
+    You are given an `m x n` binary matrix `grid`. An island is a group of `1`'s (land)
+    connected **4-directionally** (horizontal or vertical). You may assume all four edges of
+    the grid are surrounded by water.
+
+    The **area** of an island is the number of cells with a value `1` in the island.
+
+    Return the maximum **area** of an island in `grid`. If there is no island, return `0`.
+
+    **Example 1:**
+      Input:  grid =
+        [[0,1,1,0,1],[1,0,1,0,1],[0,1,1,0,1],[0,1,0,0,1]]
+      Output: 6
+
+    **Example 2:**
+      Input:  grid = [[0,0,0,0,0,0,0,0]]
+      Output: 0
+
+    **Constraints:**
+      - m == grid.length
+      - n == grid[i].length
+      - 1 <= m, n <= 50
+      - grid[i][j] is either 0 or 1.
+  time: "O(m * n)"
+  space: "O(m * n)"
+  approach: |
+    Use DFS to explore each island. When encountering an unvisited land cell, initiate DFS to
+    count all connected land cells, marking each as visited. DFS returns the total count for
+    that island. Track the maximum area seen across all islands.
+  solution: |
+    class Solution:
+        def maxAreaOfIsland(self, grid: List[List[int]]) -> int:
+            ROWS, COLS = len(grid), len(grid[0])
+            visit = set()
+
+            def dfs(r, c):
+                if (r < 0 or r == ROWS or c < 0 or c == COLS or
+                    grid[r][c] == 0 or (r, c) in visit):
+                    return 0
+                visit.add((r, c))
+                return (1 + dfs(r + 1, c) + dfs(r - 1, c) +
+                        dfs(r, c + 1) + dfs(r, c - 1))
+
+            area = 0
+            for r in range(ROWS):
+                for c in range(COLS):
+                    area = max(area, dfs(r, c))
+            return area
 - id: 703
   title: "Kth Largest Element In a Stream"
   difficulty: Easy
@@ -4261,6 +5037,81 @@
                 else:
                     r = m - 1
             return res
+- id: 994
+  title: "Rotting Oranges"
+  difficulty: Medium
+  tags: [Array, Breadth-First Search, Matrix]
+  verified: false
+  description: |
+    You are given an `m x n` grid where each cell can have one of three values:
+    - `0`: an empty cell,
+    - `1`: a fresh orange,
+    - `2`: a rotten orange.
+
+    Every minute, any fresh orange that is **4-directionally adjacent** to a rotten orange
+    becomes rotten.
+
+    Return the **minimum** number of minutes that must elapse until no cell has a fresh orange.
+    If this is impossible, return `-1`.
+
+    **Example 1:**
+      Input:  grid = [[2,1,1],[1,1,0],[0,1,1]]
+      Output: 4
+
+    **Example 2:**
+      Input:  grid = [[2,1,1],[0,1,1],[1,0,1]]
+      Output: -1
+      Explanation: The orange in the bottom left corner is never rotten.
+
+    **Example 3:**
+      Input:  grid = [[0,2]]
+      Output: 0
+      Explanation: There are no fresh oranges.
+
+    **Constraints:**
+      - m == grid.length
+      - n == grid[i].length
+      - 1 <= m, n <= 10
+      - grid[i][j] is 0, 1, or 2.
+  time: "O(m * n)"
+  space: "O(m * n)"
+  approach: |
+    Multi-source BFS from all rotten oranges simultaneously. Initialize the queue with all
+    rotten orange positions and count all fresh oranges. Process BFS level by level — each
+    level represents one minute. For each rotten orange, infect adjacent fresh oranges,
+    decrement the fresh count, and enqueue the newly rotten cells. Return elapsed time if no
+    fresh oranges remain; otherwise return -1.
+  solution: |
+    class Solution:
+        def orangesRotting(self, grid: List[List[int]]) -> int:
+            q = collections.deque()
+            fresh = 0
+            time = 0
+
+            for r in range(len(grid)):
+                for c in range(len(grid[0])):
+                    if grid[r][c] == 1:
+                        fresh += 1
+                    if grid[r][c] == 2:
+                        q.append((r, c))
+
+            directions = [[0, 1], [0, -1], [1, 0], [-1, 0]]
+            while fresh > 0 and q:
+                length = len(q)
+                for i in range(length):
+                    r, c = q.popleft()
+
+                    for dr, dc in directions:
+                        row, col = r + dr, c + dc
+                        if (row in range(len(grid)) and
+                            col in range(len(grid[0])) and
+                            grid[row][col] == 1):
+                            grid[row][col] = 2
+                            q.append((row, col))
+                            fresh -= 1
+                time += 1
+
+            return time if fresh == 0 else -1
 - id: 1046
   title: "Last Stone Weight"
   difficulty: Easy
