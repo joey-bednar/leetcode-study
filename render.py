@@ -106,11 +106,7 @@ def print_markdown(text: str) -> None:
             r"`([^`]+)`", f"{BG_CODE} {CYAN}\\1{RESET}{BG_CODE} {RESET}", line
         )
 
-        if (
-            stripped.startswith("Input:")
-            or stripped.startswith("Output:")
-            or stripped.startswith("Explanation:")
-        ):
+        if any(stripped.startswith(p) for p in ("Input:", "Output:", "Explanation:")):
             key, _, rest = stripped.partition(":")
             print(f"  {BOLD}{B_CYAN}{key}:{RESET}{rest}")
         elif stripped.startswith("- "):
@@ -145,7 +141,6 @@ def python_highlight(code: str) -> str:
     return "".join(out)
 
 
-# Print highlighted python code
 def print_code(code: str) -> None:
     """Renders and prints text as Python code"""
     lines = code.rstrip().split("\n")
@@ -171,7 +166,6 @@ def prompt_solution():
 
 
 def print_solution(problem):
-
     verified_string = f" [{B_GREEN}VERIFIED{RESET}]" if problem["verified"] else ""
 
     if problem.get("easy_solution"):
@@ -213,31 +207,29 @@ def _confidence_marker(pid, conf):
     return f"{color}[{level}]{RESET}"
 
 
+def _print_row(p, width, conf, study_ids=None):
+    color = DIFFICULTY_COLOR.get(p["difficulty"], WHITE)
+    level = _confidence_marker(p["id"], conf)
+    if study_ids is not None:
+        study = f"{B_CYAN}*{RESET}" if p["id"] in study_ids else " "
+        print(f"  {study} {level}  {BOLD}{CYAN}{p['id']:{width}}{RESET}. {color}{p['title']}{RESET}")
+    else:
+        print(f"  {level}  {BOLD}{CYAN}{p['id']:{width}}{RESET}. {color}{p['title']}{RESET}")
+
+
 def list_problems(problems, study_ids=None, conf=None):
     print(f"  {BOLD}{B_MAGENTA}PROBLEMS{RESET}\n")
-
     width = len(str(max(p["id"] for p in problems)))
-
     for p in problems:
-        color = DIFFICULTY_COLOR.get(p["difficulty"], WHITE)
-        study = f"{B_CYAN}*{RESET}" if (study_ids and p["id"] in study_ids) else " "
-        level = _confidence_marker(p["id"], conf)
-        print(
-            f"  {study} {level}  {BOLD}{CYAN}{p['id']:{width}}{RESET}. {color}{p['title']}{RESET}"
-        )
+        _print_row(p, width, conf, study_ids)
 
 
 def study_list_problems(problems, study_ids, conf=None):
     if not study_ids:
         print("  Study list is empty.")
         return
-
     filtered = [p for p in problems if p["id"] in study_ids]
     print(f"  {BOLD}{B_MAGENTA}STUDY LIST{RESET}\n")
-
     width = len(str(max(p["id"] for p in filtered)))
-
     for p in filtered:
-        color = DIFFICULTY_COLOR.get(p["difficulty"], WHITE)
-        level = _confidence_marker(p["id"], conf)
-        print(f"  {level}  {BOLD}{CYAN}{p['id']:{width}}{RESET}. {color}{p['title']}{RESET}")
+        _print_row(p, width, conf)
