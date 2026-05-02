@@ -202,20 +202,32 @@ def print_solution(problem):
     print()
 
 
-def list_problems(problems, study_ids=None):
+CONFIDENCE_COLOR = {1: DIM + WHITE, 2: B_YELLOW, 3: B_GREEN}
+
+
+def _confidence_marker(pid, conf):
+    level = conf.get(pid, 0) if conf else 0
+    if level == 0:
+        return "   "
+    color = CONFIDENCE_COLOR.get(level, RESET)
+    return f"{color}[{level}]{RESET}"
+
+
+def list_problems(problems, study_ids=None, conf=None):
     print(f"  {BOLD}{B_MAGENTA}PROBLEMS{RESET}\n")
 
     width = len(str(max(p["id"] for p in problems)))
 
     for p in problems:
         color = DIFFICULTY_COLOR.get(p["difficulty"], WHITE)
-        marker = f"{B_CYAN}*{RESET} " if (study_ids and p["id"] in study_ids) else "  "
+        study = f"{B_CYAN}*{RESET}" if (study_ids and p["id"] in study_ids) else " "
+        level = _confidence_marker(p["id"], conf)
         print(
-            f"  {marker}{BOLD}{CYAN}{p['id']:{width}}{RESET}. {color}{p['title']}{RESET}"
+            f"  {study} {level}  {BOLD}{CYAN}{p['id']:{width}}{RESET}. {color}{p['title']}{RESET}"
         )
 
 
-def study_list_problems(problems, study_ids):
+def study_list_problems(problems, study_ids, conf=None):
     if not study_ids:
         print("  Study list is empty.")
         return
@@ -227,4 +239,5 @@ def study_list_problems(problems, study_ids):
 
     for p in filtered:
         color = DIFFICULTY_COLOR.get(p["difficulty"], WHITE)
-        print(f"  {BOLD}{CYAN}{p['id']:{width}}{RESET}. {color}{p['title']}{RESET}")
+        level = _confidence_marker(p["id"], conf)
+        print(f"  {level}  {BOLD}{CYAN}{p['id']:{width}}{RESET}. {color}{p['title']}{RESET}")
