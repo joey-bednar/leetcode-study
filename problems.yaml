@@ -2909,6 +2909,45 @@
                     dfs(r, c, root)
 
             return res
+- id: 215
+  title: "Kth Largest Element In An Array"
+  difficulty: Medium
+  tags: [Array, Divide and Conquer, Sorting, Heap (Priority Queue), Quickselect]
+  verified: false
+  description: |
+    Given an integer array `nums` and an integer `k`, return the `kth` largest element in the
+    array.
+
+    Note that it is the `kth` largest element in the sorted order, not the `kth` distinct element.
+
+    Can you solve it without sorting?
+
+    **Example 1:**
+      Input:  nums = [2,3,1,5,4], k = 2
+      Output: 4
+
+    **Example 2:**
+      Input:  nums = [2,3,1,1,5,5,4], k = 3
+      Output: 4
+
+    **Constraints:**
+      - 1 <= k <= nums.length <= 10^5
+      - -10^4 <= nums[i] <= 10^4
+  time: "O(n log k)"
+  space: "O(k)"
+  approach: |
+    Use a min-heap of size k. The kth largest element is the smallest among the top k values.
+    Iterate through each number, push it onto the heap, and if the heap grows beyond k elements,
+    pop the minimum. After processing all numbers, the heap's root is the kth largest element.
+  solution: |
+    class Solution:
+        def findKthLargest(self, nums: List[int], k: int) -> int:
+            min_heap = []
+            for num in nums:
+                heapq.heappush(min_heap, num)
+                if len(min_heap) > k:
+                    heapq.heappop(min_heap)
+            return min_heap[0]
 - id: 217
   title: "Contains Duplicate"
   difficulty: Easy
@@ -3330,6 +3369,73 @@
                 slow2 = nums[slow2]
                 if slow == slow2:
                     return slow
+- id: 295
+  title: "Find Median From Data Stream"
+  difficulty: Hard
+  tags: [Two Pointers, Design, Sorting, Heap (Priority Queue), Data Stream]
+  verified: false
+  description: |
+    The **median** is the middle value in an ordered integer list. If the size of the list is
+    even, there is no middle value, and the median is the mean of the two middle values.
+
+    - For example, for `arr = [2,3,4]`, the median is `3`.
+    - For example, for `arr = [2,3]`, the median is `(2 + 3) / 2 = 2.5`.
+
+    Implement the `MedianFinder` class:
+
+    - `MedianFinder()`: initializes the `MedianFinder` object.
+    - `void addNum(int num)`: adds the integer `num` from the data stream to the data structure.
+    - `double findMedian()`: returns the median of all elements so far. Answers within `10^-5`
+      of the actual answer will be accepted.
+
+    **Example 1:**
+      Input:
+        ["MedianFinder", "addNum", "findMedian", "addNum", "findMedian"]
+        [[], [1], [], [2], []]
+      Output: [null, null, 1.0, null, 1.5]
+      Explanation:
+        MedianFinder medianFinder = new MedianFinder();
+        medianFinder.addNum(1);
+        medianFinder.findMedian(); // return 1.0
+        medianFinder.addNum(2);
+        medianFinder.findMedian(); // return 1.5
+
+    **Constraints:**
+      - -10^5 <= num <= 10^5
+      - There will be at least one element in the data structure before calling `findMedian`.
+      - At most 5 * 10^4 calls will be made to `addNum` and `findMedian`.
+  time: "O(log n) for addNum, O(1) for findMedian"
+  space: "O(n)"
+  approach: |
+    Maintain two heaps: a max-heap (`small`) for the lower half of numbers, and a min-heap
+    (`large`) for the upper half. When adding a number, push it to `small` (max-heap) if it
+    belongs to the lower half, otherwise to `large`. Then rebalance so the two heaps differ in
+    size by at most 1. For `findMedian`, if sizes are equal, average the two tops; otherwise
+    return the top of the larger heap.
+  solution: |
+    class MedianFinder:
+        def __init__(self):
+            self.small, self.large = [], []
+
+        def addNum(self, num: int) -> None:
+            if self.large and num > self.large[0]:
+                heapq.heappush(self.large, num)
+            else:
+                heapq.heappush(self.small, -1 * num)
+
+            if len(self.small) > len(self.large) + 1:
+                val = -1 * heapq.heappop(self.small)
+                heapq.heappush(self.large, val)
+            if len(self.large) > len(self.small) + 1:
+                val = heapq.heappop(self.large)
+                heapq.heappush(self.small, -1 * val)
+
+        def findMedian(self) -> float:
+            if len(self.small) > len(self.large):
+                return -1 * self.small[0]
+            elif len(self.large) > len(self.small):
+                return self.large[0]
+            return (-1 * self.small[0] + self.large[0]) / 2.0
 - id: 297
   title: "Serialize And Deserialize Binary Tree"
   difficulty: Hard
@@ -3437,6 +3543,86 @@
                     res.append(num)
                     if len(res) == k:
                         return res
+- id: 355
+  title: "Design Twitter"
+  difficulty: Medium
+  tags: [Hash Table, Linked List, Design, Heap (Priority Queue)]
+  verified: false
+  description: |
+    Design a simplified version of Twitter where users can post tweets, follow/unfollow another
+    user, and is able to see the `10` most recent tweets in the user's news feed.
+
+    Implement the `Twitter` class:
+
+    - `Twitter()`: Initializes your twitter object.
+    - `void postTweet(int userId, int tweetId)`: Composes a new tweet with ID `tweetId` by the
+      user `userId`. Each call to this function will be made with a unique `tweetId`.
+    - `List<Integer> getNewsFeed(int userId)`: Retrieves the `10` most recent tweet IDs in the
+      user's news feed. Each item in the news feed must be posted by users who the user followed
+      or by the user themself. Tweets must be **ordered from most recent to least recent**.
+    - `void follow(int followerId, int followeeId)`: The user with ID `followerId` starts
+      following the user with ID `followeeId`.
+    - `void unfollow(int followerId, int followeeId)`: The user with ID `followerId` starts
+      unfollowing the user with ID `followeeId`.
+
+    **Example 1:**
+      Input:
+        ["Twitter", "postTweet", "getNewsFeed", "follow", "postTweet", "getNewsFeed",
+         "unfollow", "getNewsFeed"]
+        [[], [1, 5], [1], [1, 2], [2, 6], [1], [1, 2], [1]]
+      Output: [null, null, [5], null, null, [6, 5], null, [5]]
+
+    **Constraints:**
+      - 1 <= userId, followerId, followeeId <= 500
+      - 0 <= tweetId <= 10^4
+      - All `tweetId`s are unique.
+      - At most 3 * 10^4 calls will be made to `postTweet`, `getNewsFeed`, `follow`, and
+        `unfollow`.
+  time: "O(n log n) for getNewsFeed, O(1) for all other methods"
+  space: "O(N * m + N * M + n)"
+  approach: |
+    Use a hash map from userId to a list of their (timestamp, tweetId) pairs, and another hash
+    map from userId to a set of followees. Assign a decreasing counter as the timestamp so newer
+    tweets have smaller values. For `getNewsFeed`, add the user to their own followees, then push
+    the most recent tweet from each followee onto a min-heap. Repeatedly pop the minimum (most
+    recent) tweet, append it to the result, and push that followee's next tweet onto the heap.
+    Stop once 10 tweets are collected or the heap is empty.
+  solution: |
+    class Twitter:
+        def __init__(self):
+            self.count = 0
+            self.tweetMap = defaultdict(list)
+            self.followMap = defaultdict(set)
+
+        def postTweet(self, userId: int, tweetId: int) -> None:
+            self.tweetMap[userId].append([self.count, tweetId])
+            self.count -= 1
+
+        def getNewsFeed(self, userId: int) -> List[int]:
+            res = []
+            minHeap = []
+
+            self.followMap[userId].add(userId)
+            for followeeId in self.followMap[userId]:
+                if followeeId in self.tweetMap:
+                    index = len(self.tweetMap[followeeId]) - 1
+                    count, tweetId = self.tweetMap[followeeId][index]
+                    heapq.heappush(minHeap, [count, tweetId, followeeId, index - 1])
+
+            while minHeap and len(res) < 10:
+                count, tweetId, followeeId, index = heapq.heappop(minHeap)
+                res.append(tweetId)
+                if index >= 0:
+                    count, tweetId = self.tweetMap[followeeId][index]
+                    heapq.heappush(minHeap, [count, tweetId, followeeId, index - 1])
+
+            return res
+
+        def follow(self, followerId: int, followeeId: int) -> None:
+            self.followMap[followerId].add(followeeId)
+
+        def unfollow(self, followerId: int, followeeId: int) -> None:
+            self.followMap[followerId].discard(followeeId)
 - id: 424
   title: "Longest Repeating Character Replacement"
   difficulty: Medium
@@ -3647,6 +3833,104 @@
                 return (self.sameTree(root.left, subRoot.left) and
                         self.sameTree(root.right, subRoot.right))
             return False
+- id: 621
+  title: "Task Scheduler"
+  difficulty: Medium
+  tags: [Array, Hash Table, Greedy, Sorting, Heap (Priority Queue), Counting]
+  verified: false
+  description: |
+    You are given an array of CPU `tasks`, each labeled with a letter from A to Z, and a number
+    `n`. Each CPU interval can be idle or allow the completion of one task. Tasks can be completed
+    in any order, but there is a cooldown interval of `n` units of time between any two tasks with
+    the **same** label.
+
+    Return the **minimum** number of CPU intervals required to complete all tasks.
+
+    **Example 1:**
+      Input:  tasks = ["X","X","Y","Y"], n = 2
+      Output: 5
+      Explanation: One valid sequence is: X → Y → Idle → X → Y.
+
+    **Example 2:**
+      Input:  tasks = ["A","A","A","B","C"], n = 3
+      Output: 9
+      Explanation: One valid sequence is: A → B → C → Idle → A → Idle → Idle → Idle → A.
+
+    **Constraints:**
+      - 1 <= tasks.length <= 1000
+      - tasks[i] is an uppercase English letter.
+      - 0 <= n <= 100
+  time: "O(m)"
+  space: "O(1)"
+  approach: |
+    Use a mathematical formula based on the most frequent task. If `maxf` is the highest
+    frequency of any task, it requires `(maxf - 1)` frames each of size `(n + 1)`. If
+    `maxCount` tasks share that maximum frequency, they all fill a slot in the final frame.
+    The minimum time is `(maxf - 1) * (n + 1) + maxCount`. However, if there are so many
+    tasks that idle slots are never needed, the answer is simply the total number of tasks.
+    Return the max of both.
+  solution: |
+    class Solution:
+        def leastInterval(self, tasks: List[str], n: int) -> int:
+            count = [0] * 26
+            for task in tasks:
+                count[ord(task) - ord('A')] += 1
+
+            maxf = max(count)
+            maxCount = sum(1 for c in count if c == maxf)
+
+            time = (maxf - 1) * (n + 1) + maxCount
+            return max(len(tasks), time)
+- id: 703
+  title: "Kth Largest Element In a Stream"
+  difficulty: Easy
+  tags: [Tree, Design, Binary Search Tree, Heap (Priority Queue), Binary Tree, Data Stream]
+  verified: false
+  description: |
+    Design a class to find the `kth` largest integer in a stream of values, including duplicates.
+    For example, the 2nd largest from [1, 2, 3, 3] is 3. The stream is not necessarily sorted.
+
+    Implement the following methods:
+
+    - `KthLargest(int k, int[] nums)`: Initializes the object given the integer `k` and the
+      stream of integers `nums`.
+    - `int add(int val)`: Adds the integer `val` to the stream and returns the `kth` largest
+      integer in the stream.
+
+    **Example 1:**
+      Input:  k = 3, nums = [1, 2, 3, 3]
+        add(3) → 3
+        add(5) → 3
+        add(6) → 3
+        add(7) → 5
+        add(8) → 6
+
+    **Constraints:**
+      - 1 <= k <= 1000
+      - 0 <= nums.length <= 1000
+      - -1000 <= nums[i] <= 1000
+      - -1000 <= val <= 1000
+      - There will always be at least k integers in the stream when `add()` is called.
+  time: "O(m log k) for each add() call"
+  space: "O(k)"
+  approach: |
+    Use a min-heap of exactly k elements. Since a min-heap always exposes its smallest element
+    at the root, keeping only the k largest elements in the heap means the root is always the
+    kth largest. On each `add()`, push the new value and if the heap exceeds size k, pop the
+    minimum. The root of the heap is then the answer.
+  solution: |
+    class KthLargest:
+        def __init__(self, k: int, nums: List[int]):
+            self.minHeap, self.k = nums, k
+            heapq.heapify(self.minHeap)
+            while len(self.minHeap) > k:
+                heapq.heappop(self.minHeap)
+
+        def add(self, val: int) -> int:
+            heapq.heappush(self.minHeap, val)
+            if len(self.minHeap) > self.k:
+                heapq.heappop(self.minHeap)
+            return self.minHeap[0]
 - id: 704
   title: "Binary Search"
   difficulty: Easy
@@ -3864,6 +4148,56 @@
                     l = k + 1
 
             return res
+- id: 973
+  title: "K Closest Points to Origin"
+  difficulty: Medium
+  tags: [Array, Math, Divide and Conquer, Geometry, Sorting, Heap (Priority Queue), Quickselect]
+  verified: false
+  description: |
+    Given an array of points where `points[i] = [xi, yi]` represents a point on the **X-Y
+    plane** and an integer `k`, return the `k` closest points to the origin `(0, 0)`.
+
+    The distance between two points on the X-Y plane is the Euclidean distance:
+    `sqrt((x1 - x2)^2 + (y1 - y2)^2)`.
+
+    You may return the answer in **any order**. The answer is **guaranteed** to be **unique**
+    (except for the order that it is in).
+
+    **Example 1:**
+      Input:  points = [[0,2],[2,2]], k = 1
+      Output: [[0,2]]
+      Explanation: The distance from (0, 2) to the origin is 2. The distance from (2, 2) to
+        the origin is sqrt(8) ≈ 2.83. So the closest point is [0, 2].
+
+    **Example 2:**
+      Input:  points = [[0,2],[2,0],[2,2]], k = 2
+      Output: [[0,2],[2,0]]
+
+    **Constraints:**
+      - 1 <= k <= points.length <= 10^4
+      - -10^4 <= points[i][0], points[i][1] <= 10^4
+  time: "O(n log k)"
+  space: "O(k)"
+  approach: |
+    Maintain a max-heap of size k (using negated distances since Python only has a min-heap).
+    For each point, compute its squared Euclidean distance (no need for sqrt) and push it onto
+    the heap. If the heap exceeds k elements, pop the farthest point. After processing all
+    points, the heap contains exactly the k closest points.
+  solution: |
+    class Solution:
+        def kClosest(self, points: List[List[int]], k: int) -> List[List[int]]:
+            maxHeap = []
+            for x, y in points:
+                dist = -(x ** 2 + y ** 2)
+                heapq.heappush(maxHeap, [dist, x, y])
+                if len(maxHeap) > k:
+                    heapq.heappop(maxHeap)
+
+            res = []
+            while maxHeap:
+                dist, x, y = heapq.heappop(maxHeap)
+                res.append([x, y])
+            return res
 - id: 981
   title: "Time Based Key Value Store"
   difficulty: Medium
@@ -3927,6 +4261,58 @@
                 else:
                     r = m - 1
             return res
+- id: 1046
+  title: "Last Stone Weight"
+  difficulty: Easy
+  tags: [Array, Heap (Priority Queue)]
+  verified: false
+  description: |
+    You are given an array of integers `stones` where `stones[i]` is the weight of the `ith`
+    stone.
+
+    We are playing a game with the stones. On each turn, we choose the **heaviest two stones**
+    and smash them together. Suppose the heaviest two stones have weights `x` and `y` with
+    `x <= y`. The result of this smash is:
+
+    - If `x == y`, both stones are destroyed.
+    - If `x != y`, the stone of weight `x` is destroyed, and the stone of weight `y` has new
+      weight `y - x`.
+
+    At the end of the game, there is **at most one** stone left. Return the weight of the last
+    remaining stone. If there are no stones left, return `0`.
+
+    **Example 1:**
+      Input:  stones = [2,3,6,2,4]
+      Output: 1
+      Explanation: Smash 6 and 4 → [2,3,2,2]; smash 3 and 2 → [1,2,2]; smash 2 and 2 → [1].
+
+    **Example 2:**
+      Input:  stones = [1,2]
+      Output: 1
+
+    **Constraints:**
+      - 1 <= stones.length <= 20
+      - 1 <= stones[i] <= 100
+  time: "O(n log n)"
+  space: "O(n)"
+  approach: |
+    Use a max-heap (simulated with negated values in Python's min-heap). Heapify all stone
+    weights. Repeatedly pop the two heaviest stones; if they differ, push the difference back.
+    Continue until one or zero stones remain, then return the result (or 0 if empty).
+  solution: |
+    class Solution:
+        def lastStoneWeight(self, stones: List[int]) -> int:
+            stones = [-s for s in stones]
+            heapq.heapify(stones)
+
+            while len(stones) > 1:
+                first = heapq.heappop(stones)
+                second = heapq.heappop(stones)
+                if second > first:
+                    heapq.heappush(stones, first - second)
+
+            stones.append(0)
+            return abs(stones[0])
 - id: 1448
   title: "Count Good Nodes In Binary Tree"
   difficulty: Medium
