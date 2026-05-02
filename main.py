@@ -145,7 +145,7 @@ def remove_problems(problems, args):
         print(f"Not valid IDs: {', '.join(invalid)}")
 
 
-def random_problem(problems, all_problems=False):
+def random_problem(problems, conf, all_problems=False, conf_filter=None):
     study_ids = load_study_list()
     if all_problems:
         pool = problems
@@ -154,6 +154,12 @@ def random_problem(problems, all_problems=False):
         sys.exit(1)
     else:
         pool = [p for p in problems if p["id"] in study_ids]
+    if conf_filter is not None:
+        pool = [p for p in pool if conf.get(p["id"], 0) == conf_filter]
+    if not pool:
+        label = f"--conf {conf_filter}" if conf_filter is not None else "study list"
+        print(f"No problems matching {label}.")
+        sys.exit(1)
     p = random.choice(pool)
     print_problem(p)
     prompt_solution()
@@ -173,7 +179,7 @@ def pick_problem(problems, problem_id):
 
 def print_help():
     print(
-        "Usage: lc [random [--all] | pick <num> | list [--all] | add <id>... | remove <id>... | mark <id>... 0-3]"
+        "Usage: lc [random [--all] [--conf <0-3>] | pick <num> | list [--all] [--conf <0-3>] | add <id>... | remove <id>... | mark <id>... 0-3]"
     )
 
 
@@ -185,19 +191,31 @@ def main():
 
     conf = load_confidence()
 
+    conf_filter = None
+    if "--conf" in args:
+        idx = args.index("--conf")
+        if idx + 1 >= len(args) or not args[idx + 1].isdigit() or int(args[idx + 1]) not in range(4):
+            print("Usage: --conf requires a level 0-3")
+            sys.exit(1)
+        conf_filter = int(args[idx + 1])
+        args = args[:idx] + args[idx + 2:]
+
     if len(args) == 0:
         print_help()
     elif args[0] == "random" and len(args) == 1:
-        random_problem(problems)
+        random_problem(problems, conf, conf_filter=conf_filter)
     elif args[0] == "random" and len(args) == 2 and args[1] == "--all":
-        random_problem(problems, all_problems=True)
+        random_problem(problems, conf, all_problems=True, conf_filter=conf_filter)
     elif args[0] == "pick" and len(args) == 2:
         pick_problem(problems, int(args[1]))
     elif args[0] == "list" and len(args) == 1:
         study_ids = load_study_list()
+        if conf_filter is not None:
+            study_ids = {pid for pid in study_ids if conf.get(pid, 0) == conf_filter}
         study_list_problems(problems, study_ids, conf)
     elif args[0] == "list" and len(args) == 2 and args[1] == "--all":
-        list_problems(problems, load_study_list(), conf)
+        filtered = [p for p in problems if conf.get(p["id"], 0) == conf_filter] if conf_filter is not None else problems
+        list_problems(filtered, load_study_list(), conf)
     elif args[0] == "add":
         add_problems(problems, args[1:])
     elif args[0] == "remove":
