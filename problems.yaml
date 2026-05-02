@@ -2106,6 +2106,261 @@
                 prev = curr
                 curr = temp
             return prev
+- id: 208
+  title: "Implement Trie (Prefix Tree)"
+  difficulty: Medium
+  tags: [Hash Table, String, Design, Trie]
+  verified: false
+  description: |
+    A **prefix tree** (also known as a trie) is a tree data structure used to efficiently store
+    and retrieve keys in a set of strings. Some applications of this data structure include
+    auto-complete and spell checker systems.
+
+    Implement the `PrefixTree` class:
+      - `PrefixTree()` Initializes the prefix tree object.
+      - `void insert(String word)` Inserts the string `word` into the prefix tree.
+      - `boolean search(String word)` Returns `true` if the string `word` is in the prefix tree
+        (i.e., was inserted before), and `false` otherwise.
+      - `boolean startsWith(String prefix)` Returns `true` if there is a previously inserted
+        string `word` that has the prefix `prefix`, and `false` otherwise.
+
+    **Example 1:**
+      Input:
+        ["PrefixTree", "insert", "search", "search", "startsWith", "insert", "search"]
+        [[], ["dog"], ["dog"], ["do"], ["do"], ["do"], ["do"]]
+      Output: [null, null, true, false, true, null, true]
+      Explanation:
+        PrefixTree prefixTree = new PrefixTree();
+        prefixTree.insert("dog");
+        prefixTree.search("dog");    // return true
+        prefixTree.search("do");     // return false
+        prefixTree.startsWith("do"); // return true
+        prefixTree.insert("do");
+        prefixTree.search("do");     // return true
+
+    **Constraints:**
+      - 1 <= word.length, prefix.length <= 1000
+      - `word` and `prefix` are made up of lowercase English letters.
+      - At most 3 * 10^4 calls **in total** will be made to `insert`, `search`, and `startsWith`.
+  time: "O(n) for each function call"
+  space: "O(t)"
+  approach: |
+    A Trie uses a tree structure where each node represents a character. Each node maintains
+    references to child nodes and includes a boolean flag marking word completion.
+
+    For insert, traverse character-by-character from the root, creating new nodes as needed,
+    then mark the final node as an end-of-word position.
+
+    For search, traverse the path matching the word's characters. Return true only if the
+    complete path exists and the final node is marked as word completion.
+
+    For startsWith, the approach is similar to search, but only verifies that the prefix path
+    exists — no need to check the word completion marker.
+  solution: |
+    class TrieNode:
+        def __init__(self):
+            self.children = {}
+            self.endOfWord = False
+
+    class PrefixTree:
+        def __init__(self):
+            self.root = TrieNode()
+
+        def insert(self, word: str) -> None:
+            cur = self.root
+            for c in word:
+                if c not in cur.children:
+                    cur.children[c] = TrieNode()
+                cur = cur.children[c]
+            cur.endOfWord = True
+
+        def search(self, word: str) -> bool:
+            cur = self.root
+            for c in word:
+                if c not in cur.children:
+                    return False
+                cur = cur.children[c]
+            return cur.endOfWord
+
+        def startsWith(self, prefix: str) -> bool:
+            cur = self.root
+            for c in prefix:
+                if c not in cur.children:
+                    return False
+                cur = cur.children[c]
+            return True
+- id: 211
+  title: "Design Add And Search Words Data Structure"
+  difficulty: Medium
+  tags: [String, Depth-First Search, Design, Trie]
+  verified: false
+  description: |
+    Design a data structure that supports adding new words and finding if a string matches any
+    previously added string.
+
+    Implement the `WordDictionary` class:
+      - `WordDictionary()` Initializes the object.
+      - `void addWord(word)` Adds `word` to the data structure, it can be matched later.
+      - `bool search(word)` Returns `true` if there is any string in the data structure that
+        matches `word` or `false` otherwise. `word` may contain dots `'.'` where dots can be
+        matched with any letter.
+
+    **Example 1:**
+      Input:
+        ["WordDictionary","addWord","addWord","addWord","search","search","search","search"]
+        [[],["day"],["bay"],["may"],["say"],["day"],[".ay"],["b.."]]
+      Output: [null, null, null, null, false, true, true, true]
+
+    **Constraints:**
+      - 1 <= word.length <= 20
+      - `word` in `addWord` consists of lowercase English letters only.
+      - `word` in `search` consists of `'.'` or lowercase English letters.
+      - There are at most 2 `'.'` symbols in `word` for `search`.
+      - At most 10^4 calls will be made to `addWord` and `search`.
+  time: "O(n)"
+  space: "O(t + n)"
+  approach: |
+    Use a Trie for efficient word storage and retrieval. For addWord, insert characters one by
+    one into the trie, creating nodes as needed, and mark the final node as the end of a word.
+    For search, use depth-first search. When a literal character is encountered, traverse the
+    trie normally. When a dot `'.'` is encountered, recursively check all possible children at
+    that position. The search succeeds only if a complete traversal of the pattern ends at a
+    node marked as a word end.
+  solution: |
+    class TrieNode:
+        def __init__(self):
+            self.children = {}
+            self.word = False
+
+    class WordDictionary:
+        def __init__(self):
+            self.root = TrieNode()
+
+        def addWord(self, word: str) -> None:
+            cur = self.root
+            for c in word:
+                if c not in cur.children:
+                    cur.children[c] = TrieNode()
+                cur = cur.children[c]
+            cur.word = True
+
+        def search(self, word: str) -> bool:
+            def dfs(j, root):
+                cur = root
+                for i in range(j, len(word)):
+                    c = word[i]
+                    if c == ".":
+                        for child in cur.children.values():
+                            if dfs(i + 1, child):
+                                return True
+                        return False
+                    else:
+                        if c not in cur.children:
+                            return False
+                        cur = cur.children[c]
+                return cur.word
+
+            return dfs(0, self.root)
+- id: 212
+  title: "Word Search II"
+  difficulty: Hard
+  tags: [Array, String, Backtracking, Trie, Matrix]
+  verified: false
+  description: |
+    Given a 2-D grid of characters `board` and a list of strings `words`, return all words that
+    are present in the grid.
+
+    For a word to be present, it must be possible to form the word with a path in the board with
+    horizontally or vertically neighboring cells. The same cell may not be used more than once
+    in a word.
+
+    **Example 1:**
+      Input:  board = [["a","b","c","d"],["s","a","a","t"],["a","c","k","e"],["a","c","d","n"]],
+              words = ["bat","cat","back","backend","stack"]
+      Output: ["cat","back","backend"]
+
+    **Example 2:**
+      Input:  board = [["x","o"],["x","o"]], words = ["xoxo"]
+      Output: []
+
+    **Constraints:**
+      - 1 <= board.length, board[i].length <= 12
+      - board[i] consists only of lowercase English letters.
+      - 1 <= words.length <= 30,000
+      - 1 <= words[i].length <= 10
+      - words[i] consists only of lowercase English letters.
+      - All strings within `words` are distinct.
+  time: "O(m * n * 4 * (3^(t-1)) + s)"
+  space: "O(s)"
+  approach: |
+    Build a Trie from all the words, storing at each node a reference count (`refs`) indicating
+    how many remaining words pass through that node. During DFS traversal of the board, when a
+    complete word is found, mark it as discovered and decrement the reference count. Once a
+    node's reference count reaches zero, physically remove that branch from the Trie, preventing
+    future exploration of dead-end paths. Mark cells as visited in-place by temporarily replacing
+    characters with a sentinel value (`'*'`), then restore them during backtracking.
+  solution: |
+    class TrieNode:
+        def __init__(self):
+            self.children = [None] * 26
+            self.idx = -1
+            self.refs = 0
+
+        def addWord(self, word, i):
+            cur = self
+            cur.refs += 1
+            for c in word:
+                index = ord(c) - ord('a')
+                if not cur.children[index]:
+                    cur.children[index] = TrieNode()
+                cur = cur.children[index]
+                cur.refs += 1
+            cur.idx = i
+
+    class Solution:
+        def findWords(self, board: List[List[str]], words: List[str]) -> List[str]:
+            root = TrieNode()
+            for i in range(len(words)):
+                root.addWord(words[i], i)
+
+            ROWS, COLS = len(board), len(board[0])
+            res = []
+
+            def getIndex(c):
+                return ord(c) - ord('a')
+
+            def dfs(r, c, node):
+                if (r < 0 or c < 0 or r >= ROWS or
+                    c >= COLS or board[r][c] == '*' or
+                    not node.children[getIndex(board[r][c])]):
+                    return
+
+                tmp = board[r][c]
+                board[r][c] = '*'
+                prev = node
+                node = node.children[getIndex(tmp)]
+                if node.idx != -1:
+                    res.append(words[node.idx])
+                    node.idx = -1
+                    node.refs -= 1
+                    if not node.refs:
+                        prev.children[getIndex(tmp)] = None
+                        node = None
+                        board[r][c] = tmp
+                        return
+
+                dfs(r + 1, c, node)
+                dfs(r - 1, c, node)
+                dfs(r, c + 1, node)
+                dfs(r, c - 1, node)
+
+                board[r][c] = tmp
+
+            for r in range(ROWS):
+                for c in range(COLS):
+                    dfs(r, c, root)
+
+            return res
 - id: 217
   title: "Contains Duplicate"
   difficulty: Easy
