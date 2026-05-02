@@ -172,9 +172,9 @@ def prompt_solution():
 
 def print_solution(problem):
 
-    verified_string = f" [{B_GREEN}VERIFIED{RESET}]" if problem['verified'] else ""
+    verified_string = f" [{B_GREEN}VERIFIED{RESET}]" if problem["verified"] else ""
 
-    if problem.get('easy_solution'):
+    if problem.get("easy_solution"):
         print()
         print(f"  {BOLD}{B_MAGENTA}SUBOPTIMAL APPROACH{RESET}\n")
         print_markdown(problem["easy_approach"])
@@ -187,7 +187,6 @@ def print_solution(problem):
         print(f"  {BOLD}{B_MAGENTA}SUBOPTIMAL_SOLUTION{RESET}\n")
         print_code(problem["easy_solution"])
         print()
-
 
     print()
     print(f"  {BOLD}{B_MAGENTA}APPROACH{RESET}\n")
@@ -203,11 +202,29 @@ def print_solution(problem):
     print()
 
 
-def list_problems(problems):
+def list_problems(problems, study_ids=None):
     print(f"  {BOLD}{B_MAGENTA}PROBLEMS{RESET}\n")
 
     width = len(str(max(p["id"] for p in problems)))
 
     for p in problems:
+        color = DIFFICULTY_COLOR.get(p["difficulty"], WHITE)
+        marker = f"{B_CYAN}*{RESET} " if (study_ids and p["id"] in study_ids) else "  "
+        print(
+            f"  {marker}{BOLD}{CYAN}{p['id']:{width}}{RESET}. {color}{p['title']}{RESET}"
+        )
+
+
+def study_list_problems(problems, study_ids):
+    if not study_ids:
+        print("  Study list is empty.")
+        return
+
+    filtered = [p for p in problems if p["id"] in study_ids]
+    print(f"  {BOLD}{B_MAGENTA}STUDY LIST{RESET}\n")
+
+    width = len(str(max(p["id"] for p in filtered)))
+
+    for p in filtered:
         color = DIFFICULTY_COLOR.get(p["difficulty"], WHITE)
         print(f"  {BOLD}{CYAN}{p['id']:{width}}{RESET}. {color}{p['title']}{RESET}")
