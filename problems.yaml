@@ -405,6 +405,66 @@
                     while l < r and nums[l] == nums[l - 1]:
                         l += 1
         return res
+- id: 17
+  title: "Letter Combinations of a Phone Number"
+  difficulty: Medium
+  tags: [Hash Table, String, Backtracking]
+  verified: false
+  description: |
+    Given a string containing digits from `2-9` inclusive, return all possible letter
+    combinations that the number could represent. Return the answer in **any order**.
+
+    A mapping of digits to letters (just like on the telephone buttons) is given below.
+    Note that `1` does not map to any letters.
+
+    **Example 1:**
+      Input:  digits = "23"
+      Output: ["ad","ae","af","bd","be","bf","cd","ce","cf"]
+
+    **Example 2:**
+      Input:  digits = ""
+      Output: []
+
+    **Example 3:**
+      Input:  digits = "2"
+      Output: ["a","b","c"]
+
+    **Constraints:**
+      - 0 <= digits.length <= 4
+      - digits[i] is a digit in the range ['2', '9'].
+  time: "O(n * 4^n)"
+  space: "O(n)"
+  approach: |
+    Use backtracking to explore all combinations. Think of each digit as a decision tree
+    level — for each digit, select one character from its mapped letters and recursively
+    process the next digit. When the built string's length equals the input length, add it
+    to the results.
+  solution: |
+    class Solution:
+        def letterCombinations(self, digits: str) -> List[str]:
+            res = []
+            digitToChar = {
+                "2": "abc",
+                "3": "def",
+                "4": "ghi",
+                "5": "jkl",
+                "6": "mno",
+                "7": "pqrs",
+                "8": "tuv",
+                "9": "wxyz",
+            }
+
+            def backtrack(i, curStr):
+                if len(curStr) == len(digits):
+                    res.append(curStr)
+                    return
+                for c in digitToChar[digits[i]]:
+                    backtrack(i + 1, curStr + c)
+
+            if digits:
+                backtrack(0, "")
+
+            return res
 - id: 19
   title: "Remove Nth Node From End of List"
   difficulty: Medium
@@ -560,6 +620,55 @@
         node.next = list1 or list2
 
         return dummy.next
+- id: 22
+  title: "Generate Parentheses"
+  difficulty: Medium
+  tags: [String, Dynamic Programming, Backtracking]
+  verified: false
+  description: |
+    Given `n` pairs of parentheses, write a function to generate all combinations of
+    well-formed parentheses.
+
+    **Example 1:**
+      Input:  n = 1
+      Output: ["()"]
+
+    **Example 2:**
+      Input:  n = 3
+      Output: ["((()))","(()())","(())()","()(())","()()()"]
+
+    **Constraints:**
+      - 1 <= n <= 7
+  time: "O(4^n / sqrt(n))"
+  space: "O(n)"
+  approach: |
+    Use backtracking with pruning. Track counts of opening and closing parentheses placed so
+    far. Add an opening bracket only if fewer than n have been used; add a closing bracket
+    only if it would not exceed the number of opening brackets. When both counts reach n, a
+    valid complete string has been formed.
+  solution: |
+    class Solution:
+        def generateParenthesis(self, n: int) -> List[str]:
+            stack = []
+            res = []
+
+            def backtrack(openN, closedN):
+                if openN == closedN == n:
+                    res.append("".join(stack))
+                    return
+
+                if openN < n:
+                    stack.append("(")
+                    backtrack(openN + 1, closedN)
+                    stack.pop()
+
+                if closedN < openN:
+                    stack.append(")")
+                    backtrack(openN, closedN + 1)
+                    stack.pop()
+
+            backtrack(0, 0)
+            return res
 - id: 23
   title: "Merge K Sorted Lists"
   difficulty: Hard
@@ -689,6 +798,235 @@
                 curr = curr.next
                 k -= 1
             return curr
+- id: 39
+  title: "Combination Sum"
+  difficulty: Medium
+  tags: [Array, Backtracking]
+  verified: false
+  description: |
+    You are given an array of **distinct** integers `candidates` and a target integer `target`.
+    Return a list of all **unique combinations** of `candidates` where the chosen numbers sum
+    to `target`. You may return the combinations in any order.
+
+    The **same** number may be chosen from `candidates` an **unlimited number of times**. Two
+    combinations are unique if the frequency of at least one of the chosen numbers is different.
+
+    The test cases are generated such that the number of unique combinations that sum up to
+    `target` is less than `150` combinations for the given input.
+
+    **Example 1:**
+      Input:  candidates = [2,5,6,9], target = 9
+      Output: [[2,2,5],[9]]
+
+    **Example 2:**
+      Input:  candidates = [3,4,5], target = 16
+      Output: [[3,3,3,3,4],[3,3,5,5],[4,4,4,4],[3,4,4,5]]
+
+    **Example 3:**
+      Input:  candidates = [3], target = 5
+      Output: []
+
+    **Constraints:**
+      - 1 <= candidates.length <= 20
+      - 2 <= candidates[i] <= 30
+      - All elements of `candidates` are distinct.
+      - 2 <= target <= 30
+  time: "O(2^(t/m))"
+  space: "O(t/m)"
+  approach: |
+    Use backtracking with early pruning. Sort the input array first so the algorithm can
+    terminate early when the running total exceeds the target. For each position, iterate
+    through remaining elements and recursively try including each number. Since numbers are
+    reusable, stay at the current index when recursing. Prune by returning when the candidate
+    exceeds the remaining target.
+  solution: |
+    class Solution:
+        def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
+            res = []
+            candidates.sort()
+
+            def dfs(i, cur, total):
+                if total == target:
+                    res.append(cur.copy())
+                    return
+
+                for j in range(i, len(candidates)):
+                    if total + candidates[j] > target:
+                        return
+                    cur.append(candidates[j])
+                    dfs(j, cur, total + candidates[j])
+                    cur.pop()
+
+            dfs(0, [], 0)
+            return res
+- id: 40
+  title: "Combination Sum II"
+  difficulty: Medium
+  tags: [Array, Backtracking]
+  verified: false
+  description: |
+    Given a collection of candidate numbers (`candidates`) and a target number (`target`),
+    find all unique combinations in `candidates` where the candidate numbers sum to `target`.
+
+    Each number in `candidates` may only be used **once** in the combination.
+
+    **Note:** The solution set must not contain duplicate combinations.
+
+    **Example 1:**
+      Input:  candidates = [9,2,2,4,6,1,5], target = 8
+      Output: [[1,2,5],[2,2,4],[2,6]]
+
+    **Example 2:**
+      Input:  candidates = [1,2,3,4,5], target = 7
+      Output: [[1,2,4],[2,5],[3,4]]
+
+    **Constraints:**
+      - 1 <= candidates.length <= 100
+      - 1 <= candidates[i] <= 50
+      - 1 <= target <= 30
+  time: "O(n * 2^n)"
+  space: "O(n)"
+  approach: |
+    Sort the array to group duplicates together. Use backtracking to explore each element.
+    At each recursion level, skip over duplicate values (when candidates[i] == candidates[i-1]
+    and i > idx) to avoid duplicate combinations. Prune early by breaking when the current
+    candidate exceeds the remaining target. Pass i + 1 to the next call so each element is
+    used at most once.
+  solution: |
+    class Solution:
+        def combinationSum2(self, candidates: List[int], target: int) -> List[List[int]]:
+            res = []
+            candidates.sort()
+
+            def dfs(idx, path, cur):
+                if cur == target:
+                    res.append(path.copy())
+                    return
+                for i in range(idx, len(candidates)):
+                    if i > idx and candidates[i] == candidates[i - 1]:
+                        continue
+                    if cur + candidates[i] > target:
+                        break
+                    path.append(candidates[i])
+                    dfs(i + 1, path, cur + candidates[i])
+                    path.pop()
+
+            dfs(0, [], 0)
+            return res
+- id: 46
+  title: "Permutations"
+  difficulty: Medium
+  tags: [Array, Backtracking]
+  verified: false
+  description: |
+    Given an array `nums` of **distinct** integers, return all the possible **permutations**.
+    You can return the answer in **any order**.
+
+    **Example 1:**
+      Input:  nums = [1,2,3]
+      Output: [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]
+
+    **Example 2:**
+      Input:  nums = [0,1]
+      Output: [[0,1],[1,0]]
+
+    **Example 3:**
+      Input:  nums = [1]
+      Output: [[1]]
+
+    **Constraints:**
+      - 1 <= nums.length <= 6
+      - -10 <= nums[i] <= 10
+      - All the integers of `nums` are unique.
+  time: "O(n! * n)"
+  space: "O(n! * n)"
+  approach: |
+    Use in-place swapping with backtracking. Treat the array as having a fixed prefix (indices
+    0 to idx-1) and a free suffix (idx onward). At each step, swap every element from position
+    idx onward into position idx, recurse to fill the next position, then swap back to restore
+    state.
+  solution: |
+    class Solution:
+        def permute(self, nums: List[int]) -> List[List[int]]:
+            self.res = []
+            self.backtrack(nums, 0)
+            return self.res
+
+        def backtrack(self, nums: List[int], idx: int):
+            if idx == len(nums):
+                self.res.append(nums[:])
+                return
+            for i in range(idx, len(nums)):
+                nums[idx], nums[i] = nums[i], nums[idx]
+                self.backtrack(nums, idx + 1)
+                nums[idx], nums[i] = nums[i], nums[idx]
+- id: 51
+  title: "N-Queens"
+  difficulty: Hard
+  tags: [Array, Backtracking]
+  verified: false
+  description: |
+    The **n-queens** puzzle is the problem of placing `n` queens on an `n x n` chessboard
+    such that no two queens attack each other.
+
+    Given an integer `n`, return all distinct solutions to the **n-queens puzzle**. You may
+    return the answer in **any order**.
+
+    Each solution contains a distinct board configuration of the n-queens' placement, where
+    `'Q'` and `'.'` both indicate a queen and an empty space, respectively.
+
+    **Example 1:**
+      Input:  n = 4
+      Output: [[".Q..","...Q","Q...","..Q."],["..Q.","Q...","...Q",".Q.."]]
+      Explanation: There exist two distinct solutions to the 4-queens puzzle as shown above.
+
+    **Example 2:**
+      Input:  n = 1
+      Output: [["Q"]]
+
+    **Constraints:**
+      - 1 <= n <= 8
+  time: "O(n!)"
+  space: "O(n^2)"
+  approach: |
+    Use backtracking to place one queen per row. For each row, try each column position and
+    verify it is safe: no queen in the same column, no queen on the upper-left diagonal, and
+    no queen on the upper-right diagonal. Track occupied columns and both diagonals using sets
+    — for a cell at (r, c), the positive diagonal is r+c and negative diagonal is r-c. When
+    all n rows are filled, save the board configuration.
+  solution: |
+    class Solution:
+        def solveNQueens(self, n: int) -> List[List[str]]:
+            col = set()
+            posDiag = set()
+            negDiag = set()
+            res = []
+            board = [["."] * n for i in range(n)]
+
+            def backtrack(r):
+                if r == n:
+                    copy = ["".join(row) for row in board]
+                    res.append(copy)
+                    return
+
+                for c in range(n):
+                    if c in col or (r + c) in posDiag or (r - c) in negDiag:
+                        continue
+
+                    col.add(c)
+                    posDiag.add(r + c)
+                    negDiag.add(r - c)
+                    board[r][c] = "Q"
+
+                    backtrack(r + 1)
+
+                    col.remove(c)
+                    posDiag.remove(r + c)
+                    negDiag.remove(r - c)
+                    board[r][c] = "."
+
+            backtrack(0)
+            return res
 - id: 33
   title: "Search In Rotated Sorted Array"
   difficulty: Medium
@@ -970,6 +1308,112 @@
                 else:
                     return True
             return False
+- id: 78
+  title: "Subsets"
+  difficulty: Medium
+  tags: [Array, Backtracking, Bit Manipulation]
+  verified: false
+  description: |
+    Given an integer array `nums` of **unique** elements, return all possible subsets (the
+    power set).
+
+    The solution set **must not** contain duplicate subsets. Return the solution in **any
+    order**.
+
+    **Example 1:**
+      Input:  nums = [1,2,3]
+      Output: [[],[1],[2],[1,2],[3],[1,3],[2,3],[1,2,3]]
+
+    **Example 2:**
+      Input:  nums = [0]
+      Output: [[],[0]]
+
+    **Constraints:**
+      - 1 <= nums.length <= 10
+      - -10 <= nums[i] <= 10
+      - All the integers of `nums` are **unique**.
+  time: "O(n * 2^n)"
+  space: "O(n)"
+  approach: |
+    Use backtracking to build all subsets by making a binary decision at each element —
+    include it or exclude it. Starting with an empty subset, recursively explore both
+    branches. When the end of the array is reached, store the formed subset. This generates
+    all 2^n possible combinations without duplicates.
+  solution: |
+    class Solution:
+        def subsets(self, nums: List[int]) -> List[List[int]]:
+            res = []
+            subset = []
+
+            def dfs(i):
+                if i >= len(nums):
+                    res.append(subset.copy())
+                    return
+                subset.append(nums[i])
+                dfs(i + 1)
+                subset.pop()
+                dfs(i + 1)
+
+            dfs(0)
+            return res
+- id: 79
+  title: "Word Search"
+  difficulty: Medium
+  tags: [Array, String, Backtracking, Depth-First Search, Matrix]
+  verified: false
+  description: |
+    Given a 2-D grid of characters `board` and a string `word`, return `true` if the word
+    exists in the grid.
+
+    The word can be constructed from letters of sequentially adjacent cells, where adjacent
+    cells are horizontally or vertically neighboring. The same cell may not be used more than
+    once.
+
+    **Example 1:**
+      Input:  board = [["A","B","C","D"],["S","A","A","T"],["A","C","A","E"]], word = "CAT"
+      Output: true
+
+    **Example 2:**
+      Input:  board = [["A","B","C","D"],["S","A","A","T"],["A","C","A","E"]], word = "BAT"
+      Output: false
+
+    **Constraints:**
+      - 1 <= board.length, board[i].length <= 5
+      - 1 <= word.length <= 10
+      - board and `word` consist of only uppercase and lowercase English letters.
+  time: "O(m * 4^n)"
+  space: "O(n)"
+  approach: |
+    Use DFS with backtracking, trying each cell as a potential starting point. For each
+    position, verify the character matches the current index in the word. Explore all four
+    directional neighbors recursively. Mark cells as visited by temporarily overwriting with
+    '#' to prevent reuse. When all word characters are matched, return true. After exploring,
+    restore the cell to its original character.
+  solution: |
+    class Solution:
+        def exist(self, board: List[List[str]], word: str) -> bool:
+            ROWS, COLS = len(board), len(board[0])
+
+            def dfs(r, c, i):
+                if i == len(word):
+                    return True
+                if (r < 0 or c < 0 or r >= ROWS or c >= COLS or
+                    word[i] != board[r][c] or board[r][c] == '#'):
+                    return False
+
+                board[r][c] = '#'
+                res = (dfs(r + 1, c, i + 1) or
+                       dfs(r - 1, c, i + 1) or
+                       dfs(r, c + 1, i + 1) or
+                       dfs(r, c - 1, i + 1))
+                board[r][c] = word[i]
+                return res
+
+            for r in range(ROWS):
+                for c in range(COLS):
+                    if dfs(r, c, 0):
+                        return True
+            return False
 - id: 76
   title: "Minimum Window Substring"
   difficulty: Hard
@@ -1082,6 +1526,57 @@
                     maxArea = max(maxArea, height * width)
                 stack.append(i)
             return maxArea
+- id: 90
+  title: "Subsets II"
+  difficulty: Medium
+  tags: [Array, Backtracking, Bit Manipulation]
+  verified: false
+  description: |
+    Given an integer array `nums` that may contain duplicates, return all possible subsets
+    (the power set).
+
+    The solution set **must not** contain duplicate subsets. Return the solution in **any
+    order**.
+
+    **Example 1:**
+      Input:  nums = [1,2,1]
+      Output: [[],[1],[1,2],[1,1],[1,2,1],[2]]
+
+    **Example 2:**
+      Input:  nums = [7,7]
+      Output: [[],[7],[7,7]]
+
+    **Constraints:**
+      - 1 <= nums.length <= 11
+      - -20 <= nums[i] <= 20
+  time: "O(n * 2^n)"
+  space: "O(n)"
+  approach: |
+    Sort the array first to group duplicates adjacently. Use backtracking to generate subsets
+    while preventing duplicates by skipping redundant choices at each recursion level. When
+    excluding a value and the next value is identical, skip forward to avoid generating the
+    same subset twice.
+  solution: |
+    class Solution:
+        def subsetsWithDup(self, nums: List[int]) -> List[List[int]]:
+            nums.sort()
+            res = []
+
+            def backtrack(i, subset):
+                if i == len(nums):
+                    res.append(subset[::])
+                    return
+
+                subset.append(nums[i])
+                backtrack(i + 1, subset)
+                subset.pop()
+
+                while i + 1 < len(nums) and nums[i] == nums[i + 1]:
+                    i += 1
+                backtrack(i + 1, subset)
+
+            backtrack(0, [])
+            return res
 - id: 98
   title: "Validate Binary Search Tree"
   difficulty: Medium
@@ -1377,6 +1872,59 @@
                 maxP = max(maxP, sell - minBuy)
                 minBuy = min(minBuy, sell)
             return maxP
+- id: 131
+  title: "Palindrome Partitioning"
+  difficulty: Medium
+  tags: [String, Dynamic Programming, Backtracking]
+  verified: false
+  description: |
+    Given a string `s`, partition `s` such that every substring of the partition is a
+    **palindrome**. Return all possible palindrome partitioning of `s`.
+
+    **Example 1:**
+      Input:  s = "aab"
+      Output: [["a","a","b"],["aa","b"]]
+
+    **Example 2:**
+      Input:  s = "a"
+      Output: [["a"]]
+
+    **Constraints:**
+      - 1 <= s.length <= 20
+      - `s` consists only of lowercase English letters.
+  time: "O(n * 2^n)"
+  space: "O(n)"
+  approach: |
+    Combine backtracking with dynamic programming. First precompute a 2D boolean DP table
+    where dp[i][j] is true if substring s[i..j] is a palindrome. Then apply backtracking
+    from index 0: for each starting position, iterate through all end positions. When dp[i][j]
+    is true, add the substring to the current partition and recurse from j+1. Backtrack by
+    popping the last substring.
+  solution: |
+    class Solution:
+        def partition(self, s: str) -> List[List[str]]:
+            n = len(s)
+            dp = [[False] * n for _ in range(n)]
+            for l in range(1, n + 1):
+                for i in range(n - l + 1):
+                    dp[i][i + l - 1] = (s[i] == s[i + l - 1] and
+                                        (i + 1 > (i + l - 2) or
+                                        dp[i + 1][i + l - 2]))
+
+            res, part = [], []
+
+            def dfs(i):
+                if i >= len(s):
+                    res.append(part.copy())
+                    return
+                for j in range(i, len(s)):
+                    if dp[i][j]:
+                        part.append(s[i : j + 1])
+                        dfs(j + 1)
+                        part.pop()
+
+            dfs(0)
+            return res
 - id: 124
   title: "Binary Tree Maximum Path Sum"
   difficulty: Hard
