@@ -24,20 +24,6 @@ Swim In Rising Water
 Alien Dictionary
 Cheapest Flights Within K Stops
 
-# 1-DP
-Climbing Stairs
-Min Cost Climbing Stairs
-House Robber
-House Robber II
-Longest Palindromic Substring
-Palindromic Substrings
-Decode Ways
-Coin Change
-Maximum Product Subarray
-Word Break
-Longest Increasing Subsequence
-Partition Equal Subset Sum
-
 # 2D DP
 Unique Paths
 Longest Common Subsequence

@@ -284,6 +284,59 @@
                     r = i - 1
                 else:
                     l = i + 1
+- id: 5
+  title: "Longest Palindromic Substring"
+  difficulty: Medium
+  tags: [Two Pointers, String, Dynamic Programming]
+  verified: false
+  description: |
+    Given a string `s`, return the longest substring that reads the same forward and backward.
+    If multiple palindromic substrings share the same maximum length, any one is acceptable.
+
+    **Example 1:**
+      Input:  s = "ababd"
+      Output: "bab"
+      Explanation: Both "aba" and "bab" are valid answers.
+
+    **Example 2:**
+      Input:  s = "abbc"
+      Output: "bb"
+
+    **Constraints:**
+      - 1 <= s.length <= 1000
+      - s contains only digits and English letters
+  time: "O(n^2)"
+  space: "O(1)"
+  approach: |
+    Use center expansion (two-pointer technique). A palindrome expands symmetrically from its
+    center — either a single character (odd-length) or between two characters (even-length).
+    For each index, treat it as a potential center and expand outward while characters match.
+    Check both odd and even-length cases. Track the longest palindrome found. This avoids
+    redundant substring checks and maintains constant auxiliary space.
+  solution: |
+    class Solution:
+        def longestPalindrome(self, s: str) -> str:
+            resIdx = 0
+            resLen = 0
+
+            for i in range(len(s)):
+                l, r = i, i
+                while l >= 0 and r < len(s) and s[l] == s[r]:
+                    if (r - l + 1) > resLen:
+                        resIdx = l
+                        resLen = r - l + 1
+                    l -= 1
+                    r += 1
+
+                l, r = i, i + 1
+                while l >= 0 and r < len(s) and s[l] == s[r]:
+                    if (r - l + 1) > resLen:
+                        resIdx = l
+                        resLen = r - l + 1
+                    l -= 1
+                    r += 1
+
+            return s[resIdx : resIdx + resLen]
 - id: 11
   title: "Container With Most Water"
   difficulty: Medium
@@ -1261,6 +1314,45 @@
                 count[ord(c) - ord('a')] += 1
             res[tuple(count)].append(s)
         return list(res.values())
+- id: 70
+  title: "Climbing Stairs"
+  difficulty: Easy
+  tags: [Math, Dynamic Programming, Memoization]
+  verified: false
+  description: |
+    You are given an integer `n` representing the number of steps to reach the top of a
+    staircase. You can climb with either 1 or 2 steps at a time.
+
+    Return the number of distinct ways to climb to the top.
+
+    **Example 1:**
+      Input:  n = 2
+      Output: 2
+      Explanation: 1+1=2 or 2=2
+
+    **Example 2:**
+      Input:  n = 3
+      Output: 3
+      Explanation: 1+1+1=3, 1+2=3, or 2+1=3
+
+    **Constraints:**
+      - 1 <= n <= 45
+  time: "O(n)"
+  space: "O(1)"
+  approach: |
+    This problem follows a Fibonacci pattern. At each step, you can arrive from either the
+    previous step (1 step back) or two steps back. The ways to reach step i equals the sum of
+    ways to reach steps i-1 and i-2. Use two variables to track only the previous two values,
+    reducing space to O(1) while maintaining O(n) time.
+  solution: |
+    class Solution:
+        def climbStairs(self, n: int) -> int:
+            one, two = 1, 1
+            for i in range(n - 1):
+                temp = one
+                one = one + two
+                two = temp
+            return one
 - id: 74
   title: "Search a 2D Matrix"
   difficulty: Medium
@@ -1577,6 +1669,55 @@
 
             backtrack(0, [])
             return res
+- id: 91
+  title: "Decode Ways"
+  difficulty: Medium
+  tags: [String, Dynamic Programming]
+  verified: false
+  description: |
+    A string of uppercase English characters can be encoded to numbers using the mapping:
+    'A' → "1", 'B' → "2", ..., 'Z' → "26".
+
+    Given a string `s` containing only digits, return the number of ways to decode it. Valid
+    groupings must not contain leading zeros (e.g., "01" is invalid).
+
+    **Example 1:**
+      Input:  s = "12"
+      Output: 2
+      Explanation: Can decode as "AB" (1, 2) or "L" (12).
+
+    **Example 2:**
+      Input:  s = "01"
+      Output: 0
+      Explanation: "01" cannot map to any letter.
+
+    **Constraints:**
+      - 1 <= s.length <= 100
+      - s consists of digits
+  time: "O(n)"
+  space: "O(1)"
+  approach: |
+    At each index, two choices exist: decode one digit (if not '0') or decode two consecutive
+    digits (if they form a number 10-26). Use dynamic programming working backward from the
+    end. For each position, accumulate the ways to decode one digit plus the ways to decode two
+    digits (when valid). Track only the next two positions (dp1, dp2) to minimize space.
+  solution: |
+    class Solution:
+        def numDecodings(self, s: str) -> int:
+            dp1, dp2 = 1, 0
+
+            for i in range(len(s) - 1, -1, -1):
+                if s[i] == '0':
+                    current = 0
+                else:
+                    current = dp1
+                    if i + 1 < len(s) and (s[i] == '1' or
+                       (s[i] == '2' and s[i + 1] <= '6')):
+                        current += dp2
+
+                dp2, dp1 = dp1, current
+
+            return dp1
 - id: 98
   title: "Validate Binary Search Tree"
   difficulty: Medium
@@ -2349,6 +2490,54 @@
                 cur = cur.next
 
             return oldToCopy[head]
+- id: 139
+  title: "Word Break"
+  difficulty: Medium
+  tags: [Array, Hash Table, String, Dynamic Programming, Trie, Memoization]
+  verified: false
+  description: |
+    Given a string `s` and a dictionary of strings `wordDict`, return `true` if `s` can be
+    segmented into a space-separated sequence of dictionary words. Words may be reused
+    unlimited times, and all dictionary words are unique.
+
+    **Example 1:**
+      Input:  s = "neetcode", wordDict = ["neet","code"]
+      Output: true
+
+    **Example 2:**
+      Input:  s = "applepenapple", wordDict = ["apple","pen","ape"]
+      Output: true
+
+    **Example 3:**
+      Input:  s = "catsincars", wordDict = ["cats","cat","sin","in","car"]
+      Output: false
+
+    **Constraints:**
+      - 1 <= s.length <= 200
+      - 1 <= wordDict.length <= 100
+      - 1 <= wordDict[i].length <= 20
+      - s and wordDict[i] consist only of lowercase English letters
+  time: "O(n * m * t)"
+  space: "O(n)"
+  approach: |
+    Use bottom-up dynamic programming with a boolean array where dp[i] represents whether the
+    substring from position i onward can be segmented. Iterate backward through the string,
+    and for each position check if any dictionary word matches the current substring. If a
+    match exists and the remaining suffix is segmentable, mark the position as true.
+  solution: |
+    class Solution:
+        def wordBreak(self, s: str, wordDict: List[str]) -> bool:
+            dp = [False] * (len(s) + 1)
+            dp[len(s)] = True
+
+            for i in range(len(s) - 1, -1, -1):
+                for w in wordDict:
+                    if (i + len(w)) <= len(s) and s[i : i + len(w)] == w:
+                        dp[i] = dp[i + len(w)]
+                    if dp[i]:
+                        break
+
+            return dp[0]
 - id: 141
   title: "Linked List Cycle"
   difficulty: Easy
@@ -2597,6 +2786,47 @@
                 else:
                     stack.append(int(c))
             return stack[0]
+- id: 152
+  title: "Maximum Product Subarray"
+  difficulty: Medium
+  tags: [Array, Dynamic Programming]
+  verified: false
+  description: |
+    Given an integer array `nums`, find a contiguous subarray with the largest product and
+    return it.
+
+    **Example 1:**
+      Input:  nums = [1,2,-3,4]
+      Output: 4
+
+    **Example 2:**
+      Input:  nums = [-2,-1]
+      Output: 2
+
+    **Constraints:**
+      - 1 <= nums.length <= 1000
+      - -10 <= nums[i] <= 10
+  time: "O(n)"
+  space: "O(1)"
+  approach: |
+    Negative numbers can flip minimum products into maximum ones. Maintain both the maximum and
+    minimum product ending at each position. At each element, the maximum product is either the
+    current number alone, the previous maximum extended, or the previous minimum extended
+    (crucial when the current number is negative). Zero naturally resets products. Update both
+    curMax and curMin simultaneously while preserving the old curMax value.
+  solution: |
+    class Solution:
+        def maxProduct(self, nums: List[int]) -> int:
+            res = nums[0]
+            curMin, curMax = 1, 1
+
+            for num in nums:
+                tmp = curMax * num
+                curMax = max(num * curMax, num * curMin, num)
+                curMin = min(tmp, num * curMin, num)
+                res = max(res, curMax)
+
+            return res
 - id: 153
   title: "Find Minimum In Rotated Sorted Array"
   difficulty: Medium
@@ -2772,6 +3002,47 @@
                 else:
                     return [l + 1, r + 1]
             return []
+- id: 198
+  title: "House Robber"
+  difficulty: Medium
+  tags: [Array, Dynamic Programming]
+  verified: false
+  description: |
+    You are given an integer array `nums` where `nums[i]` represents the amount of money the
+    `i`th house has. You cannot rob two adjacent houses (security system will alert police).
+
+    Return the maximum amount of money you can rob without alerting the police.
+
+    **Example 1:**
+      Input:  nums = [1,1,3,3]
+      Output: 4
+      Explanation: Rob houses 0 and 2: 1 + 3 = 4.
+
+    **Example 2:**
+      Input:  nums = [2,9,8,3,6]
+      Output: 16
+      Explanation: Rob houses 0, 2, and 4: 2 + 8 + 6 = 16.
+
+    **Constraints:**
+      - 1 <= nums.length <= 100
+      - 0 <= nums[i] <= 100
+  time: "O(n)"
+  space: "O(1)"
+  approach: |
+    At each house, choose to rob it (adding its value to the best result from two positions
+    back) or skip it (keeping the previous maximum). The recurrence is:
+    dp[i] = max(dp[i-1], nums[i] + dp[i-2]). Store only the previous two states (rob1, rob2)
+    to reduce space to O(1).
+  solution: |
+    class Solution:
+        def rob(self, nums: List[int]) -> int:
+            rob1, rob2 = 0, 0
+
+            for num in nums:
+                temp = max(num + rob1, rob2)
+                rob1 = rob2
+                rob2 = temp
+            return rob2
 - id: 199
   title: "Binary Tree Right Side View"
   difficulty: Medium
@@ -3311,6 +3582,51 @@
                     dfs(r, c, root)
 
             return res
+- id: 213
+  title: "House Robber II"
+  difficulty: Medium
+  tags: [Array, Dynamic Programming]
+  verified: false
+  description: |
+    You are given an integer array `nums` where `nums[i]` represents the amount of money the
+    `i`th house has. The houses are arranged in a **circle**, meaning the first and last houses
+    are neighbors. You cannot rob two adjacent houses.
+
+    Return the maximum amount of money you can rob without alerting the police.
+
+    **Example 1:**
+      Input:  nums = [3,4,3]
+      Output: 4
+      Explanation: Cannot rob houses 0 and 2 (adjacent in circle). Maximum is house 1 only.
+
+    **Example 2:**
+      Input:  nums = [2,9,8,3,6]
+      Output: 15
+      Explanation: Cannot rob houses 0 and 4. Maximum is nums[1] + nums[4] = 15.
+
+    **Constraints:**
+      - 1 <= nums.length <= 100
+      - 0 <= nums[i] <= 200
+  time: "O(n)"
+  space: "O(1)"
+  approach: |
+    The circular constraint prevents robbing both the first and last houses simultaneously.
+    Split into two linear subproblems: rob houses from index 1 to n-1 (exclude first), and rob
+    houses from index 0 to n-2 (exclude last). Each is solved with the standard House Robber I
+    approach using two variables. Return the better result between the two cases.
+  solution: |
+    class Solution:
+        def rob(self, nums: List[int]) -> int:
+            return max(nums[0], self.helper(nums[1:]), self.helper(nums[:-1]))
+
+        def helper(self, nums):
+            rob1, rob2 = 0, 0
+
+            for num in nums:
+                newRob = max(rob1 + num, rob2)
+                rob1 = rob2
+                rob2 = newRob
+            return rob2
 - id: 215
   title: "Kth Largest Element In An Array"
   difficulty: Medium
@@ -4026,6 +4342,104 @@
                 return node
 
             return dfs()
+- id: 300
+  title: "Longest Increasing Subsequence"
+  difficulty: Medium
+  tags: [Array, Binary Search, Dynamic Programming]
+  verified: false
+  description: |
+    Given an integer array `nums`, return the length of the longest **strictly increasing**
+    subsequence.
+
+    A **subsequence** is derived from the array by deleting some or no elements without
+    changing the relative order of the remaining elements.
+
+    **Example 1:**
+      Input:  nums = [9,1,4,2,3,3,7]
+      Output: 4
+      Explanation: The longest increasing subsequence is [1,2,3,7].
+
+    **Example 2:**
+      Input:  nums = [0,3,1,3,2,3]
+      Output: 4
+
+    **Constraints:**
+      - 1 <= nums.length <= 1000
+      - -1000 <= nums[i] <= 1000
+  time: "O(n log n)"
+  space: "O(n)"
+  approach: |
+    Maintain a dp array where each position stores the smallest tail element of all increasing
+    subsequences of that length. For each new element, if it exceeds the last element in dp,
+    append it (extends the longest subsequence). Otherwise, use binary search to find the
+    position where this element should replace an existing value, keeping dp optimal for future
+    extensions. The length of dp at the end is the LIS length.
+  solution: |
+    from bisect import bisect_left
+
+    class Solution:
+        def lengthOfLIS(self, nums: List[int]) -> int:
+            dp = [nums[0]]
+            LIS = 1
+
+            for i in range(1, len(nums)):
+                if dp[-1] < nums[i]:
+                    dp.append(nums[i])
+                    LIS += 1
+                    continue
+
+                idx = bisect_left(dp, nums[i])
+                dp[idx] = nums[i]
+
+            return LIS
+- id: 322
+  title: "Coin Change"
+  difficulty: Medium
+  tags: [Array, Dynamic Programming, Breadth-First Search]
+  verified: false
+  description: |
+    Given an integer array `coins` representing coin denominations and an integer `amount`,
+    return the minimum number of coins needed to form the exact target amount. Return `-1` if
+    it is impossible.
+
+    You may assume that you have an infinite number of each kind of coin.
+
+    **Example 1:**
+      Input:  coins = [1,5,10], amount = 12
+      Output: 3
+      Explanation: 12 = 10 + 1 + 1
+
+    **Example 2:**
+      Input:  coins = [2], amount = 3
+      Output: -1
+
+    **Example 3:**
+      Input:  coins = [1], amount = 0
+      Output: 0
+
+    **Constraints:**
+      - 1 <= coins.length <= 10
+      - 1 <= coins[i] <= 2^31 - 1
+      - 0 <= amount <= 10000
+  time: "O(n * t)"
+  space: "O(t)"
+  approach: |
+    Build solutions incrementally using bottom-up dynamic programming from amount 0 to the
+    target. Initialize dp[0] = 0 (zero coins for amount 0) and all other positions to
+    amount + 1 (sentinel for impossible). For each amount a and each coin c, update:
+    dp[a] = min(dp[a], 1 + dp[a - c]) when a - c >= 0. Return dp[amount] if reachable, else -1.
+  solution: |
+    class Solution:
+        def coinChange(self, coins: List[int], amount: int) -> int:
+            dp = [amount + 1] * (amount + 1)
+            dp[0] = 0
+
+            for a in range(1, amount + 1):
+                for c in coins:
+                    if a - c >= 0:
+                        dp[a] = min(dp[a], 1 + dp[a - c])
+
+            return dp[amount] if dp[amount] != amount + 1 else -1
 - id: 323
   title: "Number of Connected Components In An Undirected Graph"
   difficulty: Medium
@@ -4249,6 +4663,50 @@
 
         def unfollow(self, followerId: int, followeeId: int) -> None:
             self.followMap[followerId].discard(followeeId)
+- id: 416
+  title: "Partition Equal Subset Sum"
+  difficulty: Medium
+  tags: [Array, Dynamic Programming]
+  verified: false
+  description: |
+    Given an array of positive integers `nums`, determine if the array can be partitioned into
+    two subsets where both subsets have equal sum.
+
+    **Example 1:**
+      Input:  nums = [1,2,3,4]
+      Output: true
+      Explanation: Array partitions as [1, 4] and [2, 3].
+
+    **Example 2:**
+      Input:  nums = [1,2,3,4,5]
+      Output: false
+
+    **Constraints:**
+      - 1 <= nums.length <= 100
+      - 1 <= nums[i] <= 50
+  time: "O(n * t)"
+  space: "O(t)"
+  approach: |
+    If the total sum is odd, return false immediately. Otherwise, check whether any subset sums
+    to exactly half the total — if it does, the remaining elements automatically form an equal
+    counterpart. Use a boolean dp array where dp[j] represents achievable sums. For each number,
+    iterate backwards through possible sums (0/1 knapsack) to ensure each element is used at
+    most once: dp[j] = dp[j] or dp[j - num].
+  solution: |
+    class Solution:
+        def canPartition(self, nums: List[int]) -> bool:
+            if sum(nums) % 2:
+                return False
+
+            target = sum(nums) // 2
+            dp = [False] * (target + 1)
+            dp[0] = True
+
+            for num in nums:
+                for j in range(target, num - 1, -1):
+                    dp[j] = dp[j] or dp[j - num]
+
+            return dp[target]
 - id: 417
   title: "Pacific Atlantic Water Flow"
   difficulty: Medium
@@ -4577,6 +5035,52 @@
 
             time = (maxf - 1) * (n + 1) + maxCount
             return max(len(tasks), time)
+- id: 647
+  title: "Palindromic Substrings"
+  difficulty: Medium
+  tags: [Two Pointers, String, Dynamic Programming]
+  verified: false
+  description: |
+    Given a string `s`, return the number of substrings within `s` that are palindromes.
+
+    **Example 1:**
+      Input:  s = "abc"
+      Output: 3
+      Explanation: "a", "b", "c"
+
+    **Example 2:**
+      Input:  s = "aaa"
+      Output: 6
+      Explanation: "a", "a", "a", "aa", "aa", "aaa"
+
+    **Constraints:**
+      - 1 <= s.length <= 1000
+      - s consists of lowercase English letters
+  time: "O(n^2)"
+  space: "O(1)"
+  approach: |
+    Use expand-around-center. Every palindrome has a center — either a single character
+    (odd-length) or between two characters (even-length). Iterate through each potential center
+    and expand outward while characters match, counting each successful expansion as one
+    palindromic substring. This handles both palindrome types without redundant comparisons.
+  solution: |
+    class Solution:
+        def countSubstrings(self, s: str) -> int:
+            res = 0
+
+            for i in range(len(s)):
+                res += self.countPali(s, i, i)
+                res += self.countPali(s, i, i + 1)
+
+            return res
+
+        def countPali(self, s, l, r):
+            count = 0
+            while l >= 0 and r < len(s) and s[l] == s[r]:
+                count += 1
+                l -= 1
+                r += 1
+            return count
 - id: 684
   title: "Redundant Connection"
   difficulty: Medium
@@ -4836,6 +5340,43 @@
                     res[stackInd] = i - stackInd
                 stack.append((t, i))
             return res
+- id: 746
+  title: "Min Cost Climbing Stairs"
+  difficulty: Easy
+  tags: [Array, Dynamic Programming]
+  verified: false
+  description: |
+    You are given an integer array `cost` where `cost[i]` is the cost of stepping on the `i`th
+    floor. After paying, you can advance to either the `(i+1)`th or `(i+2)`th floor. You may
+    begin at index 0 or 1.
+
+    Find the minimum cost to reach the top (past the last index).
+
+    **Example 1:**
+      Input:  cost = [1,2,3]
+      Output: 2
+      Explanation: Start at index 1, pay 2, and take two steps to reach the top.
+
+    **Example 2:**
+      Input:  cost = [1,2,1,2,1,1,1]
+      Output: 4
+
+    **Constraints:**
+      - 2 <= cost.length <= 100
+      - 0 <= cost[i] <= 100
+  time: "O(n)"
+  space: "O(1)"
+  approach: |
+    Work backwards through the cost array. Starting from the third-to-last position, each index
+    stores the minimum total cost to reach the top from that point:
+    cost[i] += min(cost[i+1], cost[i+2]). Finally, return the smaller of starting at index 0
+    or 1, since both are free entry points.
+  solution: |
+    class Solution:
+        def minCostClimbingStairs(self, cost: List[int]) -> int:
+            for i in range(len(cost) - 3, -1, -1):
+                cost[i] += min(cost[i + 1], cost[i + 2])
+            return min(cost[0], cost[1])
 - id: 853
   title: "Car Fleet"
   difficulty: Medium
