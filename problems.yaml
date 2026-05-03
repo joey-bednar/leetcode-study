@@ -2104,7 +2104,7 @@
   title: "Longest Consecutive Sequence"
   difficulty: Medium
   tags: [Array, Hash Table, Union Find]
-  verified: false
+  verified: true
   description: |
     Given an unsorted array of integers `nums`, return the length of the longest consecutive
     elements sequence.
@@ -2132,33 +2132,41 @@
     From each sequence start, extend right while consecutive numbers exist and track the max length.
     Each number is visited at most twice overall, so the algorithm is O(n).
   easy_solution: |
-    def longest_consecutive(nums: list[int]) -> int:
-        num_set = set(nums)
-        best = 0
-        for num in num_set:
-            if num - 1 not in num_set:
-                length = 1
-                while num + length in num_set:
-                    length += 1
-                best = max(best, length)
-        return best
+    def longestConsecutive(self, nums: List[int]) -> int:
+      numSet = set(nums)
+      longest = 0
+
+      for num in numSet:
+          if (num - 1) not in numSet:
+              length = 1
+              while (num + length) in numSet:
+                  length += 1
+              longest = max(length, longest)
+      return longest
   time: "O(n)"
   space: "O(n)"
   approach: |
-    Put all numbers into a hash set for O(1) lookup. For each number where (num - 1) is absent (sequence start), count right while consecutive numbers exist and track the maximum length.
-  solution: |
-    class Solution:
-        def longestConsecutive(self, nums: List[int]) -> int:
-            numSet = set(nums)
-            longest = 0
+    When we place a new number into the map, it may connect two existing sequences or extend one of them.
+    Instead of scanning forward or backward, we only look at the lengths stored at the neighbors:
 
-            for num in numSet:
-                if (num - 1) not in numSet:
-                    length = 1
-                    while (num + length) in numSet:
-                        length += 1
-                    longest = max(length, longest)
-            return longest
+        mp[num - 1] gives the length of the sequence ending right before num
+        mp[num + 1] gives the length of the sequence starting right after num
+
+    By adding these together and including the current number, we know the total length of the new merged sequence.
+    We then update the left boundary and right boundary of this sequence so the correct length can be retrieved later.
+    This keeps the whole operation very efficient and avoids repeated work.
+  solution: |
+    def longestConsecutive(self, nums: List[int]) -> int:
+        mp = defaultdict(int)
+        res = 0
+
+        for num in nums:
+            if not mp[num]:
+                mp[num] = mp[num - 1] + mp[num + 1] + 1
+                mp[num - mp[num - 1]] = mp[num]
+                mp[num + mp[num + 1]] = mp[num]
+                res = max(res, mp[num])
+        return res
 - id: 130
   title: "Surrounded Regions"
   difficulty: Medium
@@ -4107,10 +4115,43 @@
 
     **Follow up:** Your algorithm's time complexity must be better than `O(n log n)`, where n
     is the array's size.
+  easy_time: "O(n log k)"
+  easy_space: "O(n+k)"
+  easy_approach: |
+    After counting how often each number appears, we want to efficiently keep track of only the k most frequent elements.
+    A min-heap is perfect for this because it always keeps the smallest element at the top.
+    By pushing (frequency, value) pairs into the heap and removing the smallest whenever the heap grows beyond size k, we ensure that the heap always contains the top k most frequent elements.
+    In the end, the heap holds exactly the k values with the highest frequencies.
+  easy_solution: |
+    def topKFrequent(self, nums: List[int], k: int) -> List[int]:
+        count = {}
+        for num in nums:
+            count[num] = 1 + count.get(num, 0)
+
+        heap = []
+        for num in count.keys():
+            heapq.heappush(heap, (count[num], num))
+            if len(heap) > k:
+                heapq.heappop(heap)
+
+        res = []
+        for i in range(k):
+            res.append(heapq.heappop(heap)[1])
+        return res
   time: "O(n)"
   space: "O(n)"
   approach: |
-    Bucket sort: count frequencies with a hash map, then create n+1 frequency buckets (index = frequency). Sweep from the highest bucket downward, collecting elements until k are found.
+    Each number in the array appears a certain number of times, and the maximum possible frequency is the length of the array.
+    We can use this idea by creating a list where the index represents a frequency, and at each index we store all numbers that appear exactly that many times.
+
+    For example:
+
+        All numbers that appear 1 time go into group freq[1].
+        All numbers that appear 2 times go into group freq[2].
+        And so on.
+
+    After we build these groups, we look from the highest possible frequency down to the lowest and collect numbers from these groups until we have k of them.
+    This way, we directly jump to the most frequent numbers without sorting all the elements by frequency.
   solution: |
     class Solution:
         def topKFrequent(self, nums: List[int], k: int) -> List[int]:
