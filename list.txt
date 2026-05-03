@@ -37,15 +37,6 @@ Edit Distance
 Burst Balloons
 Regular Expression Matching
 
-# Bit manipulation
-Single Number
-Number of 1 Bits
-Counting Bits
-Reverse Bits
-Missing Number
-Sum of Two Integers
-Reverse Integer
-
 # Math and Geometry
 Rotate Image
 Spiral Matrix

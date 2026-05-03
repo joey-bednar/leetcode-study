@@ -337,6 +337,57 @@
                     r += 1
 
             return s[resIdx : resIdx + resLen]
+- id: 7
+  title: "Reverse Integer"
+  difficulty: Medium
+  tags: [Math, Bit Manipulation]
+  verified: false
+  description: |
+    Given a signed 32-bit integer `x`, return `x` with its digits reversed. If reversing `x`
+    causes the value to go outside the signed 32-bit integer range `[-2^31, 2^31 - 1]`, then
+    return `0`.
+
+    Assume the environment does not allow you to store 64-bit integers (signed or unsigned).
+
+    **Example 1:**
+      Input:  x = 123
+      Output: 321
+
+    **Example 2:**
+      Input:  x = -123
+      Output: -321
+
+    **Example 3:**
+      Input:  x = 120
+      Output: 21
+
+    **Constraints:**
+      - -2^31 <= x <= 2^31 - 1
+  time: "O(1)"
+  space: "O(1)"
+  approach: |
+    Extract digits one-by-one from the original number using modulo and division operations.
+    Before appending each digit to the result, validate that the operation won't cause overflow
+    by comparing against the 32-bit boundaries (MIN = -2^31 and MAX = 2^31 - 1). This prevents
+    corruption of the result and allows immediate termination if overflow would occur.
+  solution: |
+    class Solution:
+        def reverse(self, x: int) -> int:
+            MIN = -2147483648
+            MAX = 2147483647
+
+            res = 0
+            while x:
+                digit = int(math.fmod(x, 10))
+                x = int(x / 10)
+
+                if res > MAX // 10 or (res == MAX // 10 and digit > MAX % 10):
+                    return 0
+                if res < MIN // 10 or (res == MIN // 10 and digit < MIN % 10):
+                    return 0
+                res = (res * 10) + digit
+
+            return res
 - id: 11
   title: "Container With Most Water"
   difficulty: Medium
@@ -2433,6 +2484,39 @@
                 return copy
 
             return dfs(node) if node else None
+- id: 136
+  title: "Single Number"
+  difficulty: Easy
+  tags: [Array, Bit Manipulation]
+  verified: false
+  description: |
+    You are given a **non-empty** array of integers `nums`. Every integer appears twice except
+    for one. Return the integer that appears only once.
+
+    **Example 1:**
+      Input:  nums = [3,2,3]
+      Output: 2
+
+    **Example 2:**
+      Input:  nums = [7,6,6,7,8]
+      Output: 8
+
+    **Constraints:**
+      - 1 <= nums.length <= 10000
+      - -10000 <= nums[i] <= 10000
+  time: "O(n)"
+  space: "O(1)"
+  approach: |
+    Use XOR: any number XORed with itself equals zero (a ^ a = 0), and any number XORed with
+    zero equals itself (a ^ 0 = a). Since every number appears exactly twice except one, XORing
+    all elements together causes every pair to cancel out, leaving only the single number.
+  solution: |
+    class Solution:
+        def singleNumber(self, nums: List[int]) -> int:
+            res = 0
+            for num in nums:
+                res ^= num
+            return res
 - id: 138
   title: "Copy List With Random Pointer"
   difficulty: Medium
@@ -3002,6 +3086,74 @@
                 else:
                     return [l + 1, r + 1]
             return []
+- id: 190
+  title: "Reverse Bits"
+  difficulty: Easy
+  tags: [Bit Manipulation, Divide and Conquer]
+  verified: false
+  description: |
+    Reverse the bits of a given 32-bit unsigned integer.
+
+    **Example 1:**
+      Input:  n = 00000000000000000000000000010101
+      Output: 10101000000000000000000000000000
+      Explanation: The input represents the unsigned integer 21. The output represents the
+        unsigned integer 2818572288.
+
+    **Constraints:**
+      - The input must be a **binary string** of length 32
+  time: "O(1)"
+  space: "O(1)"
+  approach: |
+    Use bitwise divide and conquer. Rather than reversing bits individually, swap bits in
+    progressively smaller blocks: first swap 16-bit halves, then 8-bit blocks, then 4-bit
+    nibbles, then 2-bit pairs, and finally individual bits. Each step uses bit masks to isolate
+    groups and shift them to their reversed positions, completing the reversal in constant
+    operations.
+  solution: |
+    class Solution:
+        def reverseBits(self, n: int) -> int:
+            res = n
+            res = (res >> 16) | (res << 16) & 0xFFFFFFFF
+            res = ((res & 0xff00ff00) >> 8) | ((res & 0x00ff00ff) << 8)
+            res = ((res & 0xf0f0f0f0) >> 4) | ((res & 0x0f0f0f0f) << 4)
+            res = ((res & 0xcccccccc) >> 2) | ((res & 0x33333333) << 2)
+            res = ((res & 0xaaaaaaaa) >> 1) | ((res & 0x55555555) << 1)
+            return res & 0xFFFFFFFF
+- id: 191
+  title: "Number of 1 Bits"
+  difficulty: Easy
+  tags: [Bit Manipulation, Divide and Conquer]
+  verified: false
+  description: |
+    Given an unsigned 32-bit integer `n`, return the number of `1` bits it has (also known as
+    the Hamming weight).
+
+    **Example 1:**
+      Input:  n = 00000000000000000000000000010111
+      Output: 4
+
+    **Example 2:**
+      Input:  n = 01111111111111111111111111111101
+      Output: 30
+
+    **Constraints:**
+      - The input must be a **binary string** of length 32
+  time: "O(1)"
+  space: "O(1)"
+  approach: |
+    Use a bitwise trick: n & (n - 1) removes the rightmost set bit from n. By repeatedly
+    applying this operation until n becomes zero, you eliminate exactly one 1-bit per
+    iteration. The number of iterations equals the total count of set bits, making this
+    approach efficient since you only process actual 1 bits rather than all 32 positions.
+  solution: |
+    class Solution:
+        def hammingWeight(self, n: int) -> int:
+            res = 0
+            while n:
+                n &= n - 1
+                res += 1
+            return res
 - id: 198
   title: "House Robber"
   difficulty: Medium
@@ -4039,6 +4191,41 @@
                 return True
 
             return dfs(0, -1) and len(visit) == n
+- id: 268
+  title: "Missing Number"
+  difficulty: Easy
+  tags: [Array, Hash Table, Math, Binary Search, Bit Manipulation, Sorting]
+  verified: false
+  description: |
+    Given an array `nums` containing `n` distinct numbers in the range `[0, n]`, return the
+    only number in the range that is missing from the array.
+
+    **Example 1:**
+      Input:  nums = [1,2,3]
+      Output: 0
+      Explanation: n = 3 since there are 3 numbers, so all numbers are in the range [0,3].
+        0 is the missing number in the range since it does not appear in nums.
+
+    **Example 2:**
+      Input:  nums = [0,2]
+      Output: 1
+
+    **Constraints:**
+      - 1 <= nums.length <= 1000
+  time: "O(n)"
+  space: "O(1)"
+  approach: |
+    Use XOR: XORing all values from 0 to n together with all array elements causes every number
+    that appears twice to cancel out (a ^ a = 0), leaving only the missing number. This achieves
+    linear time with constant space.
+  solution: |
+    class Solution:
+        def missingNumber(self, nums: List[int]) -> int:
+            n = len(nums)
+            xorr = n
+            for i in range(n):
+                xorr ^= i ^ nums[i]
+            return xorr
 - id: 271
   title: "Encode and Decode Strings"
   difficulty: Medium
@@ -4504,6 +4691,37 @@
                 if dsu.union(u, v):
                     res -= 1
             return res
+- id: 338
+  title: "Counting Bits"
+  difficulty: Easy
+  tags: [Dynamic Programming, Bit Manipulation]
+  verified: false
+  description: |
+    Given an integer `n`, count the number of `1`'s in the binary representation of every
+    number in the range `[0, n]`. Return an array `output` where `output[i]` is the number of
+    `1`'s in the binary representation of `i`.
+
+    **Example 1:**
+      Input:  n = 4
+      Output: [0,1,1,2,1]
+      Explanation: 0 --> 0, 1 --> 1, 2 --> 10, 3 --> 11, 4 --> 100
+
+    **Constraints:**
+      - 0 <= n <= 1000
+  time: "O(n)"
+  space: "O(n)"
+  approach: |
+    Use dynamic programming with bit manipulation. Right-shifting a number by 1 (i >> 1)
+    removes the least significant bit. The bit count of i equals the bit count of i >> 1 plus
+    the last bit of i (extracted by i & 1). This recurrence lets each result be computed from a
+    previously computed smaller number, building all results incrementally in one pass.
+  solution: |
+    class Solution:
+        def countBits(self, n: int) -> List[int]:
+            dp = [0] * (n + 1)
+            for i in range(n + 1):
+                dp[i] = dp[i >> 1] + (i & 1)
+            return dp
 - id: 347
   title: "Top K Frequent Elements"
   difficulty: Medium
@@ -4663,6 +4881,46 @@
 
         def unfollow(self, followerId: int, followeeId: int) -> None:
             self.followMap[followerId].discard(followeeId)
+- id: 371
+  title: "Sum of Two Integers"
+  difficulty: Medium
+  tags: [Math, Bit Manipulation]
+  verified: false
+  description: |
+    Given two integers `a` and `b`, return the sum of the two integers without using the
+    operators `+` and `-`.
+
+    **Example 1:**
+      Input:  a = 1, b = 1
+      Output: 2
+
+    **Example 2:**
+      Input:  a = 4, b = 7
+      Output: 11
+
+    **Constraints:**
+      - -1000 <= a <= 1000
+      - -1000 <= b <= 1000
+  time: "O(1)"
+  space: "O(1)"
+  approach: |
+    Binary addition uses two operations: XOR produces the sum of bits without carry (1 XOR 1 =
+    0, matching addition), and AND with left shift identifies carry (both bits are 1). Repeatedly
+    compute carry as (a & b) << 1, update sum as a XOR b, then assign carry to b — until no
+    carry remains. A 32-bit mask handles overflow; negative results in two's complement require
+    conversion back to signed representation.
+  solution: |
+    class Solution:
+        def getSum(self, a: int, b: int) -> int:
+            mask = 0xFFFFFFFF
+            max_int = 0x7FFFFFFF
+
+            while b != 0:
+                carry = (a & b) << 1
+                a = (a ^ b) & mask
+                b = carry & mask
+
+            return a if a <= max_int else ~(a ^ mask)
 - id: 416
   title: "Partition Equal Subset Sum"
   difficulty: Medium
