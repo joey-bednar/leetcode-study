@@ -10,13 +10,3 @@ Distinct Subsequences
 Edit Distance
 Burst Balloons
 Regular Expression Matching
-
-# Math and Geometry
-Rotate Image
-Spiral Matrix
-Set Matrix Zeroes
-Happy Number
-Plus One
-Pow(x, n)
-Multiply Strings
-Detect Squares
