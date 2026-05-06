@@ -1,13 +1,3 @@
-# Greedy
-Maximum Subarray
-Jump Game
-Jump Game II
-Gas Station
-Hand of Straights
-Merge Triplets to Form Target Triplet
-Partition Labels
-Valid Parenthesis String
-
 # Advanced Graphs
 Network Delay Time
 Reconstruct Itinerary

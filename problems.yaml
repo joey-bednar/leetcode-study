@@ -1017,6 +1017,57 @@
 
             dfs(0, [], 0)
             return res
+- id: 45
+  title: "Jump Game II"
+  difficulty: Medium
+  tags: [Array, Dynamic Programming, Greedy]
+  verified: false
+  description: |
+    You are given a **0-indexed** array of integers `nums` of length `n`. You are initially
+    positioned at `nums[0]`.
+
+    Each element `nums[i]` represents the maximum length of a forward jump from index `i`. In
+    other words, if you are at `nums[i]`, you can jump to any `nums[i + j]` where:
+      - `0 <= j <= nums[i]` and
+      - `i + j < n`
+
+    Return the minimum number of jumps to reach `nums[n - 1]`. The test cases are generated
+    such that you can reach `nums[n - 1]`.
+
+    **Example 1:**
+      Input:  nums = [2,3,1,1,4]
+      Output: 2
+      Explanation: Jump 1 step from index 0 to 1, then 3 steps to the last index.
+
+    **Example 2:**
+      Input:  nums = [2,3,0,1,4]
+      Output: 2
+
+    **Constraints:**
+      - 1 <= nums.length <= 10^4
+      - 0 <= nums[i] <= 1000
+      - The test cases are generated such that you can reach nums[n - 1].
+  time: "O(n)"
+  space: "O(1)"
+  approach: |
+    Treat this as a BFS-style level traversal. Maintain a window [l, r] of indices reachable
+    with the current number of jumps. For each window, compute the farthest index reachable
+    from any position inside it. Advance l to r + 1 and r to that farthest index, then
+    increment the jump counter. Repeat until the window covers or passes the last index.
+  solution: |
+    class Solution:
+        def jump(self, nums: List[int]) -> int:
+            res = 0
+            l = r = 0
+
+            while r < len(nums) - 1:
+                farthest = 0
+                for i in range(l, r + 1):
+                    farthest = max(farthest, i + nums[i])
+                l = r + 1
+                r = farthest
+                res += 1
+            return res
 - id: 46
   title: "Permutations"
   difficulty: Medium
@@ -1365,6 +1416,90 @@
                 count[ord(c) - ord('a')] += 1
             res[tuple(count)].append(s)
         return list(res.values())
+- id: 53
+  title: "Maximum Subarray"
+  difficulty: Medium
+  tags: [Array, Divide and Conquer, Dynamic Programming]
+  verified: false
+  description: |
+    Given an integer array `nums`, find the subarray with the largest sum, and return its sum.
+
+    **Example 1:**
+      Input:  nums = [-2,1,-3,4,-1,2,1,-5,4]
+      Output: 6
+      Explanation: The subarray [4,-1,2,1] has the largest sum 6.
+
+    **Example 2:**
+      Input:  nums = [1]
+      Output: 1
+
+    **Example 3:**
+      Input:  nums = [5,4,-1,7,8]
+      Output: 23
+      Explanation: The subarray [5,4,-1,7,8] has the largest sum 23.
+
+    **Constraints:**
+      - 1 <= nums.length <= 10^5
+      - -10^4 <= nums[i] <= 10^4
+  time: "O(n)"
+  space: "O(1)"
+  approach: |
+    Kadane's Algorithm: maintain a running sum and reset it to 0 whenever it becomes negative,
+    since a negative prefix can only reduce any future subarray sum. Track the maximum sum seen
+    throughout. Initialize the best sum to nums[0] to handle all-negative arrays correctly.
+  solution: |
+    class Solution:
+        def maxSubArray(self, nums: List[int]) -> int:
+            maxSub = nums[0]
+            curSum = 0
+            for num in nums:
+                if curSum < 0:
+                    curSum = 0
+                curSum += num
+                maxSub = max(maxSub, curSum)
+            return maxSub
+- id: 55
+  title: "Jump Game"
+  difficulty: Medium
+  tags: [Array, Dynamic Programming, Greedy]
+  verified: false
+  description: |
+    You are given an integer array `nums`. You are initially positioned at the array's **first
+    index**, and each element in the array represents your maximum jump length at that position.
+
+    Return `true` if you can reach the last index, or `false` otherwise.
+
+    **Example 1:**
+      Input:  nums = [2,3,1,1,4]
+      Output: true
+      Explanation: Jump 1 step from index 0 to 1, then 3 steps to the last index.
+
+    **Example 2:**
+      Input:  nums = [3,2,1,0,4]
+      Output: false
+      Explanation: You will always arrive at index 3 no matter what. Its maximum jump length
+        is 0, which makes it impossible to reach the last index.
+
+    **Constraints:**
+      - 1 <= nums.length <= 10^4
+      - 0 <= nums[i] <= 10^5
+  time: "O(n)"
+  space: "O(1)"
+  approach: |
+    Work backward from the last index, maintaining a "goal" — the leftmost index known to
+    reach the end. For each position moving right to left, if that index can jump far enough
+    to reach or exceed the current goal, it becomes the new goal. If the goal reaches index 0,
+    the start can reach the end.
+  solution: |
+    class Solution:
+        def canJump(self, nums: List[int]) -> bool:
+            goal = len(nums) - 1
+
+            for i in range(len(nums) - 2, -1, -1):
+                if i + nums[i] >= goal:
+                    goal = i
+
+            return goal == 0
 - id: 56
   title: "Merge Intervals"
   difficulty: Medium
@@ -2593,6 +2728,67 @@
                 return copy
 
             return dfs(node) if node else None
+- id: 134
+  title: "Gas Station"
+  difficulty: Medium
+  tags: [Array, Greedy]
+  verified: false
+  description: |
+    There are `n` gas stations along a circular route. You are given two integer arrays `gas`
+    and `cost` where:
+      - `gas[i]` is the amount of gas at the `i`th station.
+      - `cost[i]` is the amount of gas needed to travel from the `i`th station to the next.
+
+    You begin the journey with an empty tank at one of the gas stations. Return the starting
+    station's index if you can travel around the circuit once in the clockwise direction,
+    otherwise return `-1`. If a solution exists, it is **guaranteed** to be **unique**.
+
+    **Example 1:**
+      Input:  gas = [1,2,3,4,5], cost = [3,4,5,1,2]
+      Output: 3
+      Explanation: Start at station 3 (index 3) and fill up with 4 unit of gas. Your tank =
+        0 + 4 = 4. Travel to station 4. Your tank = 4 - 1 + 5 = 8. Travel to station 0. Your
+        tank = 8 - 2 + 1 = 7. Travel to station 1. Your tank = 7 - 3 + 2 = 6. Travel to
+        station 2. Your tank = 6 - 4 + 3 = 5. Travel to station 3. The cost is 5. Your gas is
+        just enough to travel back to station 3. Therefore, return 3 as the starting index.
+
+    **Example 2:**
+      Input:  gas = [2,3,4], cost = [3,4,3]
+      Output: -1
+      Explanation: You can't start at station 0 or 1, as there is not enough gas to travel to
+        the next station. Let's start at station 2 and fill up with 4 unit of gas. Your tank
+        = 0 + 4 = 4. Travel to station 0. Your tank = 4 - 3 + 2 = 3. Travel to station 1.
+        Your tank = 3 - 3 + 3 = 3. You cannot travel back to station 2, as it requires 4
+        unit of gas but you only have 3. Therefore, you can't make a full circuit.
+
+    **Constraints:**
+      - n == gas.length == cost.length
+      - 1 <= n <= 10^5
+      - 0 <= gas[i], cost[i] <= 10^4
+  time: "O(n)"
+  space: "O(1)"
+  approach: |
+    If total gas is less than total cost, no solution exists. Otherwise, exactly one valid
+    starting station exists. Track a running net balance as you iterate. Whenever the balance
+    drops below zero, the current candidate fails — reset the balance and try the next station.
+    All skipped candidates are provably invalid because any intermediate restart would have
+    accumulated even less gas.
+  solution: |
+    class Solution:
+        def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int:
+            if sum(gas) < sum(cost):
+                return -1
+
+            total = 0
+            res = 0
+            for i in range(len(gas)):
+                total += (gas[i] - cost[i])
+
+                if total < 0:
+                    total = 0
+                    res = i + 1
+
+            return res
 - id: 136
   title: "Single Number"
   difficulty: Easy
@@ -5578,6 +5774,67 @@
                 l -= 1
                 r += 1
             return count
+- id: 678
+  title: "Valid Parenthesis String"
+  difficulty: Medium
+  tags: [String, Dynamic Programming, Stack, Greedy]
+  verified: false
+  description: |
+    Given a string `s` containing only three types of characters: `'('`, `')'` and `'*'`,
+    return `true` if `s` is **valid**.
+
+    The following rules define a **valid** string:
+      - Any left parenthesis `'('` must have a corresponding right parenthesis `')'`.
+      - Any right parenthesis `')'` must have a corresponding left parenthesis `'('`.
+      - Left parenthesis `'('` must go before the corresponding right parenthesis `')'`.
+      - `'*'` could be treated as a single right parenthesis `')'` or a single left parenthesis
+        `'('` or an empty string `""`.
+
+    **Example 1:**
+      Input:  s = "()"
+      Output: true
+
+    **Example 2:**
+      Input:  s = "(*)"
+      Output: true
+
+    **Example 3:**
+      Input:  s = "(*))"
+      Output: true
+
+    **Constraints:**
+      - 1 <= s.length <= 100
+      - s[i] is '(', ')' or '*'.
+  time: "O(n)"
+  space: "O(1)"
+  approach: |
+    Track a range [leftMin, leftMax] representing the possible number of unmatched opening
+    parentheses. For '(' increment both; for ')' decrement both; for '*' decrement leftMin
+    (treat as ')') and increment leftMax (treat as '('). If leftMax goes negative, too many
+    closing brackets exist — return false. Clamp leftMin to 0 when it goes negative. The string
+    is valid if leftMin reaches 0 at the end.
+  solution: |
+    class Solution:
+        def checkValidString(self, s: str) -> bool:
+            leftMin, leftMax = 0, 0
+
+            for c in s:
+                if c == "(":
+                    leftMin += 1
+                    leftMax += 1
+                elif c == ")":
+                    leftMin -= 1
+                    leftMax -= 1
+                else:
+                    leftMin -= 1
+                    leftMax += 1
+
+                if leftMax < 0:
+                    return False
+                if leftMin < 0:
+                    leftMin = 0
+
+            return leftMin == 0
 - id: 684
   title: "Redundant Connection"
   difficulty: Medium
@@ -5874,6 +6131,106 @@
             for i in range(len(cost) - 3, -1, -1):
                 cost[i] += min(cost[i + 1], cost[i + 2])
             return min(cost[0], cost[1])
+- id: 763
+  title: "Partition Labels"
+  difficulty: Medium
+  tags: [Hash Table, Two Pointers, String, Greedy]
+  verified: false
+  description: |
+    You are given a string `s`. We want to partition the string into as many parts as possible
+    so that each letter appears in at most one part.
+
+    Note that the partition is done so that after concatenating all the parts in order, the
+    resultant string should be `s`.
+
+    Return a list of integers representing the size of these parts.
+
+    **Example 1:**
+      Input:  s = "ababcbacadefegdehijhklij"
+      Output: [9,7,8]
+      Explanation: The partition is "ababcbaca", "defegde", "hijhklij". This is a partition so
+        that each letter appears in at most one part. A partition like "ababcbacadefegde",
+        "hijhklij" is incorrect, because it splits s into fewer parts.
+
+    **Example 2:**
+      Input:  s = "eccbbbbdec"
+      Output: [10]
+
+    **Constraints:**
+      - 1 <= s.length <= 500
+      - s consists of lowercase English letters.
+  time: "O(n)"
+  space: "O(m)"
+  approach: |
+    Precompute the last index of every character. Then scan left to right, extending the
+    current partition's end to the farthest last occurrence of any character seen so far.
+    When the current index equals the end, the partition is complete — record its size and
+    start a fresh partition from the next index.
+  solution: |
+    class Solution:
+        def partitionLabels(self, s: str) -> List[int]:
+            lastIndex = {}
+            for i, c in enumerate(s):
+                lastIndex[c] = i
+
+            res = []
+            size = end = 0
+            for i, c in enumerate(s):
+                size += 1
+                end = max(end, lastIndex[c])
+
+                if i == end:
+                    res.append(size)
+                    size = 0
+            return res
+- id: 846
+  title: "Hand of Straights"
+  difficulty: Medium
+  tags: [Array, Hash Table, Greedy, Sorting]
+  verified: false
+  description: |
+    Alice has some number of cards and she wants to rearrange the cards into groups so that
+    each group is of size `groupSize`, and consists of `groupSize` consecutive cards.
+
+    Given an integer array `hand` where `hand[i]` is the value written on the `i`th card and
+    an integer `groupSize`, return `true` if she can rearrange the cards, or `false` otherwise.
+
+    **Example 1:**
+      Input:  hand = [1,2,3,6,2,3,4,7,8], groupSize = 3
+      Output: true
+      Explanation: Alice's hand can be rearranged as [1,2,3],[2,3,4],[6,7,8].
+
+    **Example 2:**
+      Input:  hand = [1,2,3,4,5], groupSize = 4
+      Output: false
+      Explanation: Alice's hand can't be rearranged into groups of 4.
+
+    **Constraints:**
+      - 1 <= hand.length <= 10^4
+      - 0 <= hand[i] <= 10^9
+      - 1 <= groupSize <= hand.length
+  time: "O(n log n)"
+  space: "O(n)"
+  approach: |
+    If the total card count is not divisible by groupSize, return false immediately. Build a
+    frequency counter, then iterate through card values in sorted order. For each card with a
+    positive count, attempt to form a complete group of groupSize consecutive values, decrementing
+    counts as cards are used. If any required consecutive value is missing, return false.
+  solution: |
+    class Solution:
+        def isNStraightHand(self, hand: List[int], groupSize: int) -> bool:
+            if len(hand) % groupSize:
+                return False
+
+            count = Counter(hand)
+            hand.sort()
+            for num in hand:
+                if count[num]:
+                    for i in range(num, num + groupSize):
+                        if not count[i]:
+                            return False
+                        count[i] -= 1
+            return True
 - id: 853
   title: "Car Fleet"
   difficulty: Medium
@@ -6357,3 +6714,62 @@
                 res[q] = minHeap[0][0] if minHeap else -1
 
             return [res[q] for q in queries]
+- id: 1899
+  title: "Merge Triplets to Form Target Triplet"
+  difficulty: Medium
+  tags: [Array, Greedy]
+  verified: false
+  description: |
+    A **triplet** is an array of three integers. You are given a 2D integer array `triplets`,
+    where `triplets[i] = [ai, bi, ci]` describes the `i`th triplet. You are also given an
+    integer array `target = [x, y, z]` that describes the triplet you want to obtain.
+
+    To obtain `target`, you may apply the following operation on `triplets` any number of times
+    (possibly zero):
+      - Choose two indices (`0-indexed`) `i` and `j` (`i != j`) and **update** `triplets[j]`
+        to become `[max(ai, aj), max(bi, bj), max(ci, cj)]`.
+
+    For example, if `triplets[i] = [2, 5, 3]` and `triplets[j] = [1, 7, 5]`, `triplets[j]`
+    will be updated to `[max(2, 1), max(5, 7), max(3, 5)] = [2, 7, 5]`.
+
+    Return `true` if it is possible to obtain the `target` triplet `[x, y, z]` as an
+    **element** of `triplets`, or `false` otherwise.
+
+    **Example 1:**
+      Input:  triplets = [[2,5,3],[1,8,4],[1,7,5]], target = [2,7,5]
+      Output: true
+      Explanation: Perform the following operations:
+        - Choose the first and last triplets [[2,5,3],[1,8,4],[1,7,5]]. Update the last triplet
+          to be [max(2,1), max(5,7), max(3,5)] = [2,7,5]. triplets = [[2,5,3],[1,8,4],[2,7,5]]
+        The target triplet [2,7,5] is now an element of triplets.
+
+    **Example 2:**
+      Input:  triplets = [[3,4,5],[4,5,6]], target = [3,2,5]
+      Output: false
+      Explanation: It is impossible to have [3,2,5] as an element of triplets.
+
+    **Constraints:**
+      - 1 <= triplets.length <= 10^5
+      - triplets[i].length == target.length == 3
+      - 1 <= ai, bi, ci, x, y, z <= 1000
+  time: "O(n)"
+  space: "O(1)"
+  approach: |
+    Since merging only takes the element-wise maximum, a triplet with any value exceeding the
+    corresponding target position would overshoot the target and cannot contribute. Skip all
+    such triplets. For the remaining valid triplets, track which target positions have been
+    matched. A position is matched when a valid triplet equals the target at that position.
+    Return true when all three positions are matched.
+  solution: |
+    class Solution:
+        def mergeTriplets(self, triplets: List[List[int]], target: List[int]) -> bool:
+            good = set()
+
+            for t in triplets:
+                if t[0] > target[0] or t[1] > target[1] or t[2] > target[2]:
+                    continue
+                for i, v in enumerate(t):
+                    if v == target[i]:
+                        good.add(i)
+
+            return len(good) == 3
