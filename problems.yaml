@@ -4607,6 +4607,74 @@
             for i in range(n):
                 xorr ^= i ^ nums[i]
             return xorr
+- id: 269
+  title: "Alien Dictionary"
+  difficulty: Hard
+  tags: [Array, String, DFS, BFS, Graph, Topological Sort]
+  time: "O(N + V + E)"
+  space: "O(V + E)"
+  description: |
+    There is a foreign language which uses the latin alphabet, but the order among letters is not "alphabetical". You have received a list of non-empty words from the dictionary, where the words are sorted lexicographically based on the rules of this new language.
+
+    Derive the order of letters in this new language. If the order is invalid, return an empty string. If there are multiple valid orders, return any of them.
+
+    **Example 1:**
+    Input: words = ["wrt","wrf","er","ett","rftt"]
+    Output: "wertf"
+
+    **Example 2:**
+    Input: words = ["z","x"]
+    Output: "zx"
+
+    **Example 3:**
+    Input: words = ["z","x","z"]
+    Output: ""
+    Explanation: The order is invalid, so return "".
+
+    **Constraints:**
+    - `1 <= words.length <= 100`
+    - `1 <= words[i].length <= 100`
+    - `words[i]` consists of only lowercase English letters.
+  approach: |
+    Compare adjacent words in the list to extract character ordering constraints as directed edges. For each pair of adjacent words, find the first character that differs — this gives an edge from the earlier character to the later one. Special case: if a longer word appears before its prefix (e.g., "abc" before "ab"), the order is invalid.
+
+    Build an adjacency list from all unique characters to their "must come after" neighbors. Then run DFS with three states per node: unvisited, in current path (cycle detection), and fully processed. Collect nodes in post-order and reverse to get topological order. If a cycle is detected, return "".
+  solution: |
+    class Solution:
+        def foreignDictionary(self, words: List[str]) -> str:
+            adj = {c: set() for w in words for c in w}
+
+            for i in range(len(words) - 1):
+                w1, w2 = words[i], words[i + 1]
+                minLen = min(len(w1), len(w2))
+                if len(w1) > len(w2) and w1[:minLen] == w2[:minLen]:
+                    return ""
+                for j in range(minLen):
+                    if w1[j] != w2[j]:
+                        adj[w1[j]].add(w2[j])
+                        break
+
+            visited = {}  # False = visited, True = current path
+            res = []
+
+            def dfs(c):
+                if c in visited:
+                    return visited[c]
+                visited[c] = True
+                for nei in adj[c]:
+                    if dfs(nei):
+                        return True
+                visited[c] = False
+                res.append(c)
+                return False
+
+            for c in adj:
+                if dfs(c):
+                    return ""
+
+            res.reverse()
+            return "".join(res)
+  verified: false
 - id: 271
   title: "Encode and Decode Strings"
   difficulty: Medium
@@ -5072,6 +5140,54 @@
                 if dsu.union(u, v):
                     res -= 1
             return res
+- id: 332
+  title: "Reconstruct Itinerary"
+  difficulty: Hard
+  tags: [DFS, Graph]
+  time: "O(E log E)"
+  space: "O(E)"
+  description: |
+    You are given a list of airline tickets where `tickets[i] = [fromi, toi]` represent the departure and the arrival airports of one flight. Reconstruct the itinerary in order and return it.
+
+    All of the tickets must be used once and exactly once. The itinerary must begin with `"JFK"`. If there are multiple valid itineraries, return the itinerary that has the smallest lexical order when read as a single string.
+
+    **Example 1:**
+    Input: tickets = [["MUC","LHR"],["JFK","MUC"],["SFO","SJC"],["LHR","SFO"]]
+    Output: ["JFK","MUC","LHR","SFO","SJC"]
+
+    **Example 2:**
+    Input: tickets = [["JFK","SFO"],["JFK","ATL"],["SFO","ATL"],["ATL","JFK"],["ATL","SFO"]]
+    Output: ["JFK","ATL","JFK","SFO","ATL","SFO"]
+
+    **Constraints:**
+    - `1 <= tickets.length <= 300`
+    - `tickets[i].length == 2`
+    - `fromi.length == 3`
+    - `toi.length == 3`
+    - `fromi` and `toi` consist of uppercase English letters.
+    - `fromi != toi`
+  approach: |
+    Use Hierholzer's algorithm to find an Eulerian path starting from "JFK". Sort all tickets in reverse lexicographic order so that when destinations are stored in an adjacency list and popped, we always take the smallest lexicographic destination first.
+
+    Perform a DFS from "JFK", appending airports to the result in post-order (after all outgoing edges are exhausted). Reverse the result at the end to get the correct order.
+  solution: |
+    class Solution:
+        def findItinerary(self, tickets: List[List[str]]) -> List[str]:
+            adj = defaultdict(list)
+            for src, dst in sorted(tickets, reverse=True):
+                adj[src].append(dst)
+
+            res = []
+
+            def dfs(src):
+                while adj[src]:
+                    dst = adj[src].pop()
+                    dfs(dst)
+                res.append(src)
+
+            dfs("JFK")
+            return res[::-1]
+  verified: false
 - id: 338
   title: "Counting Bits"
   difficulty: Easy
@@ -6094,6 +6210,64 @@
                     res[stackInd] = i - stackInd
                 stack.append((t, i))
             return res
+- id: 743
+  title: "Network Delay Time"
+  difficulty: Medium
+  tags: [DFS, BFS, Graph, Heap, Shortest Path]
+  time: "O(E log V)"
+  space: "O(V + E)"
+  description: |
+    You are given a network of `n` nodes, labeled from `1` to `n`. You are also given `times`, a list of travel times as directed edges `times[i] = (ui, vi, wi)`, where `ui` is the source node, `vi` is the target node, and `wi` is the time it takes for a signal to travel from source to target.
+
+    We will send a signal from a given node `k`. Return the minimum time it takes for all the `n` nodes to receive the signal. If it is impossible for all the `n` nodes to receive the signal, return `-1`.
+
+    **Example 1:**
+    Input: times = [[2,1,1],[2,3,1],[3,4,1]], n = 4, k = 2
+    Output: 2
+
+    **Example 2:**
+    Input: times = [[1,2,1]], n = 2, k = 1
+    Output: 1
+
+    **Example 3:**
+    Input: times = [[1,2,1]], n = 2, k = 2
+    Output: -1
+
+    **Constraints:**
+    - `1 <= k <= n <= 100`
+    - `1 <= times.length <= 6000`
+    - `times[i].length == 3`
+    - `1 <= ui, vi <= n`
+    - `ui != vi`
+    - `0 <= wi <= 100`
+    - All the pairs `(ui, vi)` are unique.
+  approach: |
+    Run Dijkstra's algorithm from node k. Use a min-heap initialized with `(0, k)` representing cost 0 to reach node k. Track visited nodes to avoid reprocessing. At each step, pop the cheapest node, mark it visited, and push its unvisited neighbors with updated cumulative costs.
+
+    After the heap is exhausted, check if all n nodes were visited. If so, return the maximum cost among all visited nodes (the last cost popped is the time for the signal to reach the farthest node). Otherwise return -1.
+  solution: |
+    class Solution:
+        def networkDelayTime(self, times: List[List[int]], n: int, k: int) -> int:
+            edges = defaultdict(list)
+            for u, v, w in times:
+                edges[u].append((v, w))
+
+            minHeap = [(0, k)]
+            visit = set()
+            t = 0
+
+            while minHeap:
+                w1, n1 = heapq.heappop(minHeap)
+                if n1 in visit:
+                    continue
+                visit.add(n1)
+                t = w1
+                for n2, w2 in edges[n1]:
+                    if n2 not in visit:
+                        heapq.heappush(minHeap, (w1 + w2, n2))
+
+            return t if len(visit) == n else -1
+  verified: false
 - id: 746
   title: "Min Cost Climbing Stairs"
   difficulty: Easy
@@ -6183,6 +6357,113 @@
                     res.append(size)
                     size = 0
             return res
+- id: 778
+  title: "Swim in Rising Water"
+  difficulty: Hard
+  tags: [Array, Binary Search, DFS, BFS, Union Find, Heap, Matrix]
+  time: "O(n^2 log n)"
+  space: "O(n^2)"
+  description: |
+    You are given an `n x n` integer grid where each value `grid[i][j]` represents the elevation at that point `(i, j)`.
+
+    The rain starts to fall. At time `t`, the depth of the water everywhere is `t`. You can swim from a square to another 4-directionally adjacent square if and only if the elevation of both squares individually are at most `t`. You can swim infinite distances in zero time. Of course, you must stay within the boundaries of the grid during your swim.
+
+    Return the least time until you can reach bottom right square `(n - 1, n - 1)` if you start at the top left square `(0, 0)`.
+
+    **Example 1:**
+    Input: grid = [[0,2],[1,3]]
+    Output: 3
+    Explanation: At time 0, you are in grid location (0, 0). You cannot go anywhere else because 4-directionally adjacent neighbors have a higher elevation than t = 0. You cannot reach point (1, 1) until time 3. When the depth of water is 3, we can swim anywhere inside the grid.
+
+    **Example 2:**
+    Input: grid = [[0,1,2,3,4],[24,23,22,21,5],[12,13,14,15,16],[11,17,18,19,20],[10,9,8,7,6]]
+    Output: 16
+    Explanation: The final route is shown. We need to wait until time 16 so that (0, 0) and (4, 4) are connected.
+
+    **Constraints:**
+    - `n == grid.length`
+    - `n == grid[i].length`
+    - `1 <= n <= 50`
+    - `0 <= grid[i][j] < n * n`
+    - Each value `grid[i][j]` is unique.
+  approach: |
+    Use a modified Dijkstra's algorithm where the "cost" to reach a cell is the maximum elevation encountered on the path, rather than the sum. Initialize a min-heap with `(grid[0][0], 0, 0)`.
+
+    At each step, pop the cell with the minimum maximum-elevation-so-far. If it's the bottom-right corner, return that value. Otherwise, explore all 4 neighbors; for each unvisited neighbor, push `(max(current_cost, grid[nr][nc]), nr, nc)` onto the heap. The first time we reach `(n-1, n-1)`, we've found the minimum required time.
+  solution: |
+    class Solution:
+        def swimInWater(self, grid: List[List[int]]) -> int:
+            N = len(grid)
+            visit = set()
+            minH = [[grid[0][0], 0, 0]]
+            directions = [[0, 1], [0, -1], [1, 0], [-1, 0]]
+            visit.add((0, 0))
+
+            while minH:
+                t, r, c = heapq.heappop(minH)
+                if r == N - 1 and c == N - 1:
+                    return t
+                for dr, dc in directions:
+                    neiR, neiC = r + dr, c + dc
+                    if (neiR < 0 or neiC < 0 or
+                            neiR >= N or neiC >= N or
+                            (neiR, neiC) in visit):
+                        continue
+                    visit.add((neiR, neiC))
+                    heapq.heappush(minH, [max(t, grid[neiR][neiC]), neiR, neiC])
+  verified: false
+- id: 787
+  title: "Cheapest Flights Within K Stops"
+  difficulty: Medium
+  tags: [DP, DFS, BFS, Graph, Heap, Shortest Path]
+  time: "O(n + m * k)"
+  space: "O(n)"
+  description: |
+    There are `n` cities connected by some number of flights. You are given an array `flights` where `flights[i] = [fromi, toi, pricei]` indicates that there is a flight from city `fromi` to city `toi` with cost `pricei`.
+
+    Given three integers `src`, `dst`, and `k`, return the cheapest price from `src` to `dst` with at most `k` stops. If there is no such route, return `-1`.
+
+    **Example 1:**
+    Input: n = 4, flights = [[0,1,100],[1,2,100],[2,0,100],[1,3,600],[2,3,200]], src = 0, dst = 3, k = 1
+    Output: 700
+    Explanation: The optimal path with at most 1 stop from city 0 to 3 has cost 100 + 600 = 700. Note that the path through cities [0,1,2,3] is cheaper but is invalid because it uses 2 stops.
+
+    **Example 2:**
+    Input: n = 3, flights = [[0,1,100],[1,2,100],[0,2,500]], src = 0, dst = 2, k = 1
+    Output: 200
+    Explanation: The optimal path with at most 1 stop from city 0 to 2 has cost 100 + 100 = 200.
+
+    **Constraints:**
+    - `1 <= n <= 100`
+    - `0 <= flights.length <= (n * (n - 1) / 2)`
+    - `flights[i].length == 3`
+    - `0 <= fromi, toi < n`
+    - `fromi != toi`
+    - `1 <= pricei <= 10000`
+    - There will not be any multiple flights between two cities.
+    - `0 <= src, dst, k < n`
+    - `src != dst`
+  approach: |
+    Use Bellman-Ford with exactly `k + 1` relaxation rounds (since at most k stops means at most k+1 edges). Maintain a `prices` array initialized to infinity except `prices[src] = 0`.
+
+    Each round, copy `prices` to a temporary array `tmpPrices` to prevent using updates from the current round (which would allow more than one hop per round). For each flight, if the source price is not infinity, update `tmpPrices[dst]` if we can improve the cost. After all rounds, return `prices[dst]` or -1 if still infinity.
+  solution: |
+    class Solution:
+        def findCheapestPrice(self, n: int, flights: List[List[int]], src: int, dst: int, k: int) -> int:
+            prices = [float("inf")] * n
+            prices[src] = 0
+
+            for i in range(k + 1):
+                tmpPrices = prices.copy()
+                for s, d, p in flights:
+                    if prices[s] == float("inf"):
+                        continue
+                    if prices[s] + p < tmpPrices[d]:
+                        tmpPrices[d] = prices[s] + p
+                prices = tmpPrices
+
+            return -1 if prices[dst] == float("inf") else prices[dst]
+  verified: false
 - id: 846
   title: "Hand of Straights"
   difficulty: Medium
@@ -6647,6 +6928,62 @@
                 return res
 
             return dfs(root, root.val)
+- id: 1584
+  title: "Min Cost to Connect All Points"
+  difficulty: Medium
+  tags: [Array, Union Find, Graph, Minimum Spanning Tree]
+  time: "O(n^2 log n)"
+  space: "O(n^2)"
+  description: |
+    You are given an array `points` representing integer coordinates of some points on a 2D-plane, where `points[i] = [xi, yi]`.
+
+    The cost of connecting two points `[xi, yi]` and `[xj, yj]` is the **Manhattan distance** between them: `|xi - xj| + |yi - yj|`.
+
+    Return the minimum cost to make all points connected. All points are connected if there is exactly one simple path between any two points.
+
+    **Example 1:**
+    Input: points = [[0,0],[2,2],[3,10],[5,2],[7,0]]
+    Output: 20
+
+    **Example 2:**
+    Input: points = [[3,12],[-2,5],[-4,1]]
+    Output: 18
+
+    **Constraints:**
+    - `1 <= points.length <= 1000`
+    - `-10^6 <= xi, yi <= 10^6`
+    - All pairs `(xi, yi)` are distinct.
+  approach: |
+    Use Prim's algorithm to find the Minimum Spanning Tree. Build an adjacency list where every pair of points is connected with their Manhattan distance.
+
+    Start with point 0 in the MST. Use a min-heap initialized with `(0, 0)` (cost, point index). At each step, pop the cheapest edge, and if the destination isn't already in the MST, add it and push all its unvisited neighbors. Accumulate the total cost. Continue until all n points are in the MST.
+  solution: |
+    class Solution:
+        def minCostConnectPoints(self, points: List[List[int]]) -> int:
+            N = len(points)
+            adj = {i: [] for i in range(N)}
+            for i in range(N):
+                x1, y1 = points[i]
+                for j in range(i + 1, N):
+                    x2, y2 = points[j]
+                    dist = abs(x1 - x2) + abs(y1 - y2)
+                    adj[i].append([dist, j])
+                    adj[j].append([dist, i])
+
+            res = 0
+            visit = set()
+            minH = [[0, 0]]
+            while len(visit) < N:
+                cost, i = heapq.heappop(minH)
+                if i in visit:
+                    continue
+                res += cost
+                visit.add(i)
+                for neiCost, nei in adj[i]:
+                    if nei not in visit:
+                        heapq.heappush(minH, [neiCost, nei])
+            return res
+  verified: false
 - id: 1851
   title: "Minimum Interval to Include Each Query"
   difficulty: Hard
