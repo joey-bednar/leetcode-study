@@ -7651,7 +7651,7 @@
   title: "Last Stone Weight"
   difficulty: Easy
   tags: [Array, Heap (Priority Queue)]
-  verified: false
+  verified: true
   description: |
     You are given an array of integers `stones` where `stones[i]` is the weight of the `ith`
     stone.
@@ -7679,13 +7679,13 @@
     **Constraints:**
       - 1 <= stones.length <= 20
       - 1 <= stones[i] <= 100
-  time: "O(n log n)"
-  space: "O(n)"
-  approach: |
+  time_easy: "O(n log n)"
+  space_easy: "O(n)"
+  approach_easy: |
     Use a max-heap (simulated with negated values in Python's min-heap). Heapify all stone
     weights. Repeatedly pop the two heaviest stones; if they differ, push the difference back.
     Continue until one or zero stones remain, then return the result (or 0 if empty).
-  solution: |
+  solution_easy: |
     class Solution:
         def lastStoneWeight(self, stones: List[int]) -> int:
             stones = [-s for s in stones]
@@ -7699,6 +7699,52 @@
 
             stones.append(0)
             return abs(stones[0])
+  time: "O(n + w), n is the length of stones array, w is the max value in the stones array"
+  space: "O(w)"
+  approach: |
+    Since all stone values lie within a limited numeric range, we can avoid sorting or using a heap by using bucket sort / frequency counting.
+
+    Instead of tracking every stone individually, we store how many stones exist for each possible weight.
+
+    Key ideas:
+
+    Let bucket[w] store how many stones of weight w we have.
+    We repeatedly look for the heaviest available stone.
+
+    When smashing stones of weights a and b:
+      - If a == b, they cancel out.
+      - If different, the leftover stone a - b gets added back into the bucket.
+
+    We continue until only one non-zero weight remains.
+
+    This works because bucket operations (increment, decrement, scanning) are efficient when the weight range is manageable.
+  solution: |
+    class Solution:
+        def lastStoneWeight(self, stones: List[int]) -> int:
+
+            maxStone = max(stones)
+            bucket = [0] * (maxStone + 1)
+            for stone in stones:
+                bucket[stone] += 1
+
+            first = second = maxStone
+            while first > 0:
+                if bucket[first] % 2 == 0:
+                    first -= 1
+                    continue
+
+                j = min(first - 1, second)
+                while j > 0 and bucket[j] == 0:
+                    j -= 1
+
+                if j == 0:
+                    return first
+                second = j
+                bucket[first] -= 1
+                bucket[second] -= 1
+                bucket[first - second] += 1
+                first = max(first - second, second)
+            return first
 - id: 1143
   title: "Longest Common Subsequence"
   difficulty: Medium
