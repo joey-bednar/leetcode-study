@@ -1,4 +1,4 @@
-import re, keyword
+import re, keyword, sys
 
 # ANSI Color / Style helpers
 RESET = "\033[0m"
@@ -162,7 +162,10 @@ def print_problem(problem):
 
 
 def prompt_solution():
-    input(f"\n{DIM}[enter to reveal]{RESET}")
+    try:
+        input(f"\n{DIM}[enter to reveal]{RESET}")
+    except KeyboardInterrupt:
+        sys.exit()
 
 
 def print_solution(problem):
