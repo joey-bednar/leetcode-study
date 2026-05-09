@@ -1,7 +1,7 @@
 - id: 1
   title: "Two Sum"
   difficulty: Easy
-  tags: [Array, Hash Table]
+  tags: [Neetcode 150, Array, Hash Table]
   verified: true
   description: |
     Given an array of integers `nums` and an integer `target`, return indices of the two numbers
@@ -41,7 +41,7 @@
 - id: 2
   title: "Add Two Numbers"
   difficulty: Medium
-  tags: [Linked List, Math, Recursion]
+  tags: [Neetcode 150, Linked List, Math, Recursion]
   verified: true
   description: |
     You are given two **non-empty** linked lists representing two non-negative integers. The
@@ -96,7 +96,7 @@
 - id: 3
   title: "Longest Substring Without Repeating Characters"
   difficulty: Medium
-  tags: [Hash Table, String, Sliding Window]
+  tags: [Neetcode 150, Hash Table, String, Sliding Window]
   verified: true
   description: |
     Given a string `s`, find the length of the **longest substring** without duplicate
@@ -165,7 +165,7 @@
 - id: 4
   title: "Median of Two Sorted Arrays"
   difficulty: Hard
-  tags: [Array, Binary Search, Divide and Conquer]
+  tags: [Neetcode 150, Array, Binary Search, Divide and Conquer]
   verified: true
   description: |
     Given two sorted arrays `nums1` and `nums2` of size `m` and `n` respectively, return the
@@ -287,7 +287,7 @@
 - id: 5
   title: "Longest Palindromic Substring"
   difficulty: Medium
-  tags: [Two Pointers, String, Dynamic Programming]
+  tags: [Neetcode 150, Two Pointers, String, Dynamic Programming]
   verified: false
   description: |
     Given a string `s`, return the longest substring that reads the same forward and backward.
@@ -340,7 +340,7 @@
 - id: 7
   title: "Reverse Integer"
   difficulty: Medium
-  tags: [Math, Bit Manipulation]
+  tags: [Neetcode 150, Math, Bit Manipulation]
   verified: false
   description: |
     Given a signed 32-bit integer `x`, return `x` with its digits reversed. If reversing `x`
@@ -391,7 +391,7 @@
 - id: 10
   title: "Regular Expression Matching"
   difficulty: Hard
-  tags: [String, Dynamic Programming, Recursion]
+  tags: [Neetcode 150, String, Dynamic Programming, Recursion]
   verified: false
   description: |
     Given an input string `s` and a pattern `p`, implement regular expression matching with
@@ -452,7 +452,7 @@
 - id: 11
   title: "Container With Most Water"
   difficulty: Medium
-  tags: [Array, Two Pointers, Greedy]
+  tags: [Neetcode 150, Array, Two Pointers, Greedy]
   verified: true
   description: |
     You are given an integer array `height` of length `n`. There are `n` vertical lines drawn
@@ -503,7 +503,7 @@
 - id: 15
   title: "3Sum"
   difficulty: Medium
-  tags: [Array, Two Pointers, Sorting]
+  tags: [Neetcode 150, Array, Two Pointers, Sorting]
   verified: true
   description: |
     Given an integer array `nums`, return all the triplets `[nums[i], nums[j], nums[k]]` such
@@ -573,7 +573,7 @@
 - id: 17
   title: "Letter Combinations of a Phone Number"
   difficulty: Medium
-  tags: [Hash Table, String, Backtracking]
+  tags: [Neetcode 150, Hash Table, String, Backtracking]
   verified: false
   description: |
     Given a string containing digits from `2-9` inclusive, return all possible letter
@@ -633,7 +633,7 @@
 - id: 19
   title: "Remove Nth Node From End of List"
   difficulty: Medium
-  tags: [Linked List, Two Pointers]
+  tags: [Neetcode 150, Linked List, Two Pointers]
   verified: true
   description: |
     Given the head of a linked list, remove the `n`th node from the end of the list and return
@@ -685,7 +685,7 @@
 - id: 20
   title: "Valid Parentheses"
   difficulty: Easy
-  tags: [String, Stack]
+  tags: [Neetcode 150, String, Stack]
   verified: true
   description: |
     Given a string `s` containing just the characters `'('`, `')'`, `'{'`, `'}'`, `'['` and
@@ -737,7 +737,7 @@
 - id: 21
   title: "Merge Two Sorted Lists"
   difficulty: Easy
-  tags: [Linked List, Recursion]
+  tags: [Neetcode 150, Linked List, Recursion]
   verified: true
   description: |
     You are given the heads of two sorted linked lists `list1` and `list2`.
@@ -788,7 +788,7 @@
 - id: 22
   title: "Generate Parentheses"
   difficulty: Medium
-  tags: [String, Dynamic Programming, Backtracking]
+  tags: [Neetcode 150, String, Dynamic Programming, Backtracking]
   verified: false
   description: |
     Given `n` pairs of parentheses, write a function to generate all combinations of
@@ -837,7 +837,7 @@
 - id: 23
   title: "Merge K Sorted Lists"
   difficulty: Hard
-  tags: [Linked List, Divide and Conquer, Heap (Priority Queue), Merge Sort]
+  tags: [Neetcode 150, Linked List, Divide and Conquer, Heap (Priority Queue), Merge Sort]
   verified: false
   description: |
     You are given an array of `k` linked-lists `lists`, each linked-list is sorted in ascending
@@ -904,7 +904,7 @@
 - id: 25
   title: "Reverse Nodes In K Group"
   difficulty: Hard
-  tags: [Linked List, Recursion]
+  tags: [Neetcode 150, Linked List, Recursion]
   verified: false
   description: |
     Given the head of a linked list, reverse the nodes of the list `k` at a time, and return
@@ -966,7 +966,7 @@
 - id: 39
   title: "Combination Sum"
   difficulty: Medium
-  tags: [Array, Backtracking]
+  tags: [Neetcode 150, Array, Backtracking]
   verified: false
   description: |
     You are given an array of **distinct** integers `candidates` and a target integer `target`.
@@ -1027,7 +1027,7 @@
 - id: 40
   title: "Combination Sum II"
   difficulty: Medium
-  tags: [Array, Backtracking]
+  tags: [Neetcode 150, Array, Backtracking]
   verified: false
   description: |
     Given a collection of candidate numbers (`candidates`) and a target number (`target`),
@@ -1081,7 +1081,7 @@
 - id: 43
   title: "Multiply Strings"
   difficulty: Medium
-  tags: [Math, String, Simulation]
+  tags: [Neetcode 150, Math, String, Simulation]
   time: "O(m * n)"
   space: "O(m + n)"
   description: |
@@ -1128,7 +1128,7 @@
 - id: 45
   title: "Jump Game II"
   difficulty: Medium
-  tags: [Array, Dynamic Programming, Greedy]
+  tags: [Neetcode 150, Array, Dynamic Programming, Greedy]
   verified: false
   description: |
     You are given a **0-indexed** array of integers `nums` of length `n`. You are initially
@@ -1179,7 +1179,7 @@
 - id: 46
   title: "Permutations"
   difficulty: Medium
-  tags: [Array, Backtracking]
+  tags: [Neetcode 150, Array, Backtracking]
   verified: false
   description: |
     Given an array `nums` of **distinct** integers, return all the possible **permutations**.
@@ -1226,7 +1226,7 @@
 - id: 48
   title: "Rotate Image"
   difficulty: Medium
-  tags: [Array, Math, Matrix]
+  tags: [Neetcode 150, Array, Math, Matrix]
   time: "O(n^2)"
   space: "O(1)"
   description: |
@@ -1259,7 +1259,7 @@
 - id: 50
   title: "Pow(x, n)"
   difficulty: Medium
-  tags: [Math, Recursion]
+  tags: [Neetcode 150, Math, Recursion]
   time: "O(log n)"
   space: "O(1)"
   description: |
@@ -1308,7 +1308,7 @@
 - id: 51
   title: "N-Queens"
   difficulty: Hard
-  tags: [Array, Backtracking]
+  tags: [Neetcode 150, Array, Backtracking]
   verified: false
   description: |
     The **n-queens** puzzle is the problem of placing `n` queens on an `n x n` chessboard
@@ -1375,7 +1375,7 @@
 - id: 33
   title: "Search In Rotated Sorted Array"
   difficulty: Medium
-  tags: [Array, Binary Search]
+  tags: [Neetcode 150, Array, Binary Search]
   verified: false
   description: |
     There is an integer array `nums` sorted in ascending order (with **distinct** values).
@@ -1446,7 +1446,7 @@
 - id: 36
   title: "Valid Sudoku"
   difficulty: Medium
-  tags: [Array, Hash Table, Matrix]
+  tags: [Neetcode 150, Array, Hash Table, Matrix]
   verified: false
   description: |
     Determine if a `9 x 9` Sudoku board is valid. Only the filled cells need to be validated
@@ -1520,7 +1520,7 @@
 - id: 42
   title: "Trapping Rain Water"
   difficulty: Hard
-  tags: [Array, Two Pointers, Dynamic Programming, Stack, Monotonic Stack]
+  tags: [Neetcode 150, Array, Two Pointers, Dynamic Programming, Stack, Monotonic Stack]
   verified: false
   description: |
     Given `n` non-negative integers representing an elevation map where the width of each bar
@@ -1569,7 +1569,7 @@
 - id: 49
   title: "Group Anagrams"
   difficulty: Medium
-  tags: [Array, Hash Table, String, Sorting]
+  tags: [Neetcode 150, Array, Hash Table, String, Sorting]
   verified: true
   description: |
     Given an array of strings `strs`, group **the anagrams** together. You can return the answer
@@ -1609,7 +1609,7 @@
 - id: 53
   title: "Maximum Subarray"
   difficulty: Medium
-  tags: [Array, Divide and Conquer, Dynamic Programming]
+  tags: [Neetcode 150, Array, Divide and Conquer, Dynamic Programming]
   verified: false
   description: |
     Given an integer array `nums`, find the subarray with the largest sum, and return its sum.
@@ -1651,7 +1651,7 @@
 - id: 54
   title: "Spiral Matrix"
   difficulty: Medium
-  tags: [Array, Matrix, Simulation]
+  tags: [Neetcode 150, Array, Matrix, Simulation]
   time: "O(m * n)"
   space: "O(1)"
   description: |
@@ -1700,7 +1700,7 @@
 - id: 55
   title: "Jump Game"
   difficulty: Medium
-  tags: [Array, Dynamic Programming, Greedy]
+  tags: [Neetcode 150, Array, Dynamic Programming, Greedy]
   verified: false
   description: |
     You are given an integer array `nums`. You are initially positioned at the array's **first
@@ -1742,7 +1742,7 @@
 - id: 56
   title: "Merge Intervals"
   difficulty: Medium
-  tags: [Array, Sorting]
+  tags: [Neetcode 150, Array, Sorting]
   verified: false
   description: |
     Given an array of `intervals` where `intervals[i] = [start_i, end_i]`, merge all overlapping
@@ -1788,7 +1788,7 @@
 - id: 57
   title: "Insert Interval"
   difficulty: Medium
-  tags: [Array]
+  tags: [Neetcode 150, Array]
   verified: false
   description: |
     You are given an array of non-overlapping intervals `intervals` where
@@ -1851,7 +1851,7 @@
 - id: 62
   title: "Unique Paths"
   difficulty: Medium
-  tags: [Dynamic Programming, Math, Combinatorics]
+  tags: [Neetcode 150, Dynamic Programming, Math, Combinatorics]
   verified: false
   description: |
     There is an `m x n` grid. You are located at the top-left corner (`grid[0][0]`) and your
@@ -1890,7 +1890,7 @@
 - id: 66
   title: "Plus One"
   difficulty: Easy
-  tags: [Array, Math]
+  tags: [Neetcode 150, Array, Math]
   time: "O(n)"
   space: "O(n)"
   description: |
@@ -1933,7 +1933,7 @@
 - id: 70
   title: "Climbing Stairs"
   difficulty: Easy
-  tags: [Math, Dynamic Programming, Memoization]
+  tags: [Neetcode 150, Math, Dynamic Programming, Memoization]
   verified: false
   description: |
     You are given an integer `n` representing the number of steps to reach the top of a
@@ -1972,7 +1972,7 @@
 - id: 72
   title: "Edit Distance"
   difficulty: Medium
-  tags: [String, Dynamic Programming]
+  tags: [Neetcode 150, String, Dynamic Programming]
   verified: false
   description: |
     You are given two strings `word1` and `word2`, each consisting of lowercase English
@@ -2029,7 +2029,7 @@
 - id: 73
   title: "Set Matrix Zeroes"
   difficulty: Medium
-  tags: [Array, Hash Table, Matrix]
+  tags: [Neetcode 150, Array, Hash Table, Matrix]
   time: "O(m * n)"
   space: "O(1)"
   description: |
@@ -2083,7 +2083,7 @@
 - id: 74
   title: "Search a 2D Matrix"
   difficulty: Medium
-  tags: [Array, Binary Search, Matrix]
+  tags: [Neetcode 150, Array, Binary Search, Matrix]
   verified: false
   description: |
     You are given an `m x n` integer matrix `matrix` with the following two properties:
@@ -2130,7 +2130,7 @@
 - id: 78
   title: "Subsets"
   difficulty: Medium
-  tags: [Array, Backtracking, Bit Manipulation]
+  tags: [Neetcode 150, Array, Backtracking, Bit Manipulation]
   verified: false
   description: |
     Given an integer array `nums` of **unique** elements, return all possible subsets (the
@@ -2178,7 +2178,7 @@
 - id: 79
   title: "Word Search"
   difficulty: Medium
-  tags: [Array, String, Backtracking, Depth-First Search, Matrix]
+  tags: [Neetcode 150, Array, String, Backtracking, Depth-First Search, Matrix]
   verified: false
   description: |
     Given a 2-D grid of characters `board` and a string `word`, return `true` if the word
@@ -2236,7 +2236,7 @@
 - id: 76
   title: "Minimum Window Substring"
   difficulty: Hard
-  tags: [Hash Table, String, Sliding Window]
+  tags: [Neetcode 150, Hash Table, String, Sliding Window]
   verified: false
   description: |
     Given two strings `s` and `t` of lengths `m` and `n` respectively, return the **minimum
@@ -2308,7 +2308,7 @@
 - id: 84
   title: "Largest Rectangle In Histogram"
   difficulty: Hard
-  tags: [Array, Stack, Monotonic Stack]
+  tags: [Neetcode 150, Array, Stack, Monotonic Stack]
   verified: false
   description: |
     Given an array of integers `heights` representing the histogram's bar height where the
@@ -2348,7 +2348,7 @@
 - id: 90
   title: "Subsets II"
   difficulty: Medium
-  tags: [Array, Backtracking, Bit Manipulation]
+  tags: [Neetcode 150, Array, Backtracking, Bit Manipulation]
   verified: false
   description: |
     Given an integer array `nums` that may contain duplicates, return all possible subsets
@@ -2399,7 +2399,7 @@
 - id: 91
   title: "Decode Ways"
   difficulty: Medium
-  tags: [String, Dynamic Programming]
+  tags: [Neetcode 150, String, Dynamic Programming]
   verified: false
   description: |
     A string of uppercase English characters can be encoded to numbers using the mapping:
@@ -2448,7 +2448,7 @@
 - id: 97
   title: "Interleaving String"
   difficulty: Medium
-  tags: [String, Dynamic Programming]
+  tags: [Neetcode 150, String, Dynamic Programming]
   verified: false
   description: |
     Given three strings `s1`, `s2`, and `s3`, determine if `s3` is formed by an interleaving
@@ -2506,7 +2506,7 @@
 - id: 98
   title: "Validate Binary Search Tree"
   difficulty: Medium
-  tags: [Tree, DFS, BST]
+  tags: [Neetcode 150, Tree, DFS, BST]
   verified: false
   description: |
     Given the `root` of a binary tree, determine if it is a valid binary search tree (BST).
@@ -2546,7 +2546,7 @@
 - id: 100
   title: "Same Tree"
   difficulty: Easy
-  tags: [Tree, DFS, BFS]
+  tags: [Neetcode 150, Tree, DFS, BFS]
   verified: false
   description: |
     Given the roots of two binary trees `p` and `q`, write a function to check if they are the
@@ -2586,7 +2586,7 @@
 - id: 102
   title: "Binary Tree Level Order Traversal"
   difficulty: Medium
-  tags: [Tree, BFS]
+  tags: [Neetcode 150, Tree, BFS]
   verified: false
   description: |
     Given the `root` of a binary tree, return the level order traversal of its nodes' values
@@ -2635,7 +2635,7 @@
 - id: 104
   title: "Maximum Depth of Binary Tree"
   difficulty: Easy
-  tags: [Tree, DFS, BFS]
+  tags: [Neetcode 150, Tree, DFS, BFS]
   verified: false
   description: |
     Given the `root` of a binary tree, return its maximum depth.
@@ -2667,7 +2667,7 @@
 - id: 105
   title: "Construct Binary Tree From Preorder And Inorder Traversal"
   difficulty: Medium
-  tags: [Tree, DFS, Array, Hash Table]
+  tags: [Neetcode 150, Tree, DFS, Array, Hash Table]
   verified: false
   description: |
     Given two integer arrays `preorder` and `inorder` where `preorder` is the preorder traversal
@@ -2716,7 +2716,7 @@
 - id: 110
   title: "Balanced Binary Tree"
   difficulty: Easy
-  tags: [Tree, DFS]
+  tags: [Neetcode 150, Tree, DFS]
   verified: false
   description: |
     Given a binary tree, determine if it is **height-balanced**.
@@ -2757,7 +2757,7 @@
 - id: 115
   title: "Distinct Subsequences"
   difficulty: Hard
-  tags: [String, Dynamic Programming]
+  tags: [Neetcode 150, String, Dynamic Programming]
   verified: false
   description: |
     Given two strings `s` and `t`, return the count of distinct subsequences of `s` that
@@ -2804,7 +2804,7 @@
 - id: 121
   title: "Best Time to Buy And Sell Stock"
   difficulty: Easy
-  tags: [Array, Dynamic Programming]
+  tags: [Neetcode 150, Array, Dynamic Programming]
   verified: false
   description: |
     You are given an array `prices` where `prices[i]` is the price of a given stock on the
@@ -2848,7 +2848,7 @@
 - id: 131
   title: "Palindrome Partitioning"
   difficulty: Medium
-  tags: [String, Dynamic Programming, Backtracking]
+  tags: [Neetcode 150, String, Dynamic Programming, Backtracking]
   verified: false
   description: |
     Given a string `s`, partition `s` such that every substring of the partition is a
@@ -2901,7 +2901,7 @@
 - id: 124
   title: "Binary Tree Maximum Path Sum"
   difficulty: Hard
-  tags: [Tree, DFS, DP]
+  tags: [Neetcode 150, Tree, DFS, DP]
   verified: false
   description: |
     A **path** in a binary tree is a sequence of nodes where each pair of adjacent nodes in the
@@ -2949,7 +2949,7 @@
 - id: 125
   title: "Valid Palindrome"
   difficulty: Easy
-  tags: [Two Pointers, String]
+  tags: [Neetcode 150, Two Pointers, String]
   verified: false
   description: |
     A phrase is a **palindrome** if, after converting all uppercase letters into lowercase
@@ -3003,7 +3003,7 @@
 - id: 127
   title: "Word Ladder"
   difficulty: Hard
-  tags: [Hash Table, String, Breadth-First Search]
+  tags: [Neetcode 150, Hash Table, String, Breadth-First Search]
   verified: false
   description: |
     Given two words, `beginWord` and `endWord`, and a dictionary `wordList`, return the number
@@ -3076,7 +3076,7 @@
 - id: 128
   title: "Longest Consecutive Sequence"
   difficulty: Medium
-  tags: [Array, Hash Table, Union Find]
+  tags: [Neetcode 150, Array, Hash Table, Union Find]
   verified: true
   description: |
     Given an unsorted array of integers `nums`, return the length of the longest consecutive
@@ -3143,7 +3143,7 @@
 - id: 130
   title: "Surrounded Regions"
   difficulty: Medium
-  tags: [Array, Depth-First Search, Breadth-First Search, Union Find, Matrix]
+  tags: [Neetcode 150, Array, Depth-First Search, Breadth-First Search, Union Find, Matrix]
   verified: false
   description: |
     Given an `m x n` matrix `board` containing `'X'` and `'O'`, capture all regions that are
@@ -3213,7 +3213,7 @@
 - id: 133
   title: "Clone Graph"
   difficulty: Medium
-  tags: [Hash Table, Depth-First Search, Breadth-First Search, Graph]
+  tags: [Neetcode 150, Hash Table, Depth-First Search, Breadth-First Search, Graph]
   verified: false
   description: |
     Given a reference of a node in a **connected** undirected graph, return a **deep copy**
@@ -3268,7 +3268,7 @@
 - id: 134
   title: "Gas Station"
   difficulty: Medium
-  tags: [Array, Greedy]
+  tags: [Neetcode 150, Array, Greedy]
   verified: false
   description: |
     There are `n` gas stations along a circular route. You are given two integer arrays `gas`
@@ -3329,7 +3329,7 @@
 - id: 136
   title: "Single Number"
   difficulty: Easy
-  tags: [Array, Bit Manipulation]
+  tags: [Neetcode 150, Array, Bit Manipulation]
   verified: false
   description: |
     You are given a **non-empty** array of integers `nums`. Every integer appears twice except
@@ -3362,7 +3362,7 @@
 - id: 138
   title: "Copy List With Random Pointer"
   difficulty: Medium
-  tags: [Hash Table, Linked List]
+  tags: [Neetcode 150, Hash Table, Linked List]
   verified: false
   description: |
     A linked list of length `n` is given such that each node contains an additional **random
@@ -3419,7 +3419,7 @@
 - id: 139
   title: "Word Break"
   difficulty: Medium
-  tags: [Array, Hash Table, String, Dynamic Programming, Trie, Memoization]
+  tags: [Neetcode 150, Array, Hash Table, String, Dynamic Programming, Trie, Memoization]
   verified: false
   description: |
     Given a string `s` and a dictionary of strings `wordDict`, return `true` if `s` can be
@@ -3467,7 +3467,7 @@
 - id: 141
   title: "Linked List Cycle"
   difficulty: Easy
-  tags: [Hash Table, Linked List, Two Pointers]
+  tags: [Neetcode 150, Hash Table, Linked List, Two Pointers]
   verified: false
   description: |
     Given `head`, the head of a linked list, determine if the linked list has a **cycle** in it.
@@ -3519,7 +3519,7 @@
 - id: 143
   title: "Reorder List"
   difficulty: Medium
-  tags: [Linked List, Two Pointers, Stack, Recursion]
+  tags: [Neetcode 150, Linked List, Two Pointers, Stack, Recursion]
   verified: false
   description: |
     You are given the head of a singly linked-list:
@@ -3572,7 +3572,7 @@
 - id: 146
   title: "LRU Cache"
   difficulty: Medium
-  tags: [Hash Table, Linked List, Design, Doubly-Linked List]
+  tags: [Neetcode 150, Hash Table, Linked List, Design, Doubly-Linked List]
   verified: false
   description: |
     Design a data structure that follows the constraints of a **Least Recently Used (LRU)
@@ -3655,7 +3655,7 @@
 - id: 150
   title: "Evaluate Reverse Polish Notation"
   difficulty: Medium
-  tags: [Array, Math, Stack]
+  tags: [Neetcode 150, Array, Math, Stack]
   verified: false
   description: |
     You are given an array of strings `tokens` that represents an arithmetic expression in
@@ -3715,7 +3715,7 @@
 - id: 152
   title: "Maximum Product Subarray"
   difficulty: Medium
-  tags: [Array, Dynamic Programming]
+  tags: [Neetcode 150, Array, Dynamic Programming]
   verified: false
   description: |
     Given an integer array `nums`, find a contiguous subarray with the largest product and
@@ -3756,7 +3756,7 @@
 - id: 153
   title: "Find Minimum In Rotated Sorted Array"
   difficulty: Medium
-  tags: [Array, Binary Search]
+  tags: [Neetcode 150, Array, Binary Search]
   verified: false
   description: |
     Suppose an array of length `n` sorted in ascending order is **rotated** between `1` and `n`
@@ -3811,7 +3811,7 @@
 - id: 155
   title: "Min Stack"
   difficulty: Medium
-  tags: [Stack, Design]
+  tags: [Neetcode 150, Stack, Design]
   verified: false
   description: |
     Design a stack that supports push, pop, top, and retrieving the minimum element in
@@ -3872,7 +3872,7 @@
 - id: 167
   title: "Two Sum II - Input Array Is Sorted"
   difficulty: Medium
-  tags: [Array, Two Pointers, Binary Search]
+  tags: [Neetcode 150, Array, Two Pointers, Binary Search]
   verified: false
   description: |
     Given a **1-indexed** array of integers `numbers` that is already **sorted in non-decreasing
@@ -3931,7 +3931,7 @@
 - id: 190
   title: "Reverse Bits"
   difficulty: Easy
-  tags: [Bit Manipulation, Divide and Conquer]
+  tags: [Neetcode 150, Bit Manipulation, Divide and Conquer]
   verified: false
   description: |
     Reverse the bits of a given 32-bit unsigned integer.
@@ -3965,7 +3965,7 @@
 - id: 191
   title: "Number of 1 Bits"
   difficulty: Easy
-  tags: [Bit Manipulation, Divide and Conquer]
+  tags: [Neetcode 150, Bit Manipulation, Divide and Conquer]
   verified: false
   description: |
     Given an unsigned 32-bit integer `n`, return the number of `1` bits it has (also known as
@@ -3999,7 +3999,7 @@
 - id: 198
   title: "House Robber"
   difficulty: Medium
-  tags: [Array, Dynamic Programming]
+  tags: [Neetcode 150, Array, Dynamic Programming]
   verified: false
   description: |
     You are given an integer array `nums` where `nums[i]` represents the amount of money the
@@ -4040,7 +4040,7 @@
 - id: 199
   title: "Binary Tree Right Side View"
   difficulty: Medium
-  tags: [Tree, BFS, DFS]
+  tags: [Neetcode 150, Tree, BFS, DFS]
   verified: false
   description: |
     Given the `root` of a binary tree, imagine yourself standing on the **right side** of it,
@@ -4087,7 +4087,7 @@
 - id: 200
   title: "Number of Islands"
   difficulty: Medium
-  tags: [Array, Depth-First Search, Breadth-First Search, Union Find, Matrix]
+  tags: [Neetcode 150, Array, Depth-First Search, Breadth-First Search, Union Find, Matrix]
   verified: false
   description: |
     Given an `m x n` 2D binary grid `grid` which represents a map of `'1'`s (land) and `'0'`s
@@ -4150,7 +4150,7 @@
 - id: 202
   title: "Happy Number"
   difficulty: Easy
-  tags: [Hash Table, Math, Two Pointers]
+  tags: [Neetcode 150, Hash Table, Math, Two Pointers]
   time: "O(log n)"
   space: "O(log n)"
   description: |
@@ -4199,7 +4199,7 @@
 - id: 206
   title: "Reverse Linked List"
   difficulty: Easy
-  tags: [Linked List, Recursion]
+  tags: [Neetcode 150, Linked List, Recursion]
   verified: false
   description: |
     Given the head of a singly linked list, reverse the list, and return the reversed list.
@@ -4240,7 +4240,7 @@
 - id: 207
   title: "Course Schedule"
   difficulty: Medium
-  tags: [Depth-First Search, Breadth-First Search, Graph, Topological Sort]
+  tags: [Neetcode 150, Depth-First Search, Breadth-First Search, Graph, Topological Sort]
   verified: false
   description: |
     There are a total of `numCourses` courses you have to take, labeled from `0` to
@@ -4303,7 +4303,7 @@
 - id: 208
   title: "Implement Trie (Prefix Tree)"
   difficulty: Medium
-  tags: [Hash Table, String, Design, Trie]
+  tags: [Neetcode 150, Hash Table, String, Design, Trie]
   verified: false
   description: |
     A **prefix tree** (also known as a trie) is a tree data structure used to efficiently store
@@ -4386,7 +4386,7 @@
 - id: 210
   title: "Course Schedule II"
   difficulty: Medium
-  tags: [Depth-First Search, Breadth-First Search, Graph, Topological Sort]
+  tags: [Neetcode 150, Depth-First Search, Breadth-First Search, Graph, Topological Sort]
   verified: false
   description: |
     There are a total of `numCourses` courses you have to take, labeled from `0` to
@@ -4456,7 +4456,7 @@
 - id: 211
   title: "Design Add And Search Words Data Structure"
   difficulty: Medium
-  tags: [String, Depth-First Search, Design, Trie]
+  tags: [Neetcode 150, String, Depth-First Search, Design, Trie]
   verified: false
   description: |
     Design a data structure that supports adding new words and finding if a string matches any
@@ -4528,7 +4528,7 @@
 - id: 212
   title: "Word Search II"
   difficulty: Hard
-  tags: [Array, String, Backtracking, Trie, Matrix]
+  tags: [Neetcode 150, Array, String, Backtracking, Trie, Matrix]
   verified: false
   description: |
     Given a 2-D grid of characters `board` and a list of strings `words`, return all words that
@@ -4628,7 +4628,7 @@
 - id: 213
   title: "House Robber II"
   difficulty: Medium
-  tags: [Array, Dynamic Programming]
+  tags: [Neetcode 150, Array, Dynamic Programming]
   verified: false
   description: |
     You are given an integer array `nums` where `nums[i]` represents the amount of money the
@@ -4673,7 +4673,7 @@
 - id: 215
   title: "Kth Largest Element In An Array"
   difficulty: Medium
-  tags: [Array, Divide and Conquer, Sorting, Heap (Priority Queue), Quickselect]
+  tags: [Neetcode 150, Array, Divide and Conquer, Sorting, Heap (Priority Queue), Quickselect]
   verified: false
   description: |
     Given an integer array `nums` and an integer `k`, return the `kth` largest element in the
@@ -4712,7 +4712,7 @@
 - id: 217
   title: "Contains Duplicate"
   difficulty: Easy
-  tags: [Array, Hash Table, Sorting]
+  tags: [Neetcode 150, Array, Hash Table, Sorting]
   verified: true
   description: |
     Given an integer array `nums`, return `True` if any value appears **at least twice**
@@ -4754,7 +4754,7 @@
 - id: 226
   title: "Invert Binary Tree"
   difficulty: Easy
-  tags: [Tree, DFS, BFS]
+  tags: [Neetcode 150, Tree, DFS, BFS]
   verified: false
   description: |
     Given the `root` of a binary tree, invert the tree, and return its root.
@@ -4790,7 +4790,7 @@
 - id: 230
   title: "Kth Smallest Element In a Bst"
   difficulty: Medium
-  tags: [Tree, DFS, BST]
+  tags: [Neetcode 150, Tree, DFS, BST]
   verified: false
   description: |
     Given the `root` of a binary search tree, and an integer `k`, return the `k`th smallest
@@ -4836,7 +4836,7 @@
 - id: 235
   title: "Lowest Common Ancestor of a Binary Search Tree"
   difficulty: Medium
-  tags: [Tree, DFS, BST]
+  tags: [Neetcode 150, Tree, DFS, BST]
   verified: false
   description: |
     Given a binary search tree (BST), find the lowest common ancestor (LCA) node of two given
@@ -4881,7 +4881,7 @@
 - id: 238
   title: "Product of Array Except Self"
   difficulty: Medium
-  tags: [Array, Prefix Sum]
+  tags: [Neetcode 150, Array, Prefix Sum]
   verified: false
   description: |
     Given an integer array `nums`, return an array `answer` such that `answer[i]` is equal to
@@ -4929,7 +4929,7 @@
 - id: 239
   title: "Sliding Window Maximum"
   difficulty: Hard
-  tags: [Array, Queue, Sliding Window, Heap (Priority Queue), Monotonic Queue]
+  tags: [Neetcode 150, Array, Queue, Sliding Window, Heap (Priority Queue), Monotonic Queue]
   verified: false
   description: |
     You are given an array of integers `nums`, there is a sliding window of size `k` which is
@@ -4987,7 +4987,7 @@
 - id: 242
   title: "Valid Anagram"
   difficulty: Easy
-  tags: [Hash Table, String, Sorting]
+  tags: [Neetcode 150, Hash Table, String, Sorting]
   verified: false
   description: |
     Given two strings `s` and `t`, return `true` if `t` is an anagram of `s`, and `false`
@@ -5029,7 +5029,7 @@
 - id: 252
   title: "Meeting Rooms"
   difficulty: Easy
-  tags: [Array, Sorting]
+  tags: [Neetcode 150, Array, Sorting]
   verified: false
   description: |
     Given an array of meeting time `intervals` where `intervals[i] = [start_i, end_i]`,
@@ -5066,7 +5066,7 @@
 - id: 253
   title: "Meeting Rooms II"
   difficulty: Medium
-  tags: [Array, Two Pointers, Greedy, Sorting, Heap (Priority Queue)]
+  tags: [Neetcode 150, Array, Two Pointers, Greedy, Sorting, Heap (Priority Queue)]
   verified: false
   description: |
     Given an array of meeting time intervals `intervals` where `intervals[i] = [start_i, end_i]`,
@@ -5105,7 +5105,7 @@
 - id: 261
   title: "Graph Valid Tree"
   difficulty: Medium
-  tags: [Depth-First Search, Breadth-First Search, Union Find, Graph]
+  tags: [Neetcode 150, Depth-First Search, Breadth-First Search, Union Find, Graph]
   verified: false
   description: |
     Given `n` nodes labeled from `0` to `n - 1` and a list of undirected `edges` (each edge is
@@ -5161,7 +5161,7 @@
 - id: 268
   title: "Missing Number"
   difficulty: Easy
-  tags: [Array, Hash Table, Math, Binary Search, Bit Manipulation, Sorting]
+  tags: [Neetcode 150, Array, Hash Table, Math, Binary Search, Bit Manipulation, Sorting]
   verified: false
   description: |
     Given an array `nums` containing `n` distinct numbers in the range `[0, n]`, return the
@@ -5196,7 +5196,7 @@
 - id: 269
   title: "Alien Dictionary"
   difficulty: Hard
-  tags: [Array, String, DFS, BFS, Graph, Topological Sort]
+  tags: [Neetcode 150, Array, String, DFS, BFS, Graph, Topological Sort]
   time: "O(N + V + E)"
   space: "O(V + E)"
   description: |
@@ -5264,7 +5264,7 @@
 - id: 271
   title: "Encode and Decode Strings"
   difficulty: Medium
-  tags: [Array, String, Design]
+  tags: [Neetcode 150, Array, String, Design]
   verified: false
   description: |
     Design an algorithm to encode **a list of strings** to **a single string**. The encoded
@@ -5316,7 +5316,7 @@
 - id: 286
   title: "Walls And Gates"
   difficulty: Medium
-  tags: [Array, Breadth-First Search, Matrix]
+  tags: [Neetcode 150, Array, Breadth-First Search, Matrix]
   verified: false
   description: |
     You are given an `m x n` grid `rooms` initialized with these possible values:
@@ -5387,7 +5387,7 @@
 - id: 287
   title: "Find The Duplicate Number"
   difficulty: Medium
-  tags: [Array, Two Pointers, Binary Search, Bit Manipulation]
+  tags: [Neetcode 150, Array, Two Pointers, Binary Search, Bit Manipulation]
   verified: false
   description: |
     Given an array of integers `nums` containing `n + 1` integers where each integer is in the
@@ -5439,7 +5439,7 @@
 - id: 295
   title: "Find Median From Data Stream"
   difficulty: Hard
-  tags: [Two Pointers, Design, Sorting, Heap (Priority Queue), Data Stream]
+  tags: [Neetcode 150, Two Pointers, Design, Sorting, Heap (Priority Queue), Data Stream]
   verified: false
   description: |
     The **median** is the middle value in an ordered integer list. If the size of the list is
@@ -5506,7 +5506,7 @@
 - id: 297
   title: "Serialize And Deserialize Binary Tree"
   difficulty: Hard
-  tags: [Tree, DFS, BFS, Design]
+  tags: [Neetcode 150, Tree, DFS, BFS, Design]
   verified: false
   description: |
     Serialization is the process of converting a data structure or object into a sequence of bits
@@ -5567,7 +5567,7 @@
 - id: 300
   title: "Longest Increasing Subsequence"
   difficulty: Medium
-  tags: [Array, Binary Search, Dynamic Programming]
+  tags: [Neetcode 150, Array, Binary Search, Dynamic Programming]
   verified: false
   description: |
     Given an integer array `nums`, return the length of the longest **strictly increasing**
@@ -5617,7 +5617,7 @@
 - id: 309
   title: "Best Time to Buy and Sell Stock with Cooldown"
   difficulty: Medium
-  tags: [Array, Dynamic Programming]
+  tags: [Neetcode 150, Array, Dynamic Programming]
   verified: false
   description: |
     You are given an integer array `prices` where `prices[i]` is the price of a stock on the
@@ -5663,7 +5663,7 @@
 - id: 312
   title: "Burst Balloons"
   difficulty: Hard
-  tags: [Array, Dynamic Programming]
+  tags: [Neetcode 150, Array, Dynamic Programming]
   verified: false
   description: |
     You are given an array of integers `nums` representing balloons. When you burst balloon
@@ -5710,7 +5710,7 @@
 - id: 329
   title: "Longest Increasing Path In a Matrix"
   difficulty: Hard
-  tags: [Array, Dynamic Programming, Depth-First Search, Graph, Memoization, Matrix]
+  tags: [Neetcode 150, Array, Dynamic Programming, Depth-First Search, Graph, Memoization, Matrix]
   verified: false
   description: |
     You are given a 2-D grid of integers `matrix`. Return the length of the longest strictly
@@ -5766,7 +5766,7 @@
 - id: 322
   title: "Coin Change"
   difficulty: Medium
-  tags: [Array, Dynamic Programming, Breadth-First Search]
+  tags: [Neetcode 150, Array, Dynamic Programming, Breadth-First Search]
   verified: false
   description: |
     Given an integer array `coins` representing coin denominations and an integer `amount`,
@@ -5814,7 +5814,7 @@
 - id: 323
   title: "Number of Connected Components In An Undirected Graph"
   difficulty: Medium
-  tags: [Depth-First Search, Breadth-First Search, Union Find, Graph]
+  tags: [Neetcode 150, Depth-First Search, Breadth-First Search, Union Find, Graph]
   verified: false
   description: |
     Given an integer `n` representing the number of nodes and an array `edges` where
@@ -5878,7 +5878,7 @@
 - id: 332
   title: "Reconstruct Itinerary"
   difficulty: Hard
-  tags: [DFS, Graph]
+  tags: [Neetcode 150, DFS, Graph]
   time: "O(E log E)"
   space: "O(E)"
   description: |
@@ -5926,7 +5926,7 @@
 - id: 338
   title: "Counting Bits"
   difficulty: Easy
-  tags: [Dynamic Programming, Bit Manipulation]
+  tags: [Neetcode 150, Dynamic Programming, Bit Manipulation]
   verified: false
   description: |
     Given an integer `n`, count the number of `1`'s in the binary representation of every
@@ -5957,7 +5957,7 @@
 - id: 347
   title: "Top K Frequent Elements"
   difficulty: Medium
-  tags: [Array, Hash Table, Divide and Conquer, Sorting, Heap, Bucket Sort, Counting, Quickselect]
+  tags: [Neetcode 150, Array, Hash Table, Divide and Conquer, Sorting, Heap, Bucket Sort, Counting, Quickselect]
   verified: false
   description: |
     Given an integer array `nums` and an integer `k`, return the `k` most frequent elements.
@@ -6036,7 +6036,7 @@
 - id: 355
   title: "Design Twitter"
   difficulty: Medium
-  tags: [Hash Table, Linked List, Design, Heap (Priority Queue)]
+  tags: [Neetcode 150, Hash Table, Linked List, Design, Heap (Priority Queue)]
   verified: false
   description: |
     Design a simplified version of Twitter where users can post tweets, follow/unfollow another
@@ -6116,7 +6116,7 @@
 - id: 371
   title: "Sum of Two Integers"
   difficulty: Medium
-  tags: [Math, Bit Manipulation]
+  tags: [Neetcode 150, Math, Bit Manipulation]
   verified: false
   description: |
     Given two integers `a` and `b`, return the sum of the two integers without using the
@@ -6156,7 +6156,7 @@
 - id: 416
   title: "Partition Equal Subset Sum"
   difficulty: Medium
-  tags: [Array, Dynamic Programming]
+  tags: [Neetcode 150, Array, Dynamic Programming]
   verified: false
   description: |
     Given an array of positive integers `nums`, determine if the array can be partitioned into
@@ -6200,7 +6200,7 @@
 - id: 417
   title: "Pacific Atlantic Water Flow"
   difficulty: Medium
-  tags: [Array, Depth-First Search, Breadth-First Search, Matrix]
+  tags: [Neetcode 150, Array, Depth-First Search, Breadth-First Search, Matrix]
   verified: false
   description: |
     There is an `m x n` rectangular island that borders both the **Pacific Ocean** and the
@@ -6270,7 +6270,7 @@
 - id: 424
   title: "Longest Repeating Character Replacement"
   difficulty: Medium
-  tags: [Hash Table, String, Sliding Window]
+  tags: [Neetcode 150, Hash Table, String, Sliding Window]
   verified: false
   description: |
     You are given a string `s` and an integer `k`. You can choose any character of the string
@@ -6321,7 +6321,7 @@
 - id: 435
   title: "Non Overlapping Intervals"
   difficulty: Medium
-  tags: [Array, Dynamic Programming, Greedy, Sorting]
+  tags: [Neetcode 150, Array, Dynamic Programming, Greedy, Sorting]
   verified: false
   description: |
     Given an array of intervals `intervals` where `intervals[i] = [start_i, end_i]`, return the
@@ -6375,7 +6375,7 @@
 - id: 494
   title: "Target Sum"
   difficulty: Medium
-  tags: [Array, Dynamic Programming, Backtracking]
+  tags: [Neetcode 150, Array, Dynamic Programming, Backtracking]
   verified: false
   description: |
     You are given an array of integers `nums` and an integer `target`. For each number in the
@@ -6416,7 +6416,7 @@
 - id: 518
   title: "Coin Change II"
   difficulty: Medium
-  tags: [Array, Dynamic Programming]
+  tags: [Neetcode 150, Array, Dynamic Programming]
   verified: false
   description: |
     Given an integer array `coins` representing coin denominations and an integer `amount`
@@ -6458,7 +6458,7 @@
 - id: 543
   title: "Diameter of Binary Tree"
   difficulty: Easy
-  tags: [Tree, DFS]
+  tags: [Neetcode 150, Tree, DFS]
   verified: false
   description: |
     Given the `root` of a binary tree, return the length of the **diameter** of the tree.
@@ -6506,7 +6506,7 @@
 - id: 567
   title: "Permutation In String"
   difficulty: Medium
-  tags: [Hash Table, Two Pointers, String, Sliding Window]
+  tags: [Neetcode 150, Hash Table, Two Pointers, String, Sliding Window]
   verified: false
   description: |
     Given two strings `s1` and `s2`, return `true` if `s2` contains a **permutation** of `s1`,
@@ -6568,7 +6568,7 @@
 - id: 572
   title: "Subtree of Another Tree"
   difficulty: Easy
-  tags: [Tree, DFS, Hash Function]
+  tags: [Neetcode 150, Tree, DFS, Hash Function]
   verified: false
   description: |
     Given the roots of two binary trees `root` and `subRoot`, return `true` if there is a
@@ -6617,7 +6617,7 @@
 - id: 621
   title: "Task Scheduler"
   difficulty: Medium
-  tags: [Array, Hash Table, Greedy, Sorting, Heap (Priority Queue), Counting]
+  tags: [Neetcode 150, Array, Hash Table, Greedy, Sorting, Heap (Priority Queue), Counting]
   verified: false
   description: |
     You are given an array of CPU `tasks`, each labeled with a letter from A to Z, and a number
@@ -6665,7 +6665,7 @@
 - id: 647
   title: "Palindromic Substrings"
   difficulty: Medium
-  tags: [Two Pointers, String, Dynamic Programming]
+  tags: [Neetcode 150, Two Pointers, String, Dynamic Programming]
   verified: false
   description: |
     Given a string `s`, return the number of substrings within `s` that are palindromes.
@@ -6711,7 +6711,7 @@
 - id: 678
   title: "Valid Parenthesis String"
   difficulty: Medium
-  tags: [String, Dynamic Programming, Stack, Greedy]
+  tags: [Neetcode 150, String, Dynamic Programming, Stack, Greedy]
   verified: false
   description: |
     Given a string `s` containing only three types of characters: `'('`, `')'` and `'*'`,
@@ -6772,7 +6772,7 @@
 - id: 684
   title: "Redundant Connection"
   difficulty: Medium
-  tags: [Depth-First Search, Breadth-First Search, Union Find, Graph]
+  tags: [Neetcode 150, Depth-First Search, Breadth-First Search, Union Find, Graph]
   verified: false
   description: |
     In this problem, a tree is an **undirected graph** that is connected and has no cycles.
@@ -6840,7 +6840,7 @@
 - id: 695
   title: "Max Area of Island"
   difficulty: Medium
-  tags: [Array, Depth-First Search, Breadth-First Search, Union Find, Matrix]
+  tags: [Neetcode 150, Array, Depth-First Search, Breadth-First Search, Union Find, Matrix]
   verified: false
   description: |
     You are given an `m x n` binary matrix `grid`. An island is a group of `1`'s (land)
@@ -6893,7 +6893,7 @@
 - id: 703
   title: "Kth Largest Element In a Stream"
   difficulty: Easy
-  tags: [Tree, Design, Binary Search Tree, Heap (Priority Queue), Binary Tree, Data Stream]
+  tags: [Neetcode 150, Tree, Design, Binary Search Tree, Heap (Priority Queue), Binary Tree, Data Stream]
   verified: false
   description: |
     Design a class to find the `kth` largest integer in a stream of values, including duplicates.
@@ -6943,7 +6943,7 @@
 - id: 704
   title: "Binary Search"
   difficulty: Easy
-  tags: [Array, Binary Search]
+  tags: [Neetcode 150, Array, Binary Search]
   verified: false
   description: |
     Given an array of integers `nums` which is sorted in ascending order, and an integer
@@ -6989,7 +6989,7 @@
 - id: 739
   title: "Daily Temperatures"
   difficulty: Medium
-  tags: [Array, Stack, Monotonic Stack]
+  tags: [Neetcode 150, Array, Stack, Monotonic Stack]
   verified: false
   description: |
     Given an array of integers `temperatures` represents the daily temperatures, return an
@@ -7031,7 +7031,7 @@
 - id: 743
   title: "Network Delay Time"
   difficulty: Medium
-  tags: [DFS, BFS, Graph, Heap, Shortest Path]
+  tags: [Neetcode 150, DFS, BFS, Graph, Heap, Shortest Path]
   time: "O(E log V)"
   space: "O(V + E)"
   description: |
@@ -7089,7 +7089,7 @@
 - id: 746
   title: "Min Cost Climbing Stairs"
   difficulty: Easy
-  tags: [Array, Dynamic Programming]
+  tags: [Neetcode 150, Array, Dynamic Programming]
   verified: false
   description: |
     You are given an integer array `cost` where `cost[i]` is the cost of stepping on the `i`th
@@ -7126,7 +7126,7 @@
 - id: 763
   title: "Partition Labels"
   difficulty: Medium
-  tags: [Hash Table, Two Pointers, String, Greedy]
+  tags: [Neetcode 150, Hash Table, Two Pointers, String, Greedy]
   verified: false
   description: |
     You are given a string `s`. We want to partition the string into as many parts as possible
@@ -7178,7 +7178,7 @@
 - id: 778
   title: "Swim in Rising Water"
   difficulty: Hard
-  tags: [Array, Binary Search, DFS, BFS, Union Find, Heap, Matrix]
+  tags: [Neetcode 150, Array, Binary Search, DFS, BFS, Union Find, Heap, Matrix]
   time: "O(n^2 log n)"
   space: "O(n^2)"
   description: |
@@ -7233,7 +7233,7 @@
 - id: 787
   title: "Cheapest Flights Within K Stops"
   difficulty: Medium
-  tags: [DP, DFS, BFS, Graph, Heap, Shortest Path]
+  tags: [Neetcode 150, DP, DFS, BFS, Graph, Heap, Shortest Path]
   time: "O(n + m * k)"
   space: "O(n)"
   description: |
@@ -7285,7 +7285,7 @@
 - id: 846
   title: "Hand of Straights"
   difficulty: Medium
-  tags: [Array, Hash Table, Greedy, Sorting]
+  tags: [Neetcode 150, Array, Hash Table, Greedy, Sorting]
   verified: false
   description: |
     Alice has some number of cards and she wants to rearrange the cards into groups so that
@@ -7333,7 +7333,7 @@
 - id: 853
   title: "Car Fleet"
   difficulty: Medium
-  tags: [Array, Stack, Sorting, Monotonic Stack]
+  tags: [Neetcode 150, Array, Stack, Sorting, Monotonic Stack]
   verified: false
   description: |
     There are `n` cars at given miles away from the starting mile `0`, traveling to their
@@ -7404,7 +7404,7 @@
 - id: 875
   title: "Koko Eating Bananas"
   difficulty: Medium
-  tags: [Array, Binary Search]
+  tags: [Neetcode 150, Array, Binary Search]
   verified: false
   description: |
     Koko loves to eat bananas. There are `n` piles of bananas, the `i`th pile has `piles[i]`
@@ -7462,7 +7462,7 @@
 - id: 973
   title: "K Closest Points to Origin"
   difficulty: Medium
-  tags: [Array, Math, Divide and Conquer, Geometry, Sorting, Heap (Priority Queue), Quickselect]
+  tags: [Neetcode 150, Array, Math, Divide and Conquer, Geometry, Sorting, Heap (Priority Queue), Quickselect]
   verified: false
   description: |
     Given an array of points where `points[i] = [xi, yi]` represents a point on the **X-Y
@@ -7512,7 +7512,7 @@
 - id: 981
   title: "Time Based Key Value Store"
   difficulty: Medium
-  tags: [Hash Table, String, Binary Search, Design]
+  tags: [Neetcode 150, Hash Table, String, Binary Search, Design]
   verified: false
   description: |
     Design a time-based key-value data structure that can store multiple values for the same
@@ -7575,7 +7575,7 @@
 - id: 994
   title: "Rotting Oranges"
   difficulty: Medium
-  tags: [Array, Breadth-First Search, Matrix]
+  tags: [Neetcode 150, Array, Breadth-First Search, Matrix]
   verified: false
   description: |
     You are given an `m x n` grid where each cell can have one of three values:
@@ -7650,7 +7650,7 @@
 - id: 1046
   title: "Last Stone Weight"
   difficulty: Easy
-  tags: [Array, Heap (Priority Queue)]
+  tags: [Neetcode 150, Array, Heap (Priority Queue)]
   verified: true
   description: |
     You are given an array of integers `stones` where `stones[i]` is the weight of the `ith`
@@ -7748,7 +7748,7 @@
 - id: 1143
   title: "Longest Common Subsequence"
   difficulty: Medium
-  tags: [String, Dynamic Programming]
+  tags: [Neetcode 150, String, Dynamic Programming]
   verified: false
   description: |
     Given two strings `text1` and `text2`, return the length of their longest common
@@ -7803,7 +7803,7 @@
 - id: 1448
   title: "Count Good Nodes In Binary Tree"
   difficulty: Medium
-  tags: [Tree, DFS]
+  tags: [Neetcode 150, Tree, DFS]
   verified: false
   description: |
     Given a binary tree `root`, a node X in the tree is named **good** if in the path from root
@@ -7850,7 +7850,7 @@
 - id: 1584
   title: "Min Cost to Connect All Points"
   difficulty: Medium
-  tags: [Array, Union Find, Graph, Minimum Spanning Tree]
+  tags: [Neetcode 150, Array, Union Find, Graph, Minimum Spanning Tree]
   time: "O(n^2 log n)"
   space: "O(n^2)"
   description: |
@@ -7906,7 +7906,7 @@
 - id: 1851
   title: "Minimum Interval to Include Each Query"
   difficulty: Hard
-  tags: [Array, Binary Search, Sorting, Heap (Priority Queue)]
+  tags: [Neetcode 150, Array, Binary Search, Sorting, Heap (Priority Queue)]
   verified: false
   description: |
     You are given a 2D integer array `intervals`, where `intervals[i] = [left_i, right_i]`
@@ -7973,7 +7973,7 @@
 - id: 1899
   title: "Merge Triplets to Form Target Triplet"
   difficulty: Medium
-  tags: [Array, Greedy]
+  tags: [Neetcode 150, Array, Greedy]
   verified: false
   description: |
     A **triplet** is an array of three integers. You are given a 2D integer array `triplets`,
@@ -8032,7 +8032,7 @@
 - id: 2013
   title: "Detect Squares"
   difficulty: Medium
-  tags: [Array, Hash Table, Design, Counting]
+  tags: [Neetcode 150, Array, Hash Table, Design, Counting]
   time: "O(n)"
   space: "O(n)"
   description: |
