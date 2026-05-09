@@ -1,0 +1,5 @@
+# Blind 75 missing from neetcode.io
+String to Integer (atoi) (Medium)
+Basic Calculator (Hard)
+First Bad Version (Easy)
+01 Matrix (Medium)
