@@ -2540,6 +2540,93 @@
                 dp2, dp1 = dp1, current
 
             return dp1
+- id: 94
+  title: "Binary Tree Inorder Traversal"
+  difficulty: Easy
+  tags: [Stack, Tree, Depth-First Search, Binary Tree]
+  verified: true
+  description: |
+    Given the root of a binary tree, return the inorder traversal of its nodes' values.
+
+    **Example 1:**
+    Input: root = [1,null,2,3]
+    Output: [1,3,2]
+
+    **Example 2:**
+    Input: root = [1,2,3,4,5,null,8,null,null,6,7,9]
+    Output: [4,2,6,5,7,1,3,9,8]
+
+    **Example 3:**
+    Input: root = []
+    Output: []
+
+    **Example 4:**
+    Input: root = [1]
+    Output: [1]
+
+    **Constraints:**
+      - The number of nodes in the tree is in the range [0, 100].
+      - -100 <= Node.val <= 100
+     
+    Follow up: Recursive solution is trivial, could you do it iteratively?
+  easy_time: "O(n)"
+  easy_space: "O(n)"
+  easy_approach: |
+    Continue down left path pushing to stack. If you cannot go left, pop once from the stack, output, and go right once.
+  easy_solution: |
+    class Solution:
+        def inorderTraversal(self, root):
+            out = []
+            stack = []
+            curr = root
+            while curr or stack:
+                while curr:
+                    stack.append(curr)
+                    curr = curr.left
+                curr = stack.pop()
+                out.append(curr.val)
+                curr = curr.right
+            return out
+  time: "O(n)"
+  space: "O(1), output array is O(n)"
+  approach: |
+    Morris Traversal achieves O(1) extra space by temporarily modifying the tree
+    structure. The idea is to create a temporary link from the rightmost node of
+    the left subtree back to the current node. This allows us to return to the
+    current node after traversing the left subtree without using a stack. After
+    processing, we remove the temporary link to restore the original tree.
+
+    1. Initialize the current node to the root.
+    2. While the current node is not null:
+      - If the current node has no left child, add its value to the result and move to the right child.
+      - Otherwise, find the rightmost node in the left subtree (the inorder predecessor).
+      - If the predecessor's right pointer is null, set it to the current node (create a thread) and move to the left child.
+      - If the predecessor's right pointer already points to the current node, remove the thread, add the current node's value to the result, and move to the right child.
+    3. Return the result list.
+  solution: |
+    class Solution:
+        def inorderTraversal(self, root: Optional[TreeNode]) -> List[int]:
+            res = []
+            cur = root
+
+            while cur:
+                if not cur.left:
+                    res.append(cur.val)
+                    cur = cur.right
+                else:
+                    prev = cur.left
+                    while prev.right and prev.right != cur:
+                        prev = prev.right
+
+                    if not prev.right:
+                        prev.right = cur
+                        cur = cur.left
+                    else:
+                        prev.right = None
+                        res.append(cur.val)
+                        cur = cur.right
+
+            return res
 - id: 97
   title: "Interleaving String"
   difficulty: Medium
@@ -3664,6 +3751,191 @@
                 first.next = second
                 second.next = tmp1
                 first, second = tmp1, tmp2
+- id: 144
+  title: "Binary Tree Preorder Traversal"
+  difficulty: Easy
+  tags: [Stack, Tree, Depth-First Search, Binary Tree]
+  verified: true
+  description: |
+    Given the root of a binary tree, return the preorder traversal of its nodes' values.
+
+    **Example 1:**
+      Input: root = [1,null,2,3]
+      Output: [1,2,3]
+
+    **Example 2:**
+      Input: root = [1,2,3,4,5,null,8,null,null,6,7,9]
+      Output: [1,2,4,5,6,7,3,8,9]
+
+    **Example 3:**
+      Input: root = []
+      Output: []
+
+    **Example 4:**
+      Input: root = [1]
+      Output: [1]
+
+    **Constraints:**
+      - The number of nodes in the tree is in the range [0, 100].
+      - -100 <= Node.val <= 100
+
+    Follow up: Recursive solution is trivial, could you do it iteratively?
+  easy_time: "O(n)"
+  easy_space: "O(h), h is the height of the tree"
+  easy_approach: |
+    Append popped value from stack prior to both recursive calls.
+  easy_solution: |
+    class Solution:
+      def preorderTraversal(self, root: Optional[TreeNode]) -> List[int]:
+          if not root:
+              return []
+          
+          stack = [root]
+          out = []
+          
+          while stack:
+              item = stack.pop()
+
+              out.append(item.val)
+
+              if item.right:
+                  stack.append(item.right)
+              if item.left:
+                  stack.append(item.left)
+
+          return out
+  time: "O(n)"
+  space: "O(1), O(n) for the output array"
+  approach: |
+    Morris Traversal lets us do preorder traversal without recursion and without a stack, using O(1) extra space.
+
+    The key idea:
+
+      - For every node with a left child, find its inorder predecessor (rightmost node in the left subtree).
+      - Normally, after finishing the left subtree, we would return back to the root.
+        Since we have no stack, we temporarily create a thread:
+        predecessor.right = current
+      - On the first time we reach a node, we record its value (because preorder = Node → Left → Right).
+      - When we come back through the created thread, we restore the tree by removing the thread and then continue to the right child.
+
+    This modifies the tree temporarily but restores it fully at the end.
+  solution: |
+    class Solution:
+        def preorderTraversal(self, root: Optional[TreeNode]) -> List[int]:
+            res = []
+            cur = root
+
+            while cur:
+                if not cur.left:
+                    res.append(cur.val)
+                    cur = cur.right
+                else:
+                    prev = cur.left
+                    while prev.right and prev.right != cur:
+                        prev = prev.right
+
+                    if not prev.right:
+                        res.append(cur.val)
+                        prev.right = cur
+                        cur = cur.left
+                    else:
+                        prev.right = None
+                        cur = cur.right
+
+            return res
+- id: 145
+  title: "Binary Tree Postorder Traversal"
+  difficulty: Easy
+  tags: [Stack, Tree, Depth-First Search, Binary Tree]
+  verified: true
+  description: |
+    Given the root of a binary tree, return the postorder traversal of its nodes' values.
+
+    **Example 1:**
+    Input: root = [1,null,2,3]
+    Output: [3,2,1]
+
+    **Example 2:**
+    Input: root = [1,2,3,4,5,null,8,null,null,6,7,9]
+    Output: [4,6,7,5,2,9,8,3,1]
+
+    **Example 3:**
+    Input: root = []
+    Output: []
+
+    **Example 4:**
+    Input: root = [1]
+    Output: [1]
+
+    **Constraints:**
+      - The number of the nodes in the tree is in the range [0, 100].
+      - -100 <= Node.val <= 100
+     
+    Follow up: Recursive solution is trivial, could you do it iteratively?
+  easy_time: "O(n)"
+  easy_space: "O(n)"
+  easy_approach: |
+    Preorder Traversal and reverse the output.
+  easy_solution: |
+    class Solution:
+        def postorderTraversal(self, root: Optional[TreeNode]) -> List[int]:
+            res = []
+            stack = []
+            cur = root
+
+            while cur or stack:
+                if cur:
+                    res.append(cur.val)
+                    stack.append(cur)
+                    cur = cur.right
+                else:
+                    cur = stack.pop()
+                    cur = cur.left
+
+            res.reverse()
+            return res
+  time: "O(n)"
+  space: "O(1), output array is O(n)"
+  approach: |
+    Similar to the iterative approach that reverses a modified preorder, Morris
+    Traversal for postorder works by performing a reverse preorder traversal
+    (current, right, left) without using extra space for a stack. We use temporary
+    thread links from the leftmost node of the right subtree back to the current
+    node. After the traversal, we reverse the result.
+
+    1. Initialize the current node to the root.
+    2. While the current node is not null:
+      - If the current node has no right child, add its value to the result and move to the left child.
+      - Otherwise, find the leftmost node in the right subtree.
+      - If the leftmost node's left pointer is null, add the current value to the result, set the left pointer to the current node (create thread), and move to the right child.
+      - If the left pointer already points to the current node, remove the thread and move to the left child.
+    3. Reverse the result list to get the correct postorder sequence.
+    4. Return the result list.
+  solution: |
+    class Solution:
+        def postorderTraversal(self, root: Optional[TreeNode]) -> List[int]:
+            res = []
+            cur = root
+
+            while cur:
+                if not cur.right:
+                    res.append(cur.val)
+                    cur = cur.left
+                else:
+                    prev = cur.right
+                    while prev.left and prev.left != cur:
+                        prev = prev.left
+
+                    if not prev.left:
+                        res.append(cur.val)
+                        prev.left = cur
+                        cur = cur.right
+                    else:
+                        prev.left = None
+                        cur = cur.left
+
+            res.reverse()
+            return res
 - id: 146
   title: "LRU Cache"
   difficulty: Medium
