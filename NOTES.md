@@ -88,9 +88,9 @@ from collections import deque
 
 queue = deque()
 .append() - insert right
+.pop() - pop right
 .popleft() - pop left
 .appendleft() - insert left
-.pop() - pop right
 ...................................
 
 # SET
