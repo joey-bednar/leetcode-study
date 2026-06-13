@@ -7414,6 +7414,46 @@
       - 1 <= tasks.length <= 1000
       - tasks[i] is an uppercase English letter.
       - 0 <= n <= 100
+  easy_time: "O(m)"
+  easy_space: "O(1), only max 26 different characters. Otherwise O(t)"
+  easy_approach: |
+    We always want to run the task that still has the most remaining occurrences, because those are the hardest to fit into the schedule (they need more slots with cooldown gaps).
+
+    - Keep a max-heap of tasks by their remaining count (most frequent on top).
+    - At each time unit, we take the most frequent available task and run it.
+    - After running a task, it goes into a cooldown queue with the time when it will be available again (current time + n).
+    - When a task’s cooldown finishes, we push it back into the heap so it can be scheduled again.
+    - If the heap is empty but some tasks are still in cooldown, we can jump the current time forward to the next time when a task becomes available.
+
+    This way we always use the CPU as efficiently as possible while respecting the cooldown.
+  easy_solution: |
+    class Solution:
+        def leastInterval(self, tasks: List[str], n: int) -> int:
+
+            heap = [freq for freq in Counter(tasks).values()]
+            heapq.heapify_max(heap)
+
+            queue = deque()
+
+            time = 0
+
+            while heap or queue:
+
+                time += 1
+
+                if not heap:
+                    time = queue[0][0]
+
+                if queue and time >= queue[0][0]:
+                    _,freq = queue.popleft()
+                    heapq.heappush_max(heap,freq)
+
+                if heap:
+                    freq = heapq.heappop_max(heap)
+                    if freq-1 > 0:
+                        queue.append((time+n+1,freq-1))
+
+            return time
   time: "O(m)"
   space: "O(1)"
   approach: |
