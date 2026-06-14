@@ -1441,7 +1441,9 @@
     - `1 <= n <= 20`
     - `-1000 <= matrix[i][j] <= 1000`
   approach: |
-    A 90-degree clockwise rotation can be decomposed into two simpler in-place operations: first reverse the matrix vertically (swap row 0 with row n-1, row 1 with row n-2, etc.), then transpose the matrix (swap matrix[i][j] with matrix[j][i] for all i < j). Combining these two steps achieves the rotation without any extra space.
+    90-degree clockwise rotation: reverse rows (vertical) then transpose.
+    90-degree counterclockwise rotation: transpose then reverse rows (vertical).
+    Only transpose half of the entries otherwise you will recreate the same matrix.
   solution: |
     class Solution:
         def rotate(self, matrix: List[List[int]]) -> None:
