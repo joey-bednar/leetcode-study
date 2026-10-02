@@ -3,18 +3,20 @@
 ## Running
 
 ```bash
-python lc.py # show help menu
-python lc.py list # list problems
-python lc.py random # pick a random problem
-python lc.py pick <id> # pick a problem by id
+go build -o lc . # build the executable (must live next to problems.yaml and user_data.json)
+./lc # show help menu
+./lc list # list problems
+./lc random # pick a random problem
+./lc pick <id> # pick a problem by id
 ```
 
 ## Architecture
 
-This is a terminal flashcard CLI for practicing LeetCode problems. It has two modules:
+This is a terminal flashcard CLI for practicing LeetCode problems, written in Go (the problem solutions themselves are Python, stored in `problems.yaml`). It has three source files:
 
-- **`lc.py`** — entry point; loads `problems.yaml`, picks a random problem, and calls `render.print_problem`
-- **`render.py`** — all terminal rendering: ANSI color constants, a regex-based Python syntax highlighter (`python_highlight`), a lightweight markdown renderer (`print_markdown`), and `print_problem` which sequences the interactive reveal flow
+- **`main.go`** -- entry point; arg parsing and the `random`/`pick`/`list`/`add`/`remove`/`mark` commands
+- **`data.go`** -- `Problem` struct, loading `problems.yaml`, and loading/saving `user_data.json` (both resolved relative to the executable)
+- **`render.go`** -- all terminal rendering: ANSI color constants, a regex-based Python syntax highlighter (`pythonHighlight`), a lightweight markdown renderer (`printMarkdown`), and `printProblem`/`printSolution`/list printing
 - **`problems.yaml`** — problem data; each entry has `id`, `title`, `difficulty`, `tags`, `time`, `space`, `description`, `approach`, `solution`, and `verified` fields
 
 ## Adding problems
